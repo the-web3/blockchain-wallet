@@ -25,15 +25,15 @@
 
 ### 有兴趣的朋友可以加笔者的微信，我们一起交流区块链技术，区块链钱包技术
 
-加好友： 
-    ![加好友： 
+.： 
+    ![.： 
 ](https://github.com/guoshijiang/blockchain-wallet/blob/master/img/weixin.png)
 
 
 ### 欢迎打赏
 
-打赏： 
-    ![打赏： 
+.： 
+    ![.： 
 ](https://github.com/guoshijiang/blockchain-wallet/blob/master/img/shang.png)
 
 
