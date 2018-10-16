@@ -3,9 +3,9 @@
 
 ### [第一章：前言](https://github.com/guoshijiang/blockchain-wallet/blob/master/preface/readme.md)
 
-### [第二章：钱包基础知识](https://github.com/guoshijiang/go-ethereum-code-analysis/tree/master/theory)
+### [第二章：钱包基础知识](https://github.com/guoshijiang/blockchain-wallet/tree/master/basicWallet)
 
-### [第三章：助记词](https://github.com/guoshijiang/go-ethereum-code-analysis/tree/master/theory)
+### [第三章：助记词](https://github.com/guoshijiang/blockchain-wallet/tree/master/mnemonic)
 
 ### [第四章：BIP钱包分层协议](https://github.com/guoshijiang/go-ethereum-code-analysis/tree/master/theory)
 
