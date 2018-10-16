@@ -27,15 +27,13 @@
 
 加好友： 
     ![加好友： 
-](https://github.com/guoshijiang/blockchain-wallet/blob/master/img/weixin.png "加好友： 
-")
+](https://github.com/guoshijiang/blockchain-wallet/blob/master/img/weixin.png)
 
 
 ### 欢迎打赏
 
 打赏： 
     ![打赏： 
-](https://github.com/guoshijiang/blockchain-wallet/blob/master/img/shang.png "打赏： 
-")
+](https://github.com/guoshijiang/blockchain-wallet/blob/master/img/shang.png)
 
 
