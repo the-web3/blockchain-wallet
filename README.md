@@ -28,7 +28,7 @@
 
 [点击开始阅读本书](https://github.com/guoshijiang/blockchain-wallet/blob/master/chapter/readme.md)
 
-[点击开始阅读作者的Docker一书](https://github.com/guoshijiang/blockchain-wallet/blob/master/chapter/readme.md)
+[点击开始阅读作者的Docker一书](https://github.com/guoshijiang/docker-virtual-technology)
 
 [跳转到笔者的博客](https://blog.csdn.net/jiang_xinxing)
 
