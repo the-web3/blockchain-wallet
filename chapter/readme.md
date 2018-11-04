@@ -7,7 +7,7 @@
 
 ### [第三章：助记词](https://github.com/guoshijiang/blockchain-wallet/tree/master/mnemonic)
 
-### [第四章：BIP钱包分层协议](https://github.com/guoshijiang/go-ethereum-code-analysis/tree/master/theory)
+### [第四章：BIP钱包分层协议](https://github.com/guoshijiang/blockchain-wallet/tree/master/biphd)
 
 ### [第五章：以太坊钱包开发](https://github.com/guoshijiang/go-ethereum-code-analysis/tree/master/theory)
 
