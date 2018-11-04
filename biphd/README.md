@@ -5,26 +5,26 @@
 
 ### 1.非确定钱包生成以太坊地址
 
-  var keythereum = require("keythereum");
-  var params = { keyBytes: 32, ivBytes: 16 };
+    var keythereum = require("keythereum");
+    var params = { keyBytes: 32, ivBytes: 16 };
 
-  keythereum.create(params, function (dk) {
-      var options = {
-        kdf: "pbkdf2",
-        cipher: "aes-128-ctr",
-        kdfparams: {
-          c: 262144,
-          dklen: 32,
-          prf: "hmac-sha256"
-        }
-      };
-      var password = "wheethereum";
-      var kdf = "pbkdf2"; 
-      keythereum.dump(password, dk.privateKey, dk.salt, dk.iv, options, function (keyObject) {
-        console.log(keyObject.address)
-        keythereum.exportToFile(keyObject);
+    keythereum.create(params, function (dk) {
+        var options = {
+          kdf: "pbkdf2",
+          cipher: "aes-128-ctr",
+          kdfparams: {
+            c: 262144,
+            dklen: 32,
+            prf: "hmac-sha256"
+          }
+        };
+        var password = "wheethereum";
+        var kdf = "pbkdf2"; 
+        keythereum.dump(password, dk.privateKey, dk.salt, dk.iv, options, function (keyObject) {
+          console.log(keyObject.address)
+          keythereum.exportToFile(keyObject);
+      });
     });
-  });
 
 ### 2.确定性钱包生成以太坊地址
 
