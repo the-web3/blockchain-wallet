@@ -126,7 +126,44 @@ Keythereum使用相同的密钥派生函数（PBKDF2-SHA256或scrypt），对称
 
 ### 2.使用keythereum生产keystore
 
+在生产keystore之前，你必须有一个nodeJs的环境，并且安装keythereum
 
+    npm install keythereum
+    
+或者使用压缩的浏览器文件dist/keythereum.min.js，以便在浏览器中使用。 使用一下代码引入
+
+    <script src="dist/keythereum.min.js" type="text/javascript"></script>
+
+生成一个新的随机私钥（256位），以及密钥派生函数使用的salt（256位），用于AES-128-CTR的初始化向量（128位）对密钥进行加密。 如果传递回调函数，则create是异步的，否则是同步的。
+
+下面是生成keystore的代码：
+
+    var keythereum = require("keythereum");
+
+    var params = { keyBytes: 32, ivBytes: 16 };
+    var dk = keythereum.create(params);
+    keythereum.create(params, function (dk) {
+        var password = "wheethereum";
+        var kdf = "pbkdf2";
+        var options = {
+            kdf: "pbkdf2",
+            cipher: "aes-128-ctr",
+            kdfparams: {
+                c: 262144,
+                dklen: 32,
+                prf: "hmac-sha256"
+            }
+        };
+        keythereum.dump(password, dk.privateKey, dk.salt, dk.iv, options, function (keyObject) {
+            console.log(keyObject);
+        });
+    });
+
+下图是运行结果：
+
+.： 
+    ![.： 
+](https://github.com/guoshijiang/blockchain-wallet/blob/master/img/keystoreone.png)
 
 
 ## 四.依托钱包节点方式开发钱包
