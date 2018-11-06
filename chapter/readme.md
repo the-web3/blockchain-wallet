@@ -20,3 +20,5 @@
 ### [第九章：钱包项目实战一](https://github.com/guoshijiang/go-ethereum-code-analysis/tree/master/theory)
 
 ### [第十章：钱包项目实战二](https://github.com/guoshijiang/go-ethereum-code-analysis/tree/master/theory)
+
+### [第十一章：开源钱包源码分析](https://github.com/guoshijiang/go-ethereum-code-analysis/tree/master/theory)
