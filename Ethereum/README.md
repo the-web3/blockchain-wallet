@@ -124,7 +124,7 @@ Keythereum使用相同的密钥派生函数（PBKDF2-SHA256或scrypt），对称
 
 从版本0.5.0开始，keythereum的加密和解密函数都返回Buffers而不是字符串。 对于直接使用这些功能的人来说，这是一个重大改变。
 
-### 2.使用keythereum生产keystore
+### 1.1.使用keythereum生产keystore
 
 在生产keystore之前，你必须有一个nodeJs的环境，并且安装keythereum
 
@@ -165,7 +165,7 @@ Keythereum使用相同的密钥派生函数（PBKDF2-SHA256或scrypt），对称
     ![.： 
 ](https://github.com/guoshijiang/blockchain-wallet/blob/master/img/keystoreone.png)
 
-### 3.将keystore到文件中存储
+### 1.2.将keystore到文件中存储
 
 dump创建一个对象而不是JSON字符串。 在Node中，exportToFile方法提供了一种将此格式化的密钥对象导出到文件的简便方法。 它在keystore子目录中创建一个JSON文件，并使用geth的当前文件命名约定（ISO时间戳与密钥派生的以太坊地址连接）。
 
@@ -199,7 +199,174 @@ dump创建一个对象而不是JSON字符串。 在Node中，exportToFile方法�
 ](https://github.com/guoshijiang/blockchain-wallet/blob/master/img/1541492232(1).png)
 
 
+### 1.3.keystore的导入
 
+从geth的密钥库导入密钥只能在Node上完成。 将JSON文件解析为与上面的keyObject具有相同结构的对象。
+
+    var datadir = "/home/jack/.ethereum-test";
+    var keyObject = keythereum.importFromFile(address, datadir);
+    console.log(keyObject)
+    keythereum.importFromFile(address, datadir, function (keyObject) {
+       console.log(keyObject)
+    });
+
+### 1.4.从keystore中恢复私钥
+
+这里恢复出来的私钥是buffer格式的,password是你设置的密码，keyObject就是keystore
+
+    var privateKey = keythereum.recover(password, keyObject);
+    console.log(privateKey)
+    keythereum.recover(password, keyObject, function (privateKey) {
+      console.log(privateKey)
+    });
+
+### 2.ethereumjs-tx
+
+ethereumjs-tx是用来对以太坊或者ERC20代币的交易进行交易签名的javascript库.
+
+### 2.1.安装ethereumjs-tx
+
+    npm install ethereumjs-tx
+   
+### 2.2.使用ethereumjs-tx库对交易签名
+
+#### 2.2.1.以太坊交易签名
+
+ const Web3 =require ('web3')
+    const transaction = require('ethereumjs-tx');
+    if (typeof web3 !== 'undefined')
+    {
+        var web3 = new Web3(web3.currentProvider);
+    } else {
+        var web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+    }
+
+    function ethereumSign(privateKey, nonce, toAddress, sendToBalance, sendFee) {
+        if(!privateKey || !nonce || !toAddress || !sendToBalance || !sendFee) {
+            console.log("one of fromAddress, toAddress, sendToBalance, sendFee is null, please give a valid param");
+        } else {
+            console.log("param is valid, start sign transaction");
+            var transactionNonce = parseInt(nonce).toString(16);
+            console.log("transaction nonce is " + transactionNonce);
+            var numBalance = parseFloat(sendToBalance);
+            var balancetoWei = web3.toWei(numBalance, "ether");
+            console.log("balancetoWei is " + balancetoWei);
+            var oxNumBalance = parseInt(balancetoWei).toString(16);
+            console.log("16 oxNumBalance is " + oxNumBalance);
+            var gasFee = parseFloat(sendFee);
+            var gasFeeToWei = web3.toWei(gasFee, "ether");
+            console.log("gas fee to wei is " + gasFeeToWei);
+            var gas = gasFeeToWei / 21000;
+            console.log("param gas is " + gas);
+            var oxgasFeeToWei = parseInt(gas).toString(16);
+            console.log("16 oxgasFeeToWei is " + oxgasFeeToWei);
+            var privateKeyBuffer =  Buffer.from(privateKey, 'hex');
+            var rawTx = {
+                nonce:'0x' + transactionNonce,
+                gasPrice: '0x5208',
+                gas:'0x4a817c800', //+ oxgasFeeToWei,
+                to: '0x' + toAddress,
+                value:'0x' + oxNumBalance,
+                data: '',
+                chainId: 1
+            };
+            var tx = new transaction(rawTx);
+            tx.sign(privateKeyBuffer);
+            var serializedTx = tx.serialize();
+            if(serializedTx == null) {
+                console.log("Serialized transaction fail")
+            } else {
+                console.log("Serialized transaction success and the result is " + serializedTx.toString('hex'));
+                console.log("The sender address is " + tx.getSenderAddress().toString('hex'));
+                if (tx.verifySignature()) {
+                    console.log('Signature Checks out!')
+                } else {
+                    console.log("Signature checks fail")
+                }
+            }
+        }
+        return '0x' + serializedTx.toString('hex')
+    }
+
+    var privateKey = "5204627f8e58b3c75be408423c121988a1cb942e73470fb19186ef8986cd50b3";
+    var nonce = 10;
+    var toAddress = "c6328b3a137b3be3f01c35ecda4ecda375be7fdf";
+    var sendToBalance = "0.003";
+    var sendFee = "0.001";
+
+    var sign = ethereumSign(privateKey, nonce, toAddress, sendToBalance, sendFee);
+    console.log(sign);
+    
+签名结果如下：
+
+.： 
+    ![.： 
+](https://github.com/guoshijiang/blockchain-wallet/blob/master/img/ethSign.png)
+
+#### 2.2.2.ERC20代币交易签名
+
+    const Web3 =require ('web3')
+    const transaction = require('ethereumjs-tx');
+
+    function addPreZero(num){
+        var t = (num+'').length,
+            s = '';
+        for(var i=0; i<64-t; i++){
+            s += '0';
+        }
+        return s+num;
+    }
+
+    function ethereumErc20CoinSign(privateKey/*私钥*/, nonce/*标识交易*/, currentAccount/*当前账户*/,  contractAddress/*合约地址*/, toAddress/*转入地址*/,  gasPrice/*gasPrice*/,  gasLimit/*gasLimit*/, totalAmount/*代币总量*/ , decimal /*代币的单位换算*/) {
+        if(!privateKey || !nonce || !currentAccount || !contractAddress || !toAddress  || !gasPrice || !gasLimit || !totalAmount || !decimal) {
+            console.log("one of param is null, please give a valid param");
+            return ;
+        }
+        var transactionNonce = parseInt(nonce).toString(16);
+        console.log("transaction nonce is " + transactionNonce);
+        var gasLimit = parseInt(gasLimit).toString(16);
+        console.log("send transaction gasLimit is " + gasLimit);
+        var gasPrice = parseFloat(gasPrice).toString(16);
+        console.log("send transaction gasPrice is " + gasPrice)
+        var totx = parseFloat(totalAmount*(10**decimal)).toString(16); //
+        var txData = {
+            nonce: '0x'+ transactionNonce,
+            gasLimit: '0x' + gasLimit,
+            gasPrice: '0x' +gasPrice,
+            to: contractAddress,
+            from: currentAccount,
+            value: '0x00',
+            data: '0x' + 'a9059cbb' + addPreZero(toAddress) + addPreZero(totx)
+        }
+        var tx = new transaction(txData);
+        const privateKey1 = new Buffer(privateKey, 'hex');
+        tx.sign(privateKey1);
+        var serializedTx = tx.serialize().toString('hex');
+        // console.log("transaction sign result is " + serializedTx);
+        return serializedTx; /*签名串*/
+    }
+
+    var privateKey = "5204627f8e58b3c75be408423c121988a1cb942e73470fb19186ef8986cd50b3";
+    var nonce = "9";
+    var currentAccount = "0xe558be4e90b2ac96ae5cad47dc39cd08316f2e57";
+    var contractAddress = "0xfa3118b34522580c35ae27f6cf52da1dbb756288";
+    var toAddress = "c6328b3a137b3be3f01c35ecda4ecda375be7fdf";
+    var gasPrice = 400000000;
+    var gasLimit = 200000;
+    var totalAmount = 8;
+    var decimal = 6;
+    var sign = ethereumErc20CoinSign(privateKey, nonce, currentAccount, contractAddress, toAddress, gasPrice, gasLimit, totalAmount, decimal);
+
+    console.log(sign);
+
+签名结果如下：
+
+.： 
+    ![.： 
+](https://github.com/guoshijiang/blockchain-wallet/blob/master/img/ERC20Sign.png)
+
+
+### 2.web3库
 
 
 ## 四.依托钱包节点方式开发钱包
