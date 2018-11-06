@@ -368,9 +368,37 @@ ethereumjs-tx是用来对以太坊或者ERC20代币的交易进行交易签名�
 
 ### 2.web3库
 
-web3是以太坊开发的重要库，目前有web3.js、web3j(web3java)、web3.py(web3python)、hs-web3(haskell)、web3j-scala、purescript-web3、web3.php、ethereum-php；咱们此处主要介绍web3.js，其他的后面将用一个章节来进行介绍。
+web3是以太坊开发的重要库，目前有web3.js、web3j(web3java)、web3.py(web3python)、hs-web3(haskell)、web3j-scala、purescript-web3、web3.php、ethereum-php；咱们此处主要介绍web3.js，其他的后面将用一个章节来进行介绍。web3.js是与以太坊兼容的JavaScript API，它实现了通用JSON RPC规范。 它在npm上可用作节点模块，Bower和组件可用作可嵌入脚本，也可用作meteor.js包。
 
-这是与以太坊兼容的JavaScript API，它实现了通用JSON RPC规范。 它在npm上可用作节点模块，Bower和组件可用作可嵌入脚本，也可用作meteor.js包。
+#### 2.1.web3.js库的安装
+
+##### 2.1.1.nodejs安装
+
+    npm install web3
+    
+##### 2.1.2.yarn安装
+
+    yarn add web3
+    
+##### 2.1.3.Meteor.js安装
+
+    meteor add ethereum:web3
+ 
+##### 2.1.4.做为浏览器模块
+
+* CDN
+
+    <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
+
+* Bower
+
+    bower install web3
+    
+* Component
+
+    component install ethereum/web3.js
+    
+#### 2.2.web3.js的使用
 
 
 ## 四.依托钱包节点方式开发钱包
