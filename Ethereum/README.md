@@ -165,6 +165,42 @@ Keythereum使用相同的密钥派生函数（PBKDF2-SHA256或scrypt），对称
     ![.： 
 ](https://github.com/guoshijiang/blockchain-wallet/blob/master/img/keystoreone.png)
 
+### 3.将keystore到文件中存储
+
+dump创建一个对象而不是JSON字符串。 在Node中，exportToFile方法提供了一种将此格式化的密钥对象导出到文件的简便方法。 它在keystore子目录中创建一个JSON文件，并使用geth的当前文件命名约定（ISO时间戳与密钥派生的以太坊地址连接）。
+
+代码如下：
+
+    var keythereum = require("keythereum");
+
+    var params = { keyBytes: 32, ivBytes: 16 };
+    var dk = keythereum.create(params);
+    keythereum.create(params, function (dk) {
+        var password = "wheethereum";
+        var kdf = "pbkdf2";
+        var options = {
+            kdf: "pbkdf2",
+            cipher: "aes-128-ctr",
+            kdfparams: {
+                c: 262144,
+                dklen: 32,
+                prf: "hmac-sha256"
+            }
+        };
+        keythereum.dump(password, dk.privateKey, dk.salt, dk.iv, options, function (keyObject) {
+            keythereum.exportToFile(keyObject);
+        });
+    });
+
+成功之后在你的keystor目录下将看到下面这些信息，如果出现错误，最可能的原因就是你的目录下没有keystore这个目录，当然以上代码中你也可以指定keystore的存储目录
+
+.： 
+    ![.： 
+](https://github.com/guoshijiang/blockchain-wallet/blob/master/img/1541492232(1).png)
+
+
+
+
 
 ## 四.依托钱包节点方式开发钱包
 
