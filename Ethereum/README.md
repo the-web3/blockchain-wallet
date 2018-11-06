@@ -69,9 +69,50 @@ Gas Limit之所以称为限额，因为它是您愿意在一笔交易中花费Ga
 
 查看矿工可以接受的最低Gas Price：https://etherscan.io/gastracker
 
+.： 
+    ![.： 
+](https://github.com/guoshijiang/blockchain-wallet/blob/master/img/gas.png)
+
+
 ### 2.以太币单位
+
+以太坊最小的单位是wei,最常用的单位是ether
+
+* Kwei（Babbage）= 10的3次方Wei
+* Mwei（Lovelace）= 10的6次方Wei
+* Gwei（Shannon）= 10的9次方Wei
+* MicroEther（Szabo）= 10的12次方Wei
+* MilliEther（Finney）= 10的15次方Wei
+* Ether = 10的18次方Wei
+
 ### 3.keystore
+
+keystore是以太坊账户的一种表现形式，里面包含了以太坊账户的地址，账户密文的私钥和MAC地址等等一系列的信息。
+
+    {
+      "address":"2ffe6e3816b6a84f509ea3be1b8e8bb024c894d8",
+      "crypto":
+      {
+        "cipher":"aes-128-ctr",
+        "ciphertext":"c302e468ad640ad6c43d51754caa60964ece820ad98ad0d5aa72a785a93d7a59",
+        "cipherparams": {"iv":"f4609a583b28e48a6bda7b6bf1229a26"},
+        "mac":"ef8872a3ad0a92a410b15b0e2e662d5cbfc98360d72b190a7b3189bd4151ebcf",
+        "kdf":"pbkdf2",
+        "kdfparams":
+        {
+          "c":262144,
+          "dklen":32,
+          "prf":"hmac-sha256",
+          "salt":"5a757ae33c08a46c8a50f34a2a514503fd66481ea56aeab31e25da45ae3f1c39"
+        }
+     },
+     "id":"49a53e88-4f8a-4858-80a4-02ad230da1d3",
+     "version":3
+    }
+
 ### 4.矿工费
+
+转账或调用智能合约，在区块链上执行写入操作，需要支付矿工计算费用，计费是按照Gas计算的，Gas使用ETH来支付，详细内容请看上面 1 部分
 
 ## 三.以太坊钱包涉及到的开源库
 
