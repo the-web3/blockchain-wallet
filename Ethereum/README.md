@@ -400,6 +400,89 @@ web3是以太坊开发的重要库，目前有web3.js、web3j(web3java)、web3.p
     
 #### 2.2.web3.js的使用
 
+##### 2.2.1.使用web3和以太坊交互
+
+web3.js初始化设置Provider
+
+    var Web3 = require("web3");
+    
+    if (typeof web3 !== 'undefined')
+    {
+        web3 = new Web3(web3.currentProvider);
+    }
+    else
+    {
+        web3 = new Web3(new Web3.providers.HttpProvider("http://10.23.1.209:8545"));
+    }
+
+##### 2.2.2.获取账户余额
+
+    web3.eth.getBalance("0x68db18a9cd87403c39e84467b332195b43fc33b5", function(err, result)
+    {
+        if (err == null)
+        {
+            console.log('~balance Ether:' +web3.fromWei(result, "ether"));
+        }
+        else
+        {
+            console.log('~balance Ether:' + web3.fromWei(result, "ether"));
+        }
+    });
+
+##### 2.2.3.获取交易的nonce
+
+    web3.eth.getTransactionCount("0x68db18a9cd87403c39e84467b332195b43fc33b5", function (err, result)
+    {
+        if (err == null)
+        {
+            console.log('nonce:' + result);
+        }
+        else
+        {
+            console.log('nonce:' + result);
+        }
+    });
+
+##### 2.2.4.发起转账
+
+转账需要使用到ethereumjs-tx库，对交易进行签名，关于ethereumjs-tx库，请参阅上面的内容
+
+    var Tx = require('ethereumjs-tx');
+    var privateKey = new Buffer.from('0f8e7b1b99f49d1d94ac42084216a95fe5967caec6bba35c62c911f6c4eafa95', 'hex')
+
+    var rawTx = {
+        subId:'0x0000000000000000000000000000000000',
+        nonce: '0x1',
+        gasPrice: '0x1a13b8600',
+        gas: '0xf4240',
+        to: '0x82aeb528664bb153d2114ae7ca4ef118ef1e7a98',
+        value: '0x8ac7230489e80000',
+        data:'0xd46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675',
+        //chainId:"10"
+    };
+
+    var tx = new Tx(rawTx);
+    tx.sign(privateKey);
+
+    var serializedTx = tx.serialize();
+
+    if (tx.verifySignature())
+    {
+        console.log('Signature Checks out!')
+    }
+
+    web3.eth.sendRawTransaction('0x' + serializedTx.toString('hex'), function(err, hash) {
+        if (!err)
+        {
+            console.log("hash:" + hash); // "0x7f9fade1c0d57a7af66ab4ead79fade1c0d57a7af66ab4ead7c2c2eb7b11a91385"
+        }
+        else
+        {
+            console.log(err);
+        }
+    });
+
+以上是Web3js的使用，web3是一个强大SDK，他的功能远远不止这些。后期的文章中还会用到web3.js，用到的时候我们再对相应的内容进行讲解。
 
 ## 四.依托钱包节点方式开发钱包
 
