@@ -232,7 +232,7 @@ ethereumjs-tx是用来对以太坊或者ERC20代币的交易进行交易签名�
 
 #### 2.2.1.以太坊交易签名
 
- const Web3 =require ('web3')
+    const Web3 =require ('web3')
     const transaction = require('ethereumjs-tx');
     if (typeof web3 !== 'undefined')
     {
