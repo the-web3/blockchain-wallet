@@ -368,6 +368,7 @@ ethereumjs-tx是用来对以太坊或者ERC20代币的交易进行交易签名�
 
 ### 2.web3库
 
+web3是以太坊开发的重要库，目前有web3.js、web3j(web3java)、web3.py(web3python)、hs-web3(haskell)、web3j-scala、purescript-web3、web3.php、ethereum-php
 
 ## 四.依托钱包节点方式开发钱包
 
