@@ -59,8 +59,8 @@
 
 ### 1.gas,gasLimit和gasPrice
 ### 2.以太币单位
-### 3.web3
-### 4.keystore
+### 3.keystore
+### 4.矿工费
 
 ## 三.以太坊钱包涉及到的开源库
 
