@@ -496,18 +496,41 @@ Etherscan的以太坊开发者API是社区毫无保留的提供的服务，你�
 
 * 获取单个地址的账户余额
 
-    https://api.etherscan.io/api?module=account&action=balance&address=0xddbd2b932c763ba5b1b7ae3b362eac3e8d40121a&tag=latest&apikey=YourApiKeyToken
+        https://api.etherscan.io/api?module=account&action=balance&address=0xddbd2b932c763ba5b1b7ae3b362eac3e8d40121a&tag=latest&apikey=YourApiKeyToken
 
 * 一次调用获取多个地址的账户余额
 
-    https://api.etherscan.io/api?module=account&action=balancemulti&address=0xddbd2b932c763ba5b1b7ae3b362eac3e8d40121a,0x63a9975ba31b0b9626b34300f7f627147df1f526,0x198ef1ec325a96cc354c7266a038be8b5c558f67&tag=latest&apikey=YourApiKeyToken
+        https://api.etherscan.io/api?module=account&action=balancemulti&address=0xddbd2b932c763ba5b1b7ae3b362eac3e8d40121a,0x63a9975ba31b0b9626b34300f7f627147df1f526,0x198ef1ec325a96cc354c7266a038be8b5c558f67&tag=latest&apikey=YourApiKeyToken
+    
 用逗号分隔地址，一次最多可包含20个帐户
     
-* 根据账户地址获取交易的列表
+* 根据地址获取账户交易的列表
 
 参数：startblock：起始区块，根据起始区块去检索结果；endblock：结束区块，根据结束的区块去检索结果
 
-    http://api.etherscan.io/api?module=account&action=txlist&address=0xddbd2b932c763ba5b1b7ae3b362eac3e8d40121a&startblock=0&endblock=99999999&sort=asc&apikey=YourApiKeyToken
+        http://api.etherscan.io/api?module=account&action=txlist&address=0xddbd2b932c763ba5b1b7ae3b362eac3e8d40121a&startblock=0&endblock=99999999&sort=asc&apikey=YourApiKeyToken
+
+（[BETA]返回'isError'值：0 =无错误，1 =得到错误）（最多返回最后10000个交易）
+
+或者
+
+        https://api.etherscan.io/api?module=account&action=txlist&address=0xddbd2b932c763ba5b1b7ae3b362eac3e8d40121a&startblock=0&endblock=99999999&page=1&offset=10&sort=asc&apikey=YourApiKeyToken
+
+（要获取分页结果，请使用page =<页码>和offset =<返回最大记录数>）
+
+* 根据地址获取合约交易列表
+
+参数：startblock：起始区块，根据起始区块去检索结果；endblock：结束区块，根据结束的区块去检索结果
+
+        http://api.etherscan.io/api?module=account&action=txlistinternal&address=0x2c1ba59d6f58433fb1eaee7d20b26ed83bda51a3&startblock=0&endblock=2702578&sort=asc&apikey=YourApiKeyToken
+        
+（[BETA]返回'isError'值：0 =无错误，1 =得到错误）（最多返回最后10000个交易）
+
+或者
+
+        https://api.etherscan.io/api?module=account&action=txlistinternal&address=0x2c1ba59d6f58433fb1eaee7d20b26ed83bda51a3&startblock=0&endblock=2702578&page=1&offset=10&sort=asc&apikey=YourApiKeyToken
+
+（要获取分页结果，请使用page =<页码>和offset =<返回最大记录数>）
 
 
 
