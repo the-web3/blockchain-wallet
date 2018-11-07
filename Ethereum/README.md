@@ -484,8 +484,43 @@ web3.js初始化设置Provider
 
 以上是Web3js的使用，web3是一个强大SDK，他的功能远远不止这些。后期的文章中还会用到web3.js，用到的时候我们再对相应的内容进行讲解。
 
-## 四.依托钱包节点方式开发钱包
+## 四.以太坊浏览器API介绍（钱包开发中需要用到其中一些API）
 
-## 五.非确定性以太坊钱包开发
+Etherscan的API地址：https://etherscan.io/apis
 
-## 六.分层确定性以太坊钱包开发
+### 1.简介
+
+Etherscan的以太坊开发者API是社区毫无保留的提供的服务，你可以在上面使用你需要的接口。 这些接口支持的请求方式是GET/POST请求，并且每秒只能发送5次请求。要使用API服务，请在ClientPortal-> MyApiKey区域内创建一个免费的Api-Key令牌，然后您可以将其用于所有api请求。
+
+### 2.Etherscan账户体系API
+
+* 获取单个地址的账户余额
+
+    https://api.etherscan.io/api?module=account&action=balance&address=0xddbd2b932c763ba5b1b7ae3b362eac3e8d40121a&tag=latest&apikey=YourApiKeyToken
+
+* 一次调用获取多个地址的账户余额
+
+    https://api.etherscan.io/api?module=account&action=balancemulti&address=0xddbd2b932c763ba5b1b7ae3b362eac3e8d40121a,0x63a9975ba31b0b9626b34300f7f627147df1f526,0x198ef1ec325a96cc354c7266a038be8b5c558f67&tag=latest&apikey=YourApiKeyToken
+用逗号分隔地址，一次最多可包含20个帐户
+    
+* 根据账户地址获取交易的列表
+
+参数：startblock：起始区块，根据起始区块去检索结果；endblock：结束区块，根据结束的区块去检索结果
+
+    http://api.etherscan.io/api?module=account&action=txlist&address=0xddbd2b932c763ba5b1b7ae3b362eac3e8d40121a&startblock=0&endblock=99999999&sort=asc&apikey=YourApiKeyToken
+
+
+
+## 五.以太坊JSON-RPC接口介绍（钱包开发过程中会用到其中的一些接口）
+
+
+## 六.web3j(web3java)介绍
+
+
+## 七.依托钱包节点方式开发钱包
+
+
+## 八.非确定性以太坊钱包开发
+
+
+## 九.分层确定性以太坊钱包开发
