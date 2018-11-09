@@ -835,7 +835,7 @@ eth_getTransactionCount：获取当前地址的交易nonce，即交易数量
 ## 五.以太坊JSON-RPC接口介绍（钱包开发过程中会用到其中的一些接口）
 
 
-## 六.web3j(web3java)介绍
+## 六.web3j(web3java)简介
 
 ### 1.web3j概述
 
@@ -848,6 +848,27 @@ Web3j是一个通过java来开发以太坊DAPP的SDK，里面封装了很多API�
 这允许您使用以太坊区块链，而无需为平台编写自己的集成代码的额外开销，Java和Blockchain对话提供了区块链，以太坊和web3j的概述。
 
 ### 3.web3j的特点
+
+* 通过HTTP和IPC完成以太坊的JSON-RPC客户端API的实现
+* 以太坊钱包支持
+* 自动生成Java智能合约包装器，以便从本机Java代码创建，部署，交易和调用智能合约（支持Solidity和Truffle定义格式）
+* 用于处理过滤器的反应功能API
+* 以太坊名称服务（ENS）支持
+* 支持Parity的Personal和Geth的个人客户端API
+* 支持Infura，因此您无需亲自运行以太坊客户端
+* 综合集成测试展示了上述多种场景
+* 命令行工具
+* Android兼容
+* 通过web3j-quorum支持摩根大通的法定人数
+
+### 3.web3j运行时的依赖
+
+* RxJava用于其反应功能API
+* OKHttp用于HTTP连接
+* Jackson Core用于快速JSON序列化/反序列化
+* Bouncy Castle（Android上的Spongy Castle）用于加密
+* 适用于* nix IPC的Jnr-unixsocket（不适用于Android）
+
 
 
 
