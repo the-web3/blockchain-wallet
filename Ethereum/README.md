@@ -837,6 +837,12 @@ eth_getTransactionCount：获取当前地址的交易nonce，即交易数量
 
 ## 六.web3j(web3java)介绍
 
+Web3j是一个通过java来开发以太坊DAPP的SDK，里面封装了很多API。web3j是一个轻量级，高度模块化，反应灵敏，类型安全的Java和Android库，用于处理智能合约并与以太坊网络上的客户端（节点）集成：
+
+.： 
+    ![.： 
+](https://github.com/guoshijiang/blockchain-wallet/blob/master/img/web3j_network.png)
+
 
 ## 七.依托钱包节点方式开发钱包
 
