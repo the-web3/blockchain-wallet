@@ -532,7 +532,220 @@ Etherscan的以太坊开发者API是社区毫无保留的提供的服务，你�
 
 （要获取分页结果，请使用page =<页码>和offset =<返回最大记录数>）
 
+* 根据交易Hash获取内部交易
 
+        https://api.etherscan.io/api?module=account&action=txlistinternal&txhash=0x40eb908387324f2b575b4879cd9d7188f69c8fc9d87c901b9e2daaea4b442170&apikey=YourApiKeyToken
+        
+返回'isError'值：0=OK，1 =拒绝/取消
+仅返回最后10000个交易
+
+* 通过地址获取“ERC20-Token转移事件”列表
+
+可选择参数：startblock: 根据起始区块号检索结果, endblock:根据结束区块检索结果
+
+        http://api.etherscan.io/api?module=account&action=tokentx&address=0x4e83362442b8d1bec281594cea3050c8eb01311c&startblock=0&endblock=999999999&sort=asc&apikey=YourApiKeyToken
+        
+仅返回最后10000个交易
+
+或者
+
+        https://api.etherscan.io/api?module=account&action=tokentx&contractaddress=0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2&page=1&offset=100&sort=asc&apikey=YourApiKeyToken
+
+要获得分页结果，请使用page=<page number>和offset=<返回最大记录>
+
+或者
+
+        https://api.etherscan.io/api?module=account&action=tokentx&contractaddress=0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2&address=0x4e83362442b8d1bec281594cea3050c8eb01311c&page=1&offset=100&sort=asc&apikey=YourApiKeyToken
+        
+要获取特定Token合约的转移事件，请包括合约地址参数
+
+
+* Get list of Blocks Mined by Address
+* 根据按地址获取挖掘的块列表
+
+        https://api.etherscan.io/api?module=account&action=getminedblocks&address=0x9dd134d14d1e65f84b706d6f205cd5b1cd03a46b&blocktype=blocks&apikey=YourApiKeyToken
+
+或者
+
+        https://api.etherscan.io/api?module=account&action=getminedblocks&address=0x9dd134d14d1e65f84b706d6f205cd5b1cd03a46b&blocktype=blocks&page=1&offset=10&apikey=YourApiKeyToken
+        
+要获取分页结果，请使用page =<页码>和offset =<返回最大记录数>
+
+### 3.合约API
+
+新验证的合约将在5分钟或更短的时间内同步到API服务器
+
+此处的代码将会涉及到web3.js调用智能合约的代码，大家感兴趣的话可以仔细看看
+
+* 获取已验证合约源代码的合约ABI
+
+        https://api.etherscan.io/api?module=contract&action=getabi&address=0xBB9bc244D798123fDe783fCc1C72d3Bb8C189413&apikey=YourApiKeyToken
+        
+一个简单的示例，用于使用Web3.js和Jquery检索contractABI以与合同进行交互
+
+        var Web3 = require('web3');
+        var web3 = new Web3(new Web3.providers.HttpProvider());
+        var version = web3.version.api;
+
+        $.getJSON('http://api.etherscan.io/api?module=contract&action=getabi&address=0xfb6916095ca1df60bb79ce92ce3ea74c37c5d359', function (data) {
+            var contractABI = "";
+            contractABI = JSON.parse(data.result);
+            if (contractABI != ''){
+                var MyContract = web3.eth.contract(contractABI);
+                var myContractInstance = MyContract.at("0xfb6916095ca1df60bb79ce92ce3ea74c37c5d359");
+                var result = myContractInstance.memberId("0xfe8ad7dd2f564a877cc23feea6c0a9cc2e783715");
+                console.log("result1 : " + result);            
+                var result = myContractInstance.members(1);
+                console.log("result2 : " + result);
+            } else {
+                console.log("Error" );
+            }            
+        });
+        
+* 获取已验证合约源代码的合约源代码
+
+        https://api.etherscan.io/api?module=contract&action=getsourcecode&address=0xBB9bc244D798123fDe783fCc1C72d3Bb8C189413&apikey=YourApiKeyToken
+        
+[BETA]验证源代码
+
+1.需要有效的Etherscan API密钥，否则将拒绝
+2.每位用户每天提交的每日限额为100（可能会有变化）
+3.由于http get的最大传输大小限制，仅支持HTTP post
+4.最多支持10个不同的库对
+5.使用“导入”的合同将需要将代码连接到一个文件中，因为我们不支持单独文件中的“导入”。 您可以尝试使用Blockcat solidity-flattener或SolidityFlattery
+6.支持的solc版本列表，仅支持solc版本v0.4.11及更高版本。防爆。v0.4.25+ commit.59dbf8f1
+7.成功提交后，您将收到GUID（50个字符）作为收据。
+8.您可以使用此GUID来跟踪提交的状态
+9.已验证的源代码将显示在contractsRerified中
+
+
+源代码提交Gist（成功时返回guid作为结果的一部分）：
+
+        $.ajax({
+            type: "POST",                       //Only POST supported  
+            url: "//api.etherscan.io/api", //Set to the  correct API url for Other Networks
+            data: {
+                apikey: $('#apikey').val(),                     //A valid API-Key is required        
+                module: 'contract',                             //Do not change
+                action: 'verifysourcecode',                     //Do not change
+                contractaddress: $('#contractaddress').val(),   //Contract Address starts with 0x...     
+                sourceCode: $('#sourceCode').val(),             //Contract Source Code (Flattened if necessary)
+                contractname: $('#contractname').val(),         //ContractName
+                compilerversion: $('#compilerversion').val(),   // see http://etherscan.io/solcversions for list of support versions
+                optimizationUsed: $('#optimizationUsed').val(), //0 = Optimization used, 1 = No Optimization
+                runs: 200,                                      //set to 200 as default unless otherwise         
+                constructorArguements: $('#constructorArguements').val(),   //if applicable
+                libraryname1: $('#libraryname1').val(),         //if applicable, a matching pair with libraryaddress1 required
+                libraryaddress1: $('#libraryaddress1').val(),   //if applicable, a matching pair with libraryname1 required
+                libraryname2: $('#libraryname2').val(),         //if applicable, matching pair required
+                libraryaddress2: $('#libraryaddress2').val(),   //if applicable, matching pair required
+                libraryname3: $('#libraryname3').val(),         //if applicable, matching pair required
+                libraryaddress3: $('#libraryaddress3').val(),   //if applicable, matching pair required
+                libraryname4: $('#libraryname4').val(),         //if applicable, matching pair required
+                libraryaddress4: $('#libraryaddress4').val(),   //if applicable, matching pair required
+                libraryname5: $('#libraryname5').val(),         //if applicable, matching pair required
+                libraryaddress5: $('#libraryaddress5').val(),   //if applicable, matching pair required
+                libraryname6: $('#libraryname6').val(),         //if applicable, matching pair required
+                libraryaddress6: $('#libraryaddress6').val(),   //if applicable, matching pair required
+                libraryname7: $('#libraryname7').val(),         //if applicable, matching pair required
+                libraryaddress7: $('#libraryaddress7').val(),   //if applicable, matching pair required
+                libraryname8: $('#libraryname8').val(),         //if applicable, matching pair required
+                libraryaddress8: $('#libraryaddress8').val(),   //if applicable, matching pair required
+                libraryname9: $('#libraryname9').val(),         //if applicable, matching pair required
+                libraryaddress9: $('#libraryaddress9').val(),   //if applicable, matching pair required
+                libraryname10: $('#libraryname10').val(),       //if applicable, matching pair required
+                libraryaddress10: $('#libraryaddress10').val()  //if applicable, matching pair required
+            },
+            success: function (result) {
+                console.log(result);
+                if (result.status == "1") {
+                    //1 = submission success, use the guid returned (result.result) to check the status of your submission.
+                    // Average time of processing is 30-60 seconds
+                    document.getElementById("postresult").innerHTML = result.status + ";" + result.message + ";" + result.result;
+                    // result.result is the GUID receipt for the submission, you can use this guid for checking the verification status
+                } else {
+                    //0 = error
+                    document.getElementById("postresult").innerHTML = result.status + ";" + result.message + ";" + result.result;
+                }
+                console.log("status : " + result.status);
+                console.log("result : " + result.result);
+            },
+            error: function (result) {
+                console.log("error!");
+                document.getElementById("postresult").innerHTML = "Unexpected Error"
+            }
+        });
+
+检查源代码验证提交状态：
+
+        $.ajax({
+            type: "GET",
+            url: "//api.etherscan.io/api",
+            data: {
+                guid: 'ezq878u486pzijkvvmerl6a9mzwhv6sefgvqi5tkwceejc7tvn', //Replace with your Source Code GUID receipt above
+                module: "contract",
+                action: "checkverifystatus"
+            },
+            success: function (result) {
+                console.log("status : " + result.status);   //0=Error, 1=Pass 
+                console.log("message : " + result.message); //OK, NOTOK
+                console.log("result : " + result.result);   //result explanation
+                $('#guidstatus').html(">> " + result.result);
+            },
+            error: function (result) {
+                alert('error');
+            }
+        });
+
+### 4.交易API
+
+* [BETA]检查合约执行状态（如果合约执行期间出错），注意：isError“：”0“= Pass，isError”：“1”=合约执行期间出错
+
+        https://api.etherscan.io/api?module=transaction&action=getstatus&txhash=0x15f8e5ea1079d9a0bb04a4c58ae5fe7654b5b2b4463375ff7ffb490aa0032f3a&apikey=YourApiKeyToken
+        
+[BETA]检查交易背书状态（仅适用于Post Byzantium fork交易），注意：状态：0=失败，1=通过。 将为pre-byzantium fork返回null/empty值
+
+        https://api.etherscan.io/api?module=transaction&action=gettxreceiptstatus&txhash=0x513c1ba0bebf66436b5fed86ab668452b7805593c05073eb2d51d3a52f480a76&apikey=YourApiKeyToken
+
+### 5.区块API
+
+* [BETA] 通过区块号获取区块和叔区块
+
+        https://api.etherscan.io/api?module=block&action=getblockreward&blockno=2165403&apikey=YourApiKeyToken
+
+### 6.事件日志
+
+
+
+### 7.Geth/Parity Proxy
+
+
+
+### 8.代币相关的API
+
+
+
+### 9.统计相关API
+
+* 获得以太的总供应量,结果以Wei方式返回，以获得以太坊数结果的值除以1000000000000000000的到最终的结果
+
+        https://api.etherscan.io/api?module=stats&action=ethsupply&apikey=YourApiKeyToken
+
+* 获得ETHER LastPrice价格
+
+        https://api.etherscan.io/api?module=stats&action=ethprice&apikey=YourApiKeyToken
+
+### 10.杂项、工具和实用程序
+
+下面这些是由社区创建的第三方工具和实用程序
+
+* py-etherscan-api模块（corpetty），由Corey Petty编写的第三方EtherScan.io API python绑定模块
+
+        https://github.com/corpetty/py-etherscan-api
+
+* 节点API（SebastianSchürmann），Etherscan的第三方Node API
+
+        https:/github.com/sebs/etherscan-api
 
 ## 五.以太坊JSON-RPC接口介绍（钱包开发过程中会用到其中的一些接口）
 
