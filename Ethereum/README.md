@@ -719,10 +719,95 @@ Etherscan的以太坊开发者API是社区毫无保留的提供的服务，你�
 
 ### 7.Geth/Parity Proxy
 
+以下是通过Etherscan提供的Geth支持的Proxied API的有限列表。 有关参数和说明的列表，请参阅https://github.com/ethereum/wiki/wiki/JSON-RPC。 提供的参数应如下面的示例中所示命名。 为了与Parity兼容，请在所有十六进制字符串前加“0x”
 
+* eth_blockNumber:返回最近的区块数量
+
+        https://api.etherscan.io/api?module=proxy&action=eth_blockNumber&apikey=YourApiKeyToken
+
+
+* eth_getBlockByNumber：根据区块号返回区块信息
+
+        https://api.etherscan.io/api?module=proxy&action=eth_getBlockByNumber&tag=0x10d4f&boolean=true&apikey=YourApiKeyToken
+
+
+* eth_getUncleByBlockNumberAndIndex：根据区块号返回一个叔区块信息
+
+        https://api.etherscan.io/api?module=proxy&action=eth_getUncleByBlockNumberAndIndex&tag=0x210A9B&index=0x0&apikey=YourApiKeyToken
+
+* eth_getBlockTransactionCountByNumber：从匹配给定块号的块返回块中的事务数
+
+        https://api.etherscan.io/api?module=proxy&action=eth_getBlockTransactionCountByNumber&tag=0x10FB78&apikey=YourApiKeyToken
+
+
+* eth_getTransactionByHash：根据交易hash返回交易信心
+
+        https://api.etherscan.io/api?module=proxy&action=eth_getTransactionByHash&txhash=0x1e2910a262b1008d0616a0beb24c1a491d78771baa54a33e66065e03b1f46bc1&apikey=YourApiKeyToken
+
+
+* eth_getTransactionByBlockNumberAndIndex：按块号和事务索引位置返回有关事务的信息
+
+        https://api.etherscan.io/api?module=proxy&action=eth_getTransactionByBlockNumberAndIndex&tag=0x10d4f&index=0x0&apikey=YourApiKeyToken
+
+
+eth_getTransactionCount：获取当前地址的交易nonce，即交易数量
+
+        https://api.etherscan.io/api?module=proxy&action=eth_getTransactionCount&address=0x2910543af39aba0cd09dbb2d50200b3e800a63d2&tag=latest&apikey=YourApiKeyToken
+
+
+* eth_sendRawTransaction：发送一个签名交易串到区块链网络
+
+        https://api.etherscan.io/api?module=proxy&action=eth_sendRawTransaction&hex=0xf904808000831cfde080&apikey=YourApiKeyToken
+
+将十六进制值替换为要发送的原始十六进制编码事务。如果您的十六进制代码特别长，则作为POST请求发送
+
+
+* eth_getTransactionReceipt：通过交易Hash返回交易的背书
+
+        https://api.etherscan.io/api?module=proxy&action=eth_getTransactionReceipt&txhash=0x1e2910a262b1008d0616a0beb24c1a491d78771baa54a33e66065e03b1f46bc1&apikey=YourApiKeyToken
+
+
+* eth_call：立即执行新的消息调用，而不在块链上创建交易
+
+        https://api.etherscan.io/api?module=proxy&action=eth_call&to=0xAEEF46DB4855E25702F8237E8f403FddcaF931C0&data=0x70a08231000000000000000000000000e16359506c028e51f16be38986ec5746251e9724&tag=latest&apikey=YourApiKeyToken
+
+
+* eth_getCode：返回给定地址的代码
+
+        https://api.etherscan.io/api?module=proxy&action=eth_getCode&address=0xf75e354c5edc8efed9b59ee9f67a80845ade7d0c&tag=latest&apikey=YourApiKeyToken
+
+
+* eth_getStorageAt (试验) 返回给定地址的存储位置的值。
+
+        https://api.etherscan.io/api?module=proxy&action=eth_getStorageAt&address=0x6e03d9cce9d60f3e9f2597e13cd4c54c55330cfd&position=0x0&tag=latest&apikey=YourApiKeyToken
+
+
+* eth_gasPrice：以wei为单位返回当前的gas的价格
+
+        https://api.etherscan.io/api?module=proxy&action=eth_gasPrice&apikey=YourApiKeyToken
+
+
+* eth_estimateGas:进行调用或交易，不会将调用和交易的信息添加到区块链，并且能够返回估计使用的gas，可用于估算使用的gas
+
+        https://api.etherscan.io/api?module=proxy&action=eth_estimateGas&to=0xf0160428a8552ac9bb7e050d90eeade4ddd52843&value=0xff22&gasPrice=0x051da038cc&gas=0xffffff&apikey=YourApiKeyToken
 
 ### 8.代币相关的API
 
+* 根据合约地址获取ERC20 Token代币总量
+
+        https://api.etherscan.io/api?module=stats&action=tokensupply&contractaddress=0x57d90b64a1a57749b0f932f1a3395792e12e7055&apikey=YourApiKeyToken
+        
+废弃API:根据合约名获取代币总量，这个API已经被废弃，取而代之的是上一个API，根据合约地址获取ERC20代币总量
+
+        https://api.etherscan.io/api?module=stats&action=tokensupply&tokenname=DGD&apikey=YourApiKeyToken
+
+* 根据Token的合约地址和账户地址获取ERC20的代币总量
+
+        https://api.etherscan.io/api?module=account&action=tokenbalance&contractaddress=0x57d90b64a1a57749b0f932f1a3395792e12e7055&address=0xe04f27eb70e025b78871a2ad7eabe85e61212761&tag=latest&apikey=YourApiKeyToken
+
+废弃API：根据Token名和账户地址获取ERC20的代币总量，这个API已经被废弃，取而代之的是上面的这个API
+
+        https://api.etherscan.io/api?module=account&action=tokenbalance&tokenname=DGD&address=0x4366ddc115d8cf213c564da36e64c8ebaa30cdbd&tag=latest&apikey=YourApiKeyToken
 
 
 ### 9.统计相关API
