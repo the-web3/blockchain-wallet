@@ -845,11 +845,10 @@ Web3j是一个通过java来开发以太坊DAPP的SDK，里面封装了很多API�
     ![.： 
 ](https://github.com/guoshijiang/blockchain-wallet/blob/master/img/web3j_network.png)
 
-这允许您使用以太坊区块链，而无需为平台编写自己的集成代码的额外开销。
-
-Java和Blockchain对话提供了区块链，以太坊和web3j的概述。
+这允许您使用以太坊区块链，而无需为平台编写自己的集成代码的额外开销，Java和Blockchain对话提供了区块链，以太坊和web3j的概述。
 
 ### 3.web3j的特点
+
 
 
 ## 七.依托钱包节点方式开发钱包
