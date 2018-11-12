@@ -869,6 +869,70 @@ Web3j是一个通过java来开发以太坊DAPP的SDK，里面封装了很多API�
 * Bouncy Castle（Android上的Spongy Castle）用于加密
 * 适用于* nix IPC的Jnr-unixsocket（不适用于Android）
 
+### 4.在项目中使用Web3j
+
+以下项目针对的都是java8的库
+
+#### 4.1.maven项目
+
+    <dependency>
+      <groupId>org.web3j</groupId>
+      <artifactId>core</artifactId>
+      <version>4.0.0</version>
+    </dependency>
+
+#### 4.2.安卓项目
+
+    <dependency>
+      <groupId>org.web3j</groupId>
+      <artifactId>core</artifactId>
+      <version>3.3.1-android</version>
+    </dependency>
+
+#### 4.3.gradle项目
+
+compile ('org.web3j:core:4.0.0')
+
+Android:
+compile ('org.web3j:core:3.3.1-android')
+
+#### 4.4.web3j的简单使用
+
+在发送请求前，你需要选择一个geth客户端
+
+如果您还没有运行，请启动以太坊客户端，例如Geth：
+
+    geth --rpcapi personal,db,eth,net,web3 --rpc --testnet
+    
+Parity:
+
+    parity --chain testnet
+    
+或者使用Infura，它提供在云中运行的免费客户端：
+
+    Web3j web3 = Web3j.build(new HttpService("https://ropsten.infura.io/your-token"));
+
+发送同步请求
+
+    Web3j web3 = Web3j.build(new HttpService());  // 默认 http://localhost:8545/
+    Web3ClientVersion web3ClientVersion = web3.web3ClientVersion().send();
+    String clientVersion = web3ClientVersion.getWeb3ClientVersion();
+    
+使用CompletableFuture（Android上的Future）发送异步请求：
+
+    Web3j web3 = Web3j.build(new HttpService());  // 默认 http://localhost:8545/
+    Web3ClientVersion web3ClientVersion = web3.web3ClientVersion().sendAsync().get();
+    String clientVersion = web3ClientVersion.getWeb3ClientVersion();
+    
+要使用RxJava Flowable：
+
+    Web3j web3 = Web3j.build(new HttpService());  // defaults to http://localhost:8545/
+    web3.web3ClientVersion().flowable().subscribe(x -> {
+        String clientVersion = x.getWeb3ClientVersion();
+        ...
+    });
+
+### 5.web3的IPC机制
 
 
 
