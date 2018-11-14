@@ -1299,7 +1299,9 @@ web3j支持使用以太坊钱包文件（推荐）和以太网客户端管理命
 
     module.exports = ethOrErc20Sign;
     
-解释一下上面的代码，privateKey:是私钥，你在生成账户的过程中生成的私钥，私钥是开启你账户大门的钥匙，请谨慎保管；nonce:交易nonce，是保证交易唯一性的标识；toAddress:转入地址，你要转给的那个用户的账户地址，类似于银行卡号；sendAmount：转账金额； gasPrice和gasLimit请参照上面gas,gasPrice和gasLimit一节处查看
+解释一下上面的代码，privateKey:是私钥，你在生成账户的过程中生成的私钥，私钥是开启你账户大门的钥匙，请谨慎保管；nonce:交易nonce，是保证交易唯一性的标识；toAddress:转入地址，你要转给的那个用户的账户地址，类似于银行卡号；sendAmount：转账金额； gasPrice和gasLimit请参照上面gas,gasPrice和gasLimit一节处查看。
+
+代码中的nonce，gasPrice，gas，to，value等一系列的签名参数都是十六进制字符串，前缀加0x;上面的签名代码中，你也可以使用`chainId:1`,chainId=1表示将交易发到主网。
 
 ### 5.发送交易到区块链网络
 
