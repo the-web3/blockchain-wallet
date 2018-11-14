@@ -1243,6 +1243,64 @@ web3j支持使用以太坊钱包文件（推荐）和以太网客户端管理命
 
 ### 4.交易签名
 
+以下代码是以太坊交易签名的代码
+
+    const util = require('ethereumjs-util');
+    const transaction = require('ethereumjs-tx');
+
+    var ethOrErc20Sign = {};
+
+    /**
+     * @param privateKey
+     * @param nonce
+     * @param toAddress
+     * @param sendAmount
+     * @param gasPrice
+     * @param gasLimit
+     * @returns {*}
+     */
+    ethOrErc20Sign.ethereumSign = function (privateKey, nonce, toAddress, sendAmount, gasPrice, gasLimit) {
+        var errData = {code:400, message:"param is null"};
+        var serializedErr = {code:400, message:"Serialized transaction fail"};
+        if(!privateKey || !nonce || !toAddress || !sendAmount || !gasPrice || !gasLimit) {
+            console.log("one of fromAddress, toAddress, sendToBalance, sendFee is null, please give a valid param");
+            return errData;
+        } else {
+            var transactionNonce = parseInt(nonce).toString(16);
+            var numBalance = parseFloat(sendAmount);
+            var balancetoWei = web3.toWei(numBalance, "ether");
+            var oxNumBalance = parseInt(balancetoWei).toString(16);
+            var gasPriceHex = parseInt(gasPrice).toString(16);
+            var gasLimitHex = parseInt(gasLimit).toString(16);
+            var privateKeyBuffer =  Buffer.from(privateKey, 'hex');
+            var rawTx = {
+                nonce:'0x' + transactionNonce,
+                gasPrice: '0x' + gasPriceHex,
+                gas:'0x'+ gasLimitHex,
+                to:toAddress,
+                value:'0x' + oxNumBalance,
+            };
+            alert(JSON.stringify(rawTx));
+            var tx = new transaction(rawTx);
+            tx.sign(privateKeyBuffer);
+            var serializedTx = tx.serialize();
+            if(serializedTx == null) {
+                return serializedErr;
+            } else {
+                if (tx.verifySignature()) {
+                    console.log('Signature Checks out!');
+                } else {
+                    return serializedErr;
+                }
+            }
+        }
+        return '0x' + serializedTx.toString('hex');
+    }
+
+    module.exports = ethOrErc20Sign;
+    
+解释一下上面的代码，privateKey:是私钥，你在生成账户的过程中生成的私钥，私钥是开启你账户大门的钥匙，请谨慎保管；nonce:交易nonce，是保证交易唯一性的标识；toAddress:转入地址，你要转给的那个用户的账户地址，类似于银行卡号；sendAmount：转账金额； gasPrice和gasLimit请参照上面gas,gasPrice和gasLimit一节处查看
+
 ### 5.发送交易到区块链网络
 
 
