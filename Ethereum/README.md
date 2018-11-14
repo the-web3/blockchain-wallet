@@ -1106,17 +1106,142 @@ web3j支持使用以太坊钱包文件（推荐）和以太网客户端管理命
 
 使用keystore方式开发以太坊钱包是可以不需要助记词这一类的东西的，咱们将使用ethereumjs中的keythereum、ethereumjs-tx和web3js来开发钱包，webjs是和web3j类似的一个NodeJs库。咱们此处的钱包开发只是把生成keystore，导出导入keystore，导入导出私钥，交易签名，发送转账和转账确定的片段的nodeJS代码编写出来，如何你想学习怎么用keythereum、ethereumjs-tx和web3js开发一个以太坊钱包，请阅读本书的项目实战一。项目实战一部分将详细地讲解一个以太坊钱包的设计，开发，测试和上线部署的整个流程。我们的这个钱包将实现的本地私钥的存储，私钥将由钱包的客户端进行管理。
 
-### 1.生成keystore
+### 1.keystore
+下面的代码是按照keystore相关的代码，包含了生成keystore，导出导入keystore，导入导出私钥。这是笔者基于NodeJs封装的一个模块库，如果你有需求，可以直接使用
 
+    const keythereum = require("keythereum");
+    const fs = require('fs');
 
-### 2.导出导入keystore
+    var libKeystore = {};
 
+    const paramsErr = {code:1000, message:"input params is null"};
+    const createDkErr = {code:1001, message:"create dk error"};
+    const createKeystoreErr = {code:1002, message:"create keystore fail"};
 
-### 3.导入导出私钥
+    /**
+     * @param password
+     * @returns {*}
+     */
+    // 生成keystore
+    libKeystore.createKeystore = function (password) {
+        if(!password) {
+            return paramsErr;
+        }
+        var keystore = '';
+        var params = { keyBytes: 32, ivBytes: 16 };
+        var dk = keythereum.create(params);
+        var kdf = "pbkdf2";
+        var options = {
+            kdf: "pbkdf2",
+            cipher: "aes-128-ctr",
+            kdfparams: {
+                c: 262144,
+                dklen: 32,
+                prf: "hmac-sha256"
+            }
+        };
+        var dk = keythereum.create(params)
+        if (!dk) {
+            return createDkErr;
+        }
+        keystore = keythereum.dump(password, dk.privateKey, dk.salt, dk.iv, options);
+        if(!keystore) {
+            return createKeystoreErr;
+        }
+        return keystore;
+    }
+
+    /**
+     * @param keyObject
+     * @param path if your path is null, export keystore by default way; if path has value, export keystore by your way
+     * @returns {{code: number, message: string}}
+     */
+     // 导出keystore
+    libKeystore.exportKeystore = function(keyObject, path) {
+        if(!keyObject) {
+            return paramsErr;
+        }
+        if(!path){
+            keythereum.exportToFile(keyObject);
+        } else {
+            var json = JSON.stringify(keyObject);
+            var outfile = keythereum.generateKeystoreFilename(keyObject.address);
+            var outpath = path + "/" + outfile;
+            console.log(outpath);
+            fs.writeFile(outpath, json, function (err) {
+                if (err) {
+                    return err;
+                } else{
+                    outpath;
+                }
+            });
+        }
+    }
+
+    /**
+     * @param address
+     * @param datadir
+     * @returns {*}
+     */
+     // 导入keystore
+    libKeystore.importKeystore = function(address, datadir) {
+        if(!address || !datadir) {
+            return paramsErr;
+        }
+        return keythereum.importFromFile(address, datadir);
+    }
+
+    /**
+     * @param keyObject
+     * @param password
+     * @returns {*}
+     */
+     // 导出私钥
+    libKeystore.exportPrivateKey = function(keyObject, password) {
+        if(!keyObject || !password) {
+            return paramsErr;
+        }
+        return keythereum.recover(password, keyObject);
+    }
+
+    /**
+     * @param privateKey
+     * @param password
+     * @returns {*}
+     */
+     // 导入私钥并生成keystore
+    libKeystore.importPrivateKey = function(privateKey ,password) {
+        if(!password || privateKey) {
+            return paramsErr;
+        }
+        var keystore = '';
+        var params = { keyBytes: 32, ivBytes: 16 };
+        var dk = keythereum.create(params);
+        var kdf = "pbkdf2";
+        var options = {
+            kdf: "pbkdf2",
+            cipher: "aes-128-ctr",
+            kdfparams: {
+                c: 262144,
+                dklen: 32,
+                prf: "hmac-sha256"
+            }
+        };
+        var dk = keythereum.create(params)
+        if (!dk) {
+            return createDkErr;
+        }
+        keystore = keythereum.dump(password, privateKey, dk.salt, dk.iv, options);
+        if(!keystore) {
+            return createKeystoreErr;
+        }
+        return keystore;
+    }
+
+    module.exports = libKeystore;
 
 
 ### 4.交易签名
-
 
 ### 5.发送交易到区块链网络
 
