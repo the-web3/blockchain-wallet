@@ -934,9 +934,176 @@ Parity:
 
 ### 5.web3的IPC机制
 
+web3j还支持通过文件套接字与运行在与web3j相同主机上的客户端的快速进程间通信（IPC）。 在创建服务时，只需使用相关的IpcService实现而不是HttpService：
 
+* Linux
+
+        Web3j web3 = Web3j.build(new UnixIpcService("/path/to/socketfile"));
+        
+* Windows
+
+        Web3j web3 = Web3j.build(new WindowsIpcService("/path/to/namedpipefile"));
+        
+注意：IPC机制目前在web3j-android上不可使用
+
+使用Java智能合约“包装器”处理智能合约
+
+web3j可以自动生成智能合约包装器代码，以便在不离开JVM的情况下部署智能合约并与之交互。
+
+下面命令是生成包装器代码，编译你的智能合约
+
+    solc <contract>.sol --bin --abi --optimize -o <output-dir>/
+    
+然后使用web3j的命令行工具生成包装器代码：
+
+    web3j solidity generate -b /path/to/<smart-contract>.bin -a /path/to/<smart-contract>.abi -o /path/to/src/main/java -p com.your.organisation.name
+    
+现在你可以创建和部署你的智能合约
+
+    Web3j web3 = Web3j.build(new HttpService());  // defaults to http://localhost:8545/
+    Credentials credentials = WalletUtils.loadCredentials("password", "/path/to/walletfile");
+
+    YourSmartContract contract = YourSmartContract.deploy(
+            <web3j>, <credentials>,
+            GAS_PRICE, GAS_LIMIT,
+            <param1>, ..., <paramN>).send();  // constructor params
+
+或者，如果您使用Truffle，则可以使用其.json输出文件：
+
+    # Inside your Truffle project
+    $ truffle compile
+    $ truffle deploy
+        
+然后使用web3j的命令行工具生成包装器代码：
+
+    $ cd /path/to/your/web3j/java/project
+    $ web3j truffle generate /path/to/<truffle-smart-contract-output>.json -o /path/to/src/main/java -p com.your.organisation.name
+    
+无论是直接使用Truffle还是solc，无论哪种方式，您都可以获得适合您合约的Java包装器。
+
+因此，要使用现有合约：
+
+    YourSmartContract contract = YourSmartContract.load(
+            "0x<address>|<ensName>", <web3j>, <credentials>, GAS_PRICE, GAS_LIMIT);
+    
+与智能合约进行交易：
+
+    TransactionReceipt transactionReceipt = contract.someMethod(
+                 <param1>,
+                 ...).send();
+    
+    
+调用智能合约
+
+    Type result = contract.someMethod(<param1>, ...).send();
+
+控制gasprice价格
+
+    contract.setGasProvider(new DefaultGasProvider() {
+            ...
+            });
+    
+    
+ ### 6.web3的过滤器
+ 
+web3j功能反应性使得设置观察者非常简单，这些观察者通知订阅者在区块链上发生的事件。
+    
+要在添加到区块链时接收所有新块：
+
+    Subscription subscription = web3j.blockFlowable(false).subscribe(block -> {
+        ...
+    });
+    
+要在添加到区块链时接收所有新交易： 
+
+    Subscription subscription = web3j.transactionFlowable().subscribe(tx -> {
+        ...
+    });
+    
+在提交给网络时（即在将它们一起分组到一个块之前）接收所有待处理的事务：
+
+    Subscription subscription = web3j.pendingTransactionFlowable().subscribe(tx -> {
+        ...
+    });
+    
+或者，如果您希望将所有块重播到最新，并通知正在创建的新后续块：咱们最后的附录中（目前还没有写）描述了许多其他事务和块重放Flowable。
+
+支持主题过滤器：   
+    
+    EthFilter filter = new EthFilter(DefaultBlockParameterName.EARLIEST,
+            DefaultBlockParameterName.LATEST, <contract-address>)
+                 .addSingleTopic(...)|.addOptionalTopics(..., ...)|...;
+    web3j.ethLogFlowable(filter).subscribe(log -> {
+        ...
+    });   
+       
+不再需要时，应始终取消订阅：
+
+    subscription.unsubscribe();
+
+注意：Infura不支持过滤器。
+
+### 7.交易
+
+web3j支持使用以太坊钱包文件（推荐）和以太网客户端管理命令发送交易。
+
+要使用以太坊钱包文件将以太网发送给另一方：
+
+    Web3j web3 = Web3j.build(new HttpService());  // defaults to http://localhost:8545/
+    Credentials credentials = WalletUtils.loadCredentials("password", "/path/to/walletfile");
+    TransactionReceipt transactionReceipt = Transfer.sendFunds(
+            web3, credentials, "0x<address>|<ensName>",
+            BigDecimal.valueOf(1.0), Convert.Unit.ETHER)
+            .send();
+    
+或者，如果您希望创建自己的自定义交易：
+
+* 构建httpService
+
+        Web3j web3 = Web3j.build(new HttpService());  // defaults to http://localhost:8545/
+        Credentials credentials = WalletUtils.loadCredentials("password", "/path/to/walletfile");
+* 获取可用的nonce
+
+        EthGetTransactionCount ethGetTransactionCount = web3j.ethGetTransactionCount(
+                     address, DefaultBlockParameterName.LATEST).sendAsync().get();
+        BigInteger nonce = ethGetTransactionCount.getTransactionCount();
+
+* 创建我们的交易
+
+        RawTransaction rawTransaction  = RawTransaction.createEtherTransaction(
+                     nonce, <gas price>, <gas limit>, <toAddress>, <value>);
+
+* 签名并发送我们的交易
+
+        byte[] signedMessage = TransactionEncoder.signMessage(rawTransaction, credentials);
+        String hexValue = Hex.toHexString(signedMessage);
+        EthSendTransaction ethSendTransaction = web3j.ethSendRawTransaction(hexValue).send();
+   
+虽然使用web3j的Transfer与Ether进行交易简单得多。
+
+使用以太坊客户端的管理命令（确保您的钱包在客户端的密钥库中）：
+    
+    Admin web3j = Admin.build(new HttpService());  //默认http://localhost:8545/
+    PersonalUnlockAccount personalUnlockAccount = web3j.personalUnlockAccount("0x000...", "a password").sendAsync().get();
+    if (personalUnlockAccount.accountUnlocked()) {
+        //此处发送交易
+    }
+
+如果您想使用Parity的Personal或Trace或Geth的Personal客户端API，您可以分别使用org.web3j：parity和org.web3j：geth模块。
+
+### 8.命令行工具
+
+伴随每个版本一起发布web3j fat jar，提供命令行工具。 你可以从命令行使用web3j的一些功能：
+
+* 钱包创作
+* 钱包密码管理
+* 资金从一个钱包转移到另一个钱包
+* 生成Solidity智能合约函数包装器
+
+具体的信息请看Web3j一章
 
 ## 七.使用keystore存储地址和私钥的方式开发钱包
+
 
 
 ## 八.非确定性以太坊钱包开发
