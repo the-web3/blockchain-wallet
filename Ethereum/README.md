@@ -1475,3 +1475,63 @@ nonce：标识交易的nonce，依次递增。
 ## 九.非确定性以太坊钱包开发
 
 ## 十.分层确定性以太坊钱包开发
+
+关于分层确定性钱包的优势，在前面的内容中我们已经介绍过，这里就不再多做介绍了。以太坊在BIP分层协议中的序号是`60`;关于Bip分层协议的内容，请看BIP分层协议一章的内容。
+
+下图是ETH在分层协议中的位置
+
+.： 
+    ![.： 
+](https://github.com/guoshijiang/blockchain-wallet/blob/master/img/eth60.png)
+
+
+### 1.本地生成以太坊分层确定性钱包的账户体系
+
+为了更直观地理解以太坊的地址生成，下面的代码将包含着助记词的东西
+
+    var bip39 = require('bip39')
+    var hdkey = require('ethereumjs-wallet/hdkey')
+    var util = require('ethereumjs-util')
+
+    var mnemonic = bip39.generateMnemonic()      
+    var seed = bip39.mnemonicToSeed(mnemonic)
+    var hdWallet = hdkey.fromMasterSeed(seed)
+    var key = hdWallet.derivePath("m/44'/60'/0'/0/0")
+   
+    var address = util.pubToAddress(key1._hdkey._publicKey, true)
+    var privateKey = 
+    console.log(address)
+    
+    
+    address1 = util.toChecksumAddress(address1.toString('hex'))
+    console.log(address1)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
