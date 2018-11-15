@@ -1305,12 +1305,57 @@ web3j支持使用以太坊钱包文件（推荐）和以太网客户端管理命
 
 ### 5.发送交易到区块链网络
 
+发送签名的交易到区块链网络有很多种方式，可以使用web3j,web3js等库，也可以自己发起一个http请求。咱们这里使用的是web3js发送交易到区块链网络，要使用web3js发送交易到区块链网络。得做下面几件事。
+
+#### 5.1.初始化web3js
+
+    var Web3 = require("web3")
+    if (typeof web3 !== 'undefined'){
+       web3 = new Web3(web3.currentProvider);
+    }else{
+       web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+    }
+
+#### 5.2.获取你的账户上的余额
+
+获取你账户上的余额的目的是为了在你转账的时候校验一下你是否有足够的钱转出，这样能防止你签名的交易发送失败。
+
+    web3.eth.getBalance("0xfa319c8ea9b00513bb1a112de2073263aa92c930", function(err, result){
+       if (err == null){
+          console.log('~balance:' + result);
+       }else{
+          console.log('~balance:' + result);
+       }
+    });
+
+`0xfa319c8ea9b00513bb1a112de2073263aa92c930`是账户地址，如果你用的是你的账户，请把这个地址替换成你的地址
+
+#### 5.3.发送交易到区块链网络
+
+    web3.eth.sendRawTransaction(十六进制的签名串, function (err, hash){
+       console.log('交易结果：' + hash);
+       if (callback && typeof(callback) === "function"){
+          if(!err){
+             callback(null, hash);
+          }else{
+             callback(err, null);
+          }
+       }
+    });
+
+“十六进制的签名串”这儿的位置是你签名的字符串转换成十六进制的串，加前缀`0x`即可
 
 ### 6.转账交易确认
 
+转账确认有很多种机制来实现，列如利用事件通知机制，区块数确认机制等。在咱项目实战的时候咱们会详细讲解各种确认机制，这里只提供一种简单的确认机制，获取区块数，当你发送交易到区块链网络时，你获取一下当前的区块数量，转完账之后，实时获取区块数量，当你的区块数达到确认的块数之后，可认为转账成功。
 
+下面是获取区块数量的代码
 
-## 八.非确定性以太坊钱包开发
+    var bnum = web3.eth.blockNumber;
+    console.log(bnum);
+    
+## 八.基于节点的钱包开发
 
+## 九.非确定性以太坊钱包开发
 
-## 九.分层确定性以太坊钱包开发
+## 十.分层确定性以太坊钱包开发
