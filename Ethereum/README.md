@@ -1492,19 +1492,22 @@ nonce：标识交易的nonce，依次递增。
     var bip39 = require('bip39')
     var hdkey = require('ethereumjs-wallet/hdkey')
     var util = require('ethereumjs-util')
-
-    var mnemonic = bip39.generateMnemonic()      
+    
+    // 生成助记词
+    var mnemonic = bip39.generateMnemonic() 
+    // 生成随机种子
     var seed = bip39.mnemonicToSeed(mnemonic)
-    var hdWallet = hdkey.fromMasterSeed(seed)
+    // 生成钱包私钥
+    var hdWallet = hdkey.fromMasterSeed(seed) 
+    // 生成第一个账户的私钥
     var key = hdWallet.derivePath("m/44'/60'/0'/0/0")
-   
-    var address = util.pubToAddress(key1._hdkey._publicKey, true)
-    var privateKey = 
-    console.log(address)
+    // 生成地址
+    var address = util.pubToAddress(key._hdkey._publicKey, true)  
+    // 导出私钥
+    var privateKey = key._hdkey._privateKey.toString('hex')
+    console.log("address = " + address + "  privateKey = " + privateKey)
     
-    
-    address1 = util.toChecksumAddress(address1.toString('hex'))
-    console.log(address1)
+上面生成的地址和私钥，你可以将使用本地数据库或者文件管理起来，具体怎么管理，在咱们后面的项目实战中将详细地说明
 
 
 
