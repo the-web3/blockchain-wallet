@@ -28,7 +28,7 @@
     
 想要运行上面这段段代码，你需要nodejs的环境并且安装keythereum库。上面这段代码是生成以太坊keystore的代码。keystore里面包含了地址、加密的私钥和MAC地址等信息，dk.privateKey是明文的私钥。上面这段代码中并没有助记词的概念。
 
-### 2.确定性钱包生成以太坊地址
+### 2.确定性分层钱包以太坊地址生成
 
     var bip39 = require('bip39')
     var hdkey = require('ethereumjs-wallet/hdkey')
