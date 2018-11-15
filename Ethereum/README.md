@@ -1509,11 +1509,360 @@ nonce：标识交易的nonce，依次递增。
     
 上面生成的地址和私钥，你可以将使用本地数据库或者文件管理起来，具体怎么管理，在咱们后面的项目实战中将详细地说明
 
+### 2.交易签名
+
+单个交易签名
+
+    function ethereumSign(privateKey, nonce, toAddress, sendToBalance, gasPrice, gasLimit) {
+      var errData = {code:400, message:"param is null"};
+      var serializedErr = {code:400, message:"Serialized transaction fail"};
+      if(!privateKey || !nonce || !toAddress || !sendToBalance || !gasPrice || !gasLimit) {
+        console.log("one of fromAddress, toAddress, sendToBalance, sendFee is null, please give a valid param");
+        return errData;
+      } else {
+        var transactionNonce = parseInt(nonce).toString(16);
+        var numBalance = parseFloat(sendToBalance);
+        var balancetoWei = web3.toWei(numBalance, "ether");
+        var oxNumBalance = parseInt(balancetoWei).toString(16);
+        var gasPriceHex = parseInt(gasPrice).toString(16);
+        var gasLimitHex = parseInt(gasLimit).toString(16);
+        var privateKeyBuffer =  Buffer.from(privateKey, 'hex');
+        var rawTx = {
+          nonce:'0x' + transactionNonce,
+          gasPrice: '0x' + gasPriceHex,
+          gas:'0x'+ gasLimitHex,
+          to:toAddress,
+          value:'0x' + oxNumBalance,
+        };
+        alert(JSON.stringify(rawTx));
+        var tx = new transaction(rawTx);
+        tx.sign(privateKeyBuffer);
+        var serializedTx = tx.serialize();
+        if(serializedTx == null) {
+          return serializedErr;
+        } else {
+          if (tx.verifySignature()) {
+            console.log('Signature Checks out!');
+          } else {
+            return serializedErr;
+          }
+        }
+      }
+      return '0x' + serializedTx.toString('hex');
+    }
+
+多笔转账签名
+
+    function MultiEthSign(sendData) {
+      if(sendData == null) {
+        console.log("param is invalid, sendData is null");
+      }
+      console.log("param is valid, start multiSign transaction");
+      var calcNonce = sendData.nonce;
+      var arrData = sendData.signDta;
+      var outArr = [];
+      for(var i = 0; i < arrData.length; i++){
+        var transactionNonce = parseInt(calcNonce).toString(16);
+        var balancetoWei = web3.toWei(parseFloat(sendData.signDta[i].totalAmount), "ether");
+        var balanceValue = parseInt(balancetoWei).toString(16);
+        var oxGas = parseInt(sendData.gasLimit).toString(16);
+        var oxGasPrice = parseInt(sendData.gasPrice).toString(16);
+        var privateKeyBuffer =  Buffer.from(sendData.privateKey, 'hex');
+        var rawTx = {
+          nonce:'0x' + transactionNonce,
+          gasPrice: '0x' + oxGasPrice,
+          gas:'0x' + oxGas,
+          to: sendData.signDta[i].toAddress,
+          value:'0x' + balanceValue
+        };
+        var tx = new transaction(rawTx);
+        tx.sign(privateKeyBuffer);
+        var serializedTx = tx.serialize();
+        if(serializedTx == null) {
+          console.log("Serialized transaction fail")
+        } else {
+          outArr = outArr.concat('0x' + serializedTx.toString('hex'))
+          if (tx.verifySignature()) {
+            console.log('Signature Checks out!')
+          } else {
+            console.log("Signature checks fail")
+          }
+        }
+        calcNonce = calcNonce + 1;
+      }
+      return { signCoin:"ETH", signDataArr:outArr}
+    }
+
+发送交易和交易确认如果用NodeJs的话和上面的是一致的
+
+下面咱们使用web3j来发送交易，SSM的代码，使用SpringMVC
+
+交易发送控制器
+
+        package com.biwork.controller;
+
+        import java.util.ArrayList;
+        import java.util.HashMap;
+        import java.util.List;
+        import java.util.Map;
+
+        import javax.servlet.http.HttpServletRequest;
+
+        import org.apache.commons.lang3.StringUtils;
+        import org.slf4j.Logger;
+        import org.slf4j.LoggerFactory;
+        import org.springframework.beans.factory.annotation.Autowired;
+        import org.springframework.stereotype.Controller;
+        import org.springframework.web.bind.annotation.RequestBody;
+        import org.springframework.web.bind.annotation.RequestMapping;
+        import org.springframework.web.bind.annotation.ResponseBody;
+        import org.springframework.web.bind.annotation.RequestMethod;
+
+        import com.biwork.entity.RawTx;
+
+        import com.biwork.exception.BusiException;
+
+        import com.biwork.po.RespPojo;
+        import com.biwork.po.request.BatchRawTxFlowPojo;
+        import com.biwork.po.request.RawTxFlowPojo;
+        import com.biwork.po.RawTxPojo;
+
+        import com.biwork.service.RawTxService;
+
+        import com.biwork.util.Constants;
+
+        import io.swagger.annotations.Api;
+        import io.swagger.annotations.ApiOperation;
+        import io.swagger.annotations.ApiParam;
+
+        @Controller
+        @RequestMapping("/v1")
+        @Api(value = "/v1", description = "发送签名后交易数据到区块链网络")
+        public class RawTxController {
+            private Logger logger = LoggerFactory.getLogger(getClass());
+            //发送签名后交易到区块链网络
+            @Autowired
+            RawTxService rawTxService;
+
+            @ResponseBody
+            @RequestMapping(value = "/eth_sendBatchRawTransaction", method=RequestMethod.POST, produces="application/json;charset=utf-8;")
+            @ApiOperation(value = "批量发送签名后交易数据到以太坊区块链网络", notes = "批量发送签名后交易数据到以太坊区块链网络",httpMethod = "POST")
+            public RespPojo getBatchEthRawTx(HttpServletRequest request, @RequestBody 
+                    @ApiParam(name="发送签名后交易对象",value="传入json格式",required=true) BatchRawTxFlowPojo batchRwatxFlowPojo){
+                logger.info("---批量发送签名后交易数据到以太坊区块链网络---");
+                RawTxPojo rawTx_pojo=new RawTxPojo();
+                RespPojo resp=new RespPojo();
+                String signCoin = batchRwatxFlowPojo.getSignCoin();
+                List<String> arrList = new ArrayList<>();
+                arrList = batchRwatxFlowPojo.getSignDataArr();
+                System.out.println("signCoin = " + signCoin);
+                System.out.println("sign = " + arrList.get(0));
+
+                if(StringUtils.isBlank(signCoin) || arrList.size() == 0){
+                      resp.setRetCode(Constants.PARAMETER_CODE);
+                      resp.setRetMsg("批量签名后数据不能为空");
+                      return resp;
+                }
+
+                RawTx rawTx;
+                List<String> hashArray = new ArrayList<>();
+                try {
+                    for(int i = 0; i < arrList.size(); i++) {
+                        rawTx = rawTxService.getEthRawTx(arrList.get(i));
+                        hashArray.add(rawTx.getRawTx());
+                    }
+                }catch(BusiException e){
+                     logger.error("批量发送签名后交易数据到以太坊区块链网络异常-业务异常{}",e);
+                      resp.setRetCode(e.getCode());
+                      resp.setRetMsg(e.getMessage());
+                      return resp;
+                }
+                catch (Exception e) {
+                      logger.error("批量发送签名后交易数据到以太坊区块链网络异常-普通异常{}",e);
+                      resp.setRetCode(Constants.FAIL_CODE);
+                      resp.setRetMsg(Constants.FAIL_MESSAGE);
+                      return resp;
+                }
+                resp.setRetCode(Constants.SUCCESSFUL_CODE);
+                resp.setRetMsg(Constants.SUCCESSFUL_MESSAGE);
+                resp.setData(hashArray);
+                System.out.println("hashArray = " + hashArray);
+                return resp;
+            }
+
+            @ResponseBody
+            @RequestMapping(value = "/eth_sendRawTransaction", method=RequestMethod.POST, produces="application/json;charset=utf-8;")
+            @ApiOperation(value = "发送签名后交易数据到以太坊区块链网络", notes = "发送签名后交易数据到以太坊区块链网络",httpMethod = "POST")
+            public RespPojo getEthRawTx(HttpServletRequest request, @RequestBody 
+                    @ApiParam(name="发送签名后交易对象",value="传入json格式",required=true) RawTxFlowPojo rwatxFlowPojo){
+                logger.info("---发送签名后交易数据到以太坊区块链网络方法---");
+                RawTxPojo rawTx_pojo=new RawTxPojo();
+                RespPojo resp=new RespPojo();
+                String data = rwatxFlowPojo.getData();
+                System.out.println("data = " + data);
+
+                if(StringUtils.isBlank(data)){
+                      resp.setRetCode(Constants.PARAMETER_CODE);
+                      resp.setRetMsg("签名后数据不能为空");
+                      return resp;
+                }
+
+                RawTx rawTx;
+                try {
+                    rawTx = rawTxService.getEthRawTx(data);
+                }catch(BusiException e){
+                     logger.error("发送签名后交易数据到以太坊区块链网络异常{}",e);
+                      resp.setRetCode(e.getCode());
+                      resp.setRetMsg(e.getMessage());
+                      return resp;
+                }
+                catch (Exception e) {
+                      logger.error("发送签名后交易数据到以太坊区块链网络异常{}",e);
+                      resp.setRetCode(Constants.FAIL_CODE);
+                      resp.setRetMsg(Constants.FAIL_MESSAGE);
+                      return resp;
+                }
+                if(rawTx!=null){
+                    rawTx_pojo = new RawTxPojo();
+                    rawTx_pojo.setRawTx(rawTx.getRawTx());
+                    Map<String, Object> rtnMap = new HashMap<String, Object>();
+                    rtnMap.put("transactionHash", rawTx.getRawTx());
+                    resp.setRetCode(Constants.SUCCESSFUL_CODE);
+                    resp.setRetMsg(Constants.SUCCESSFUL_MESSAGE);
+                    resp.setData(rtnMap);
+                    return resp;
+                }
+                return resp;
+            }
+
+            @ResponseBody 
+            @RequestMapping(value="/btc_sendRawTransaction", method=RequestMethod.POST, produces="application/json;charset=utf-8;")	@ApiOperation(value = "发送签名后交易数据到BTC区块链网络", notes = "发送签名后交易数据到BTC区块链网络",httpMethod = "POST")
+            public RespPojo getBtcRawTx(HttpServletRequest request,@RequestBody
+                    @ApiParam(name="流程对象",value="传入json格式",required=true) RawTxFlowPojo rwatxFlowPojo){
+                logger.info("---发送签名后交易数据到BTC区块链网络方法---");
+                RawTxPojo rawTx_pojo=new RawTxPojo();
+                RespPojo resp=new RespPojo();
+
+                String data = rwatxFlowPojo.getData();
+                System.out.println("data = " + data);
+
+                if(StringUtils.isBlank(data)){
+                      resp.setRetCode(Constants.PARAMETER_CODE);
+                      resp.setRetMsg("签名后数据不能为空");
+                      return resp;
+                }
+
+                RawTx rawTx;
+                try {
+                    rawTx = rawTxService.getBtcRawTx(data);
+                }catch(BusiException e){
+                     logger.error("发送签名后交易数据到BTC区块链网络异常{}",e);
+                      resp.setRetCode(e.getCode());
+                      resp.setRetMsg(e.getMessage());
+                      return resp;
+                }
+                catch (Exception e) {
+                      logger.error("发送签名后交易数据到BTC区块链网络异常{}",e);
+                      resp.setRetCode(Constants.FAIL_CODE);
+                      resp.setRetMsg(Constants.FAIL_MESSAGE);
+                      return resp;
+                }
+                if(rawTx!=null){
+                    rawTx_pojo = new RawTxPojo();
+                    rawTx_pojo.setRawTx(rawTx.getRawTx());
+                    Map<String, Object> rtnMap = new HashMap<String, Object>();
+                    rtnMap.put("transactionHash", rawTx.getRawTx());
+                    resp.setRetCode(Constants.SUCCESSFUL_CODE);
+                    resp.setRetMsg(Constants.SUCCESSFUL_MESSAGE);
+                    resp.setData(rtnMap);
+                    return resp;
+                }
+                return resp;
+            }
+        }  
+
+服务的代码
+
+    package com.biwork.service.Impl;
+
+    import org.springframework.stereotype.Service;
+    import org.apache.http.impl.client.CloseableHttpClient;
+    import org.apache.http.impl.client.HttpClients;
+    import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+    import org.slf4j.Logger;
+    import org.slf4j.LoggerFactory;
+
+    import com.biwork.entity.RawTx;
+    import com.biwork.service.RawTxService;
+
+    import org.web3j.protocol.Web3j;
+    import org.web3j.protocol.core.methods.response.EthSendTransaction;
+    import org.web3j.protocol.http.HttpService;
+
+    import java.io.BufferedInputStream;
+    import java.io.FileInputStream;
+    import java.io.IOException;
+    import java.io.InputStream;
+    import java.math.BigDecimal;
+
+    import com.biwork.exception.BusiException;
 
 
+    import com.biwork.util.HttpUtil;
+    import com.neemre.btcdcli4j.core.BitcoindException;
+    import com.neemre.btcdcli4j.core.CommunicationException;
+    import com.neemre.btcdcli4j.core.client.BtcdClient;
+    import com.neemre.btcdcli4j.core.client.BtcdClientImpl;
 
+    import java.util.HashMap;
+    import java.util.Map;
+    import java.util.Properties;
 
+    @Service("RawTxService")
+    public class RawTxServiceImpl implements RawTxService {
 
+        static Logger log = LoggerFactory.getLogger(RawTxService.class);
+        private static final String PRO_URL = "https://mainnet.infura.io/PVMw2QL6TZTb2TTgIgrs";
+
+        @Override
+        public RawTx getEthRawTx(String data) throws Exception {
+            RawTx rawTx = new RawTx();
+            Web3j web3j = Web3j.build(new HttpService(PRO_URL, true));
+            EthSendTransaction ethSendTransaction = new EthSendTransaction();
+            String hash = "";
+            try {
+                ethSendTransaction = web3j.ethSendRawTransaction(data).send();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (ethSendTransaction.hasError()) {
+                throw new BusiException(Integer.toString(ethSendTransaction.getError().getCode()), ethSendTransaction.getError().getMessage());
+            } else {
+                hash = ethSendTransaction.getTransactionHash();
+            }
+            rawTx.setRawTx(hash);
+            return rawTx;
+        }
+
+        @Override
+        public RawTx getBtcRawTx(String data) throws Exception {
+            RawTx rawTx = new RawTx();
+            String txid = "";
+            Map<String,String> params=new HashMap<String,String>();
+            System.out.println("dataTwo = " + data);
+            params.put("tx", data);
+             try {
+                 txid =  HttpUtil.testPost(params, "https://blockchain.info/pushtx");
+                 System.out.println("txid =" + txid);
+             } catch (Exception e) {
+                 throw new BusiException("pushtx",  e.getMessage());	
+             }
+            rawTx.setRawTx(txid);
+            return rawTx;
+        }
+    }
+
+到目前为止，以太坊钱包开发一章算是完成，想要学习更多的内容，请继续关注，项目实战中将会有更多的干货。
 
 
 
