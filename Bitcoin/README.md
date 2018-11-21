@@ -33,7 +33,7 @@
 
 .： 
     ![.： 
-](https://github.com/guoshijiang/blockchain-wallet/blob/master/img/PubKeyToAddr.png)
+](https://github.com/guoshijiang/blockchain-wallet/blob/master/img/PubKeyToAddr.jpg)
 
 ### 3.比特币地址生成代码实战
 
