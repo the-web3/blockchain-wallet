@@ -41,9 +41,56 @@
 
 #### 3.1.主网比特币地址生成（NodeJs版）
 
+rng ()函数产生随机数种子，下面的代码使用了bitcoinjs库
 
+    const bitcoin = require('bitcoinjs-lib')
+    const baddress = require('bitcoinjs-lib/src/address')
+    const bcrypto = require('bitcoinjs-lib/src/crypto')
+    const NETWORKS = require('bitcoinjs-lib/src/networks')
+
+    // deterministic RNG for testing only
+    function rng () { return Buffer.from('sssszzddzzzzzzzzzzzzzzzzzzzzzzzz') }
+
+    const testnet = bitcoin.networks.testnet
+    const keyPair = bitcoin.ECPair.makeRandom({ network: testnet, rng: rng })
+    const wif = keyPair.toWIF()
+    console.log("wif = " + wif)
+
+    const { address } = bitcoin.payments.p2pkh({ pubkey: keyPair.publicKey, network: testnet })
+    console.log("address = " + address)
+    
 #### 3.2.测试网比特币地址生成（NodeJs版）
 
+下面代码生成了找零地址和非找零地址
+
+    var bip39 = require('bip39')
+    const bip32 = require('bip32')
+    const bitcoin = require('bitcoinjs-lib')
+    const baddress = require('bitcoinjs-lib/src/address')
+    const bcrypto = require('bitcoinjs-lib/src/crypto')
+    const NETWORKS = require('bitcoinjs-lib/src/networks')
+
+    function getAddress (node) {
+        console.log("PrivateKey = " + node.toWIF().toString('hex'));
+        console.log("PublicKey =" + node.publicKey.toString('hex'))
+        return baddress.toBase58Check(bcrypto.hash160(node.publicKey), NETWORKS.bitcoin.pubKeyHash)
+    }
+    var mnemonic = bip39.generateMnemonic()
+    var seed = bip39.mnemonicToSeed(mnemonic)
+    const rootMasterKey = bip32.fromSeed(seed)
+
+    var key1 = rootMasterKey.derivePath("m/44'/0'/0'/0/0")
+    var key2 = rootMasterKey.derivePath("m/44'/0'/0'/0/1")
+    var key3 = rootMasterKey.derivePath("m/44'/0'/0'/1/0")
+    var key4 =rootMasterKey.derivePath("m/44'/0'/0'/1/1")
+
+    //普通地址
+    console.log(getAddress(key1))
+    console.log(getAddress(key2))
+
+    //找零地址
+    console.log(getAddress(key3))
+    console.log(getAddress(key4))
 
 #### 3.3.主网比特币地址生成（Java版）
 
