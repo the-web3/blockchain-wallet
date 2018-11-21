@@ -35,3 +35,17 @@
     ![.： 
 ](https://github.com/guoshijiang/blockchain-wallet/blob/master/img/PubKeyToAddr.png)
 
+### 3.比特币地址生成代码实战
+
+关于比特币的地址生成部分，咱们主要生成主网地址和测试网地址，使用nodeJs和java两种语言实现。
+
+#### 3.1.主网比特币地址生成（NodeJs版）
+
+
+#### 3.2.测试网比特币地址生成（NodeJs版）
+
+
+#### 3.3.主网比特币地址生成（Java版）
+
+
+#### 3.4.测试网比特币地址生成（Java版）
