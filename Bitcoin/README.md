@@ -510,5 +510,7 @@
 == References ==
 <references />
 
+{{Bitcoin Core documentation}}
+
 
 
