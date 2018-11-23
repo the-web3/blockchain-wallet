@@ -189,11 +189,148 @@ Fee对象具有以下属性（除了它们引用的minFee-maxFee范围）：
 
 ## 三.比特币区块链浏览器API
 
+
+
 ## 四.比特币JSON-RPC接口
 
-## 五.在线发起比特交易
+
+
+## 五.在线创建并发起比特交易
+
+
 
 ## 六.比特币交易离线签名
+
+### 1.单个转账签名
+
+    const bitcoin = require('bitcoinjs-lib');
+
+    function bitcoinSign(privateKey, amount, utxo, sendFee, toAddress, changeAddress) {
+        if(!privateKey || !amount || !utxo || !sendFee || !toAddress || !changeAddress ) {
+            console.log("one of privateKey, amount, utxo, sendFee, toAddress and changeAddress is null, please give a valid param");
+        } else {
+            console.log("param is valid, start sign transaction");
+            set = bitcoin.ECPair.fromWIF(privateKey);
+            txb = new bitcoin.TransactionBuilder();
+            var sendAmount = parseFloat(amount);
+            var fee = parseFloat(sendFee);
+            sendAmount += fee;
+            console.log("Send Transaction total amount is: " + sendAmount)
+            txb.setVersion(1);
+            var totalMoney = 0;
+            for(var i=0; i<utxo.length; i++){
+                txb.addInput(utxo[i].tx_hash_big_endian, utxo[i].tx_output_n);
+                totalMoney += utxo[i].value;
+            }
+            console.log("this address total money is: " + totalMoney)
+            txb.addOutput(toAddress, sendAmount - fee);
+            for(var i=0;i<utxo.length;i++){
+                txb.sign(0, set);
+            }
+        }
+        return txb.buildIncomplete().toHex();
+    }
+
+    var bitUtxo = {
+        "unspent_outputs":[
+            {
+                "tx_hash":"8ee886ba0c66ba2df2c0e3da3beee526996d9a5e6bbbdfea43e1a78340cb0128",
+                "tx_hash_big_endian":"2801cb4083a7e143eadfbb6b5e9a6d9926e5ee3bdae3c0f22dba660cba86e88e",
+                "tx_index":382253932,
+                "tx_output_n": 0,
+                "script":"76a914ca45c6eceea7aed14b6aea7e0ed466c6134f14bc88ac",
+                "value": 1899000,
+                "value_hex": "1cf9f8",
+                "confirmations":2
+            }
+        ]
+    }
+    var privateKey = "KwHEU8DTrY2ekGuqE6EqMMrcFj6Kdb6gWF4k8SpUeV7vDfc9c5Fn";
+    var amount = 1898000;
+    var utxo = bitUtxo.unspent_outputs;
+    var sendFee = 1000;
+    var toAddress = "12zEJohMNqSZLXH1Msxpw41ykkk3rxgx1s";
+    var changeAddress = "1KSX5wmrVax3LYaB4uKUxXzCRcv5SiLDq3";
+    var sign = bitcoinSign(privateKey, amount, bitUtxo.unspent_outputs, sendFee, toAddress, changeAddress);
+    console.log(sign);
+
+
+### 2.批量转账签名
+
+
+    const bitcoin = require('bitcoinjs-lib');
+
+    function bitcoinMultiSign(sendInfo, utxo) {
+        if( !utxo || !sendInfo ) {
+            console.log("one of sendInfo or utxo, is null, please give a valid param");
+        } else {
+            console.log("param is valid, start sign transaction");
+            set = bitcoin.ECPair.fromWIF(sendInfo.privateKey);
+            txb = new bitcoin.TransactionBuilder();
+            var sendAmount = 0;
+            console.log("Send Transaction total amount is: " + sendAmount)
+            txb.setVersion(1);
+            var totalMoney = 0;
+            for(var i=0; i<utxo.length; i++){
+                txb.addInput(utxo[i].tx_hash_big_endian, utxo[i].tx_output_n);
+                totalMoney += utxo[i].value;
+            }
+            console.log("this address total money is: " + totalMoney)
+            for(var j = 0; j < sendInfo.addressAmount.length; j++)
+            {
+                txb.addOutput(sendInfo.addressAmount[j].toAddress,  parseFloat(sendInfo.addressAmount[j].amount));
+                sendAmount = sendAmount + sendInfo.addressAmount[j].amount;
+            }
+            console.log("sendAount = " + sendAmount)
+            txb.addOutput(sendInfo.changeAddress, totalMoney - (sendAmount + parseFloat(sendInfo.sendFee)));
+            for(var i=0;i<utxo.length;i++){
+                txb.sign(0, set);
+            }
+        }
+        return txb.buildIncomplete().toHex();
+    }
+
+    var bitUtxo = {
+        "unspent_outputs":[
+            {
+                "tx_hash":"8ee886ba0c66ba2df2c0e3da3beee526996d9a5e6bbbdfea43e1a78340cb0128",
+                "tx_hash_big_endian":"2801cb4083a7e143eadfbb6b5e9a6d9926e5ee3bdae3c0f22dba660cba86e88e",
+                "tx_index":382253932,
+                "tx_output_n": 0,
+                "script":"76a914ca45c6eceea7aed14b6aea7e0ed466c6134f14bc88ac",
+                "value": 1899000,
+                "value_hex": "1cf9f8",
+                "confirmations":2
+            }
+        ]
+    }
+
+    var sendInfo = {
+        "privateKey":"KwHEU8DTrY2ekGuqE6EqMMrcFj6Kdb6gWF4k8SpUeV7vDfc9c5Fn",
+        "changeAddress":"1KSX5wmrVax3LYaB4uKUxXzCRcv5SiLDq3",
+        "sendFee":1000,
+        "addressAmount":[
+            {
+                "toAddress":"12zEJohMNqSZLXH1Msxpw41ykkk3rxgx1s",
+                "amount":0.00003
+            },{
+                "toAddress":"1KSX5wmrVax3LYaB4uKUxXzCRcv5SiLDq3",
+                "amount":0.00003
+            },{
+                "toAddress":"12zEJohMNqSZLXH1Msxpw41ykkk3rxgx1s",
+                "amount":0.001
+            }
+        ]
+    }
+
+
+    var utxo = bitUtxo.unspent_outputs;
+    var sign = bitcoinMultiSign(sendInfo, bitUtxo.unspent_outputs);
+    console.log(sign);
+
+
+
+
 
 ## 七.发送交易比特币主网
 
