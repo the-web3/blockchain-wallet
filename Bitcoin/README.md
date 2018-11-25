@@ -1163,6 +1163,124 @@ URL：`https://blockchain.info/tobtc？money=USD＆value=500`
 
     10
 
+### 7.区块链图表和统计API
+
+Blockchain Charts＆Statistics API提供了一个简单的接口，可以通过编程方式与blockchain.info上显示的图表和统计信息进行交互。
+
+日期参数表示为YYYY-MM-DDThh：mm：ss或YYYY-MM-DD。 时区是UTC。 持续时间通过连接时间单位的数量和它所代表的时间单位来表示（例如“1年”，“3个月”等）。 可用时间单位为：分钟，小时，日，周和年。
+
+#### 7.1.图表API（获取Blockchain图表背后的数据）
+
+此方法可用于获取和操作Blockchain.info图表后面的数据。
+
+* URL: https://api.blockchain.info/charts/$chartName?timespan=$timespan&rollingAverage=$rollingAverage&start=$start&format=$format&sampled=$sampled
+* 请求方式: GET
+* 示例: https://api.blockchain.info/charts/transactions-per-second?timespan=5weeks&rollingAverage=8hours&format=json
+
+* timespan：图表的持续时间，大多数图表默认为1年，mempool图表为1周。 （可选的）
+* rollingAverage：应该平均数据的持续时间。 （可选的）
+* start:启动图表的日期时间。 （可选的）
+* format:JSON或CSV，默认为JSON。 （可选的）
+* sampled:Boolean设置为'true'或'false'（默认为'true'）。 如果为true，则出于性能原因将返回的数据点数限制为~1.5k。（可选的）
+
+请注意，图表的值可以用科学记数法表示（14,627,700表示为1.46277E7）
+
+回复：200 OK，application/json
+
+    {
+      "status": "ok",
+      "name": "Confirmed Transactions Per Day",
+      "unit": "Transactions",
+      "period": "day",
+      "description": "The number of daily confirmed Bitcoin transactions.",
+      "values": [
+        {
+          "x": 1442534400, // Unix timestamp (2015-09-18T00:00:00+00:00)
+          "y": 188330.0
+        },
+        ...
+    }
+
+回复：200 OK，text/csv;字符集= ASCII
+
+    2015-09-18 00:00:00,188330.0
+    2015-09-19 00:00:00,117999.0
+    2015-09-20 00:00:00,105933.0
+    
+
+#### 7.2.Stats API (获取Blockchain统计数据背后的数据)
+
+此方法可用于获取Blockchain.info的统计数据背后的数据。
+
+网址：https://api.blockchain.info/stats
+方法：GET
+示例：https://api.blockchain.info/stats
+
+回复：200 OK，application/json
+
+    {
+      "market_price_usd": 610.036975,
+      "hash_rate": 1.8410989266292908E9,
+      "total_fees_btc": 6073543165,
+      "n_btc_mined": 205000000000,
+      "n_tx": 233805,
+      "n_blocks_mined": 164,
+      "minutes_between_blocks": 8.2577,
+      "totalbc": 1587622500000000,
+      "n_blocks_total": 430098,
+      "estimated_transaction_volume_usd": 1.2342976868108143E8,
+      "blocks_size": 117490685,
+      "miners_revenue_usd": 1287626.6577490852,
+      "nextretarget": 431423,
+      "difficulty": 225832872179,
+      "estimated_btc_sent": 20233161880242,
+      "miners_revenue_btc": 2110,
+      "total_btc_sent": 184646388663542,
+      "trade_volume_btc": 21597.09997288,
+      "trade_volume_usd": 1.3175029536228297E7,
+      "timestamp": 1474035340000
+    }
+
+#### 7.3.Pools API(获取Blockchain池信息的数据)
+
+他的方法可用于获取Blockchain.info的池信息背后的数据。
+
+网址：https：//api.blockchain.info/pools？timespan = $timespan
+方法：GET
+示例：https：//api.blockchain.info/pools？timespan = 5days
+
+$ timespan计算数据的持续时间，最长10天，默认为4天。 （可选的）
+回复：200 OK，application / json
+
+    {
+      "GHash.IO": 7,
+      "95.128.48.209": 1,
+      "NiceHash Solo": 1,
+      "Solo CKPool": 2,
+      "176.9.31.178": 1,
+      "1Hash": 11,
+      "217.11.225.189": 1,
+      "Unknown": 10,
+      "BitClub Network": 23,
+      "Telco 214": 5,
+      "HaoBTC": 29,
+      "GBMiners": 2,
+      "SlushPool": 44,
+      "91.220.131.39": 1,
+      "Kano CKPool": 13,
+      "BTCC Pool": 74,
+      "60.205.107.55": 1,
+      "BitMinter": 1,
+      "BitFury": 58,
+      "AntPool": 87,
+      "F2Pool": 104,
+      "ViaBTC": 54,
+      "BW.COM": 77,
+      "BTC.com": 2,
+      "47.89.51.25": 1,
+      "74.118.157.122": 2
+    }
+
 ## 四.在线创建并发起比特交易
 
 
