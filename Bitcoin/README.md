@@ -694,16 +694,244 @@ PHP示例代码
     {"active" : "18fyqiZzndTxdVo7g9ouRogB4uFj86JJiy"}
 
 
+### 3.区块链数据API
 
-## 四.比特币JSON-RPC接口
+#### 3.1.单个块
+
+    https://blockchain.info/rawblock/$block_hash
+
+您还可以使用？format = hex请求块以二进制形式（十六进制编码）返回
+
+    {
+        "hash":"0000000000000bae09a7a393a8acded75aa67e46cb81f7acaa5ad94f9eacd103",
+        "ver":1,
+        "prev_block":"00000000000007d0f98d9edca880a6c124e25095712df8952e0439ac7409738a",
+        "mrkl_root":"935aa0ed2e29a4b81e0c995c39e06995ecce7ddbebb26ed32d550a72e8200bf5",
+        "time":1322131230,
+        "bits":437129626,
+        "nonce":2964215930,
+        "n_tx":22,
+        "size":9195,
+        "block_index":818044,
+        "main_chain":true,
+        "height":154595,
+        "received_time":1322131301,
+        "relayed_by":"108.60.208.156",
+        "tx":[--Array of Transactions--]
+    }
+
+#### 3.2.单个交易
+
+    https://blockchain.info/rawtx/$tx_hash
+
+您还可以使用？format = hex请求事务以二进制形式（十六进制编码）返回
+
+    {
+        "hash":"b6f6991d03df0e2e04dafffcd6bc418aac66049e2cd74b80f14ac86db1e3f0da",
+        "ver":1,
+        "vin_sz":1,
+        "vout_sz":2,
+        "lock_time":"Unavailable",
+        "size":258,
+        "relayed_by":"64.179.201.80",
+        "block_height, 12200,
+        "tx_index":"12563028",
+        "inputs":[
+
+
+                {
+                    "prev_out":{
+                        "hash":"a3e2bcc9a5f776112497a32b05f4b9e5b2405ed9",
+                        "value":"100000000",
+                        "tx_index":"12554260",
+                        "n":"2"
+                    },
+                    "script":"76a914641ad5051edd97029a003fe9efb29359fcee409d88ac"
+                }
+
+            ],
+        "out":[
+
+                    {
+                        "value":"98000000",
+                        "hash":"29d6a3540acfa0a950bef2bfdc75cd51c24390fd",
+                        "script":"76a914641ad5051edd97029a003fe9efb29359fcee409d88ac"
+                    },
+
+                    {
+                        "value":"2000000",
+                        "hash":"17b5038a413f5c5ee288caa64cfab35a0c01914e",
+                        "script":"76a914641ad5051edd97029a003fe9efb29359fcee409d88ac"
+                    }
+            ]
+    }
+
+#### 3.3.图表数据
+
+    https://blockchain.info/charts/$chart-type?format=json
+
+    {
+        "values" : [
+            {
+                "x" : 1290602498, //Unix timestamp
+                "y" : 1309696.2116000003
+            }]
+    }
+
+#### 3.4.块高
+
+    https://blockchain.info/block-height/$block_height?format=json
+    
+    {
+        "blocks" :
+        [
+            --Array Of Blocks at the specified height--
+        ]
+    }
+
+#### 3.5.单个地址
+
+    https://blockchain.info/rawaddr/$bitcoin_address
+
+* 地址可以是base58或hash160
+* 显示n个事务的可选限制参数，例如 ＆limit = 50（默认值：50，最大值：50）
+* 可选的偏移参数，用于跳过前n个事务，例如 ＆offset = 100（限制50的页面2）
+
+        {
+            "hash160":"660d4ef3a743e3e696ad990364e555c271ad504b",
+            "address":"1AJbsFZ64EpEfS5UAjAfcUG8pH8Jn3rn1F",
+            "n_tx":17,
+            "n_unredeemed":2,
+            "total_received":1031350000,
+            "total_sent":931250000,
+            "final_balance":100100000,
+            "txs":[--Array of Transactions--]
+        }
+
+#### 3.6.多个地址
+
+    https://blockchain.info/multiaddr?active=$address|$address
+
+* 多个地址以| 分割
+* 地址可以是base58或xpub
+* 显示n个事务的可选限制参数，例如 ＆n = 50（默认值：50，最大值：100）
+* （可选的偏移参数，用于跳过前n个事务，例如 ＆offset = 100（限制50的页面2）
+
+        {
+            "addresses":[
+
+            {
+                "hash160":"641ad5051edd97029a003fe9efb29359fcee409d",
+                "address":"1A8JiWcwvpY7tAopUkSnGuEYHmzGYfZPiq",
+                "n_tx":4,
+                "total_received":1401000000,
+                "total_sent":1000000,
+                "final_balance":1400000000
+            },
+
+            {
+                "hash160":"ddbeb8b1a5d54975ee5779cf64573081a89710e5",
+                "address":"1MDUoxL1bGvMxhuoDYx6i11ePytECAk9QK",
+                "n_tx":0,
+                "total_received":0,
+                "total_sent":0,
+                "final_balance":0
+            },
+
+            "txs":[--Latest 50 Transactions--]
+
+#### 3.7.获取未花费输出
+
+    https://blockchain.info/unspent?active=$address
+
+* 允许的多个地址用“|”分隔
+* 地址可以是base58或xpub
+* 显示n个事务的可选限制参数，例如＆limit = 50（默认值：250，最大值：1000）
+* 可选的确认参数，用于限制最低确认，例如＆确认= 6
+
+        {
+            "unspent_outputs":[
+                {
+                    "tx_age":"1322659106",
+                    "tx_hash":"e6452a2cb71aa864aaa959e647e7a4726a22e640560f199f79b56b5502114c37",
+                    "tx_index":"12790219",
+                    "tx_output_n":"0",
+                    "script":"76a914641ad5051edd97029a003fe9efb29359fcee409d88ac", (Hex encoded)
+                    "value":"5000661330"
+                }
+            ]
+        }
+
+tx哈希是反向字节顺序。这意味着为了从以下事务的JSON tx哈希获取html事务哈希，您需要解码十六进制（例如，使用此站点）。 这将产生一个二进制输出，你需要反转（最后8位/ 1byte移动到前面，第二个到最后8位/ 1byte需要移动到第二个，等等）。 然后，一旦反转的字节被解码，您将获得html事务哈希。
+
+#### 3.8.余额
+
+    https://blockchain.info/balance?active=$address
+
+* 允许的多个地址用“|”
+* 分隔地址可以是base58或xpub
+
+列出列出的每个地址的余额摘要。
+
+    {
+        "1MDUoxL1bGvMxhuoDYx6i11ePytECAk9QK": {
+            "final_balance": 0,
+            "n_tx": 0,
+            "total_received": 0
+        },
+        "15EW3AMRm2yP6LEF5YKKLYwvphy3DmMqN6": {
+            "final_balance": 0,
+            "n_tx": 2,
+            "total_received": 310630609
+        }
+    }
+
+#### 3.9.最新区块
+
+    https://blockchain.info/latestblock
+
+    {
+        "hash":"0000000000000538200a48202ca6340e983646ca088c7618ae82d68e0c76ef5a",
+        "time":1325794737,
+        "block_index":841841,
+        "height":160778,
+        "txIndexes":[13950369,13950510,13951472]
+     }
+
+
+#### 3.11.未被确认交易
+
+    https://blockchain.info/unconfirmed-transactions?format=json
+
+
+    {
+        "txs":[--Array of Transactions--]
+    }
+
+#### 3.12.区块
+
+阻止一天：`https：//blockchain.info/blocks/$time_in_milliseconds?format=json`
+特定池的块：`https：//blockchain.info/blocks/$pool_name？format = json`
+
+    {
+        "blocks" : [
+        {
+            "height" : 166107,
+            "hash" : "00000000000003823fa3667d833a354a437bdecf725f1358b17f949c991bfe0a",
+            "time" : 1328830483
+        },
+        {
+            "height" : 166104,
+            "hash" : "00000000000008a34f292bfe3098b6eb40d9fd40db65d29dc0ee6fe5fa7d7995",
+            "time" : 1328828041
+        }]
+    }
+
+## 四.在线创建并发起比特交易
 
 
 
-## 五.在线创建并发起比特交易
-
-
-
-## 六.比特币交易离线签名
+## 五.比特币交易离线签名
 
 ### 1.单个转账签名
 
@@ -833,7 +1061,7 @@ PHP示例代码
     console.log(sign);
 
 
-## 七.发送交易比特币主网
+## 六.发送交易比特币主网
 
 
 
