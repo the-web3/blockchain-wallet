@@ -1417,9 +1417,71 @@ $ timespan计算数据的持续时间，最长10天，默认为4天。 （可选
 
 ## 六.发送交易比特币主网
 
+Controller代码
+
+    @ResponseBody 
+        @RequestMapping(value="/btc_sendRawTransaction", method=RequestMethod.POST, produces="application/json;charset=utf-8;")	@ApiOperation(value = "发送签名后交易数据到BTC区块链网络", notes = "发送签名后交易数据到BTC区块链网络",httpMethod = "POST")
+        public RespPojo getBtcRawTx(HttpServletRequest request,@RequestBody
+                @ApiParam(name="流程对象",value="传入json格式",required=true) RawTxFlowPojo rwatxFlowPojo){
+            logger.info("---发送签名后交易数据到BTC区块链网络方法---");
+            RawTxPojo rawTx_pojo=new RawTxPojo();
+            RespPojo resp=new RespPojo();
+
+            String data = rwatxFlowPojo.getData();
+            System.out.println("data = " + data);
+
+            if(StringUtils.isBlank(data)){
+                  resp.setRetCode(Constants.PARAMETER_CODE);
+                  resp.setRetMsg("签名后数据不能为空");
+                  return resp;
+            }
+
+            RawTx rawTx;
+            try {
+                rawTx = rawTxService.getBtcRawTx(data);
+            }catch(BusiException e){
+                 logger.error("发送签名后交易数据到BTC区块链网络异常{}",e);
+                  resp.setRetCode(e.getCode());
+                  resp.setRetMsg(e.getMessage());
+                  return resp;
+            }
+            catch (Exception e) {
+                  logger.error("发送签名后交易数据到BTC区块链网络异常{}",e);
+                  resp.setRetCode(Constants.FAIL_CODE);
+                  resp.setRetMsg(Constants.FAIL_MESSAGE);
+                  return resp;
+            }
+            if(rawTx!=null){
+                rawTx_pojo = new RawTxPojo();
+                rawTx_pojo.setRawTx(rawTx.getRawTx());
+                Map<String, Object> rtnMap = new HashMap<String, Object>();
+                rtnMap.put("transactionHash", rawTx.getRawTx());
+                resp.setRetCode(Constants.SUCCESSFUL_CODE);
+                resp.setRetMsg(Constants.SUCCESSFUL_MESSAGE);
+                resp.setData(rtnMap);
+                return resp;
+            }
+            return resp;
+        }
 
 
+Service代码
 
+    public RawTx getBtcRawTx(String data) throws Exception {
+            RawTx rawTx = new RawTx();
+            String txid = "";
+            Map<String,String> params=new HashMap<String,String>();
+            System.out.println("dataTwo = " + data);
+            params.put("tx", data);
+             try {
+                 txid =  HttpUtil.testPost(params, "https://blockchain.info/pushtx");
+                 System.out.println("txid =" + txid);
+             } catch (Exception e) {
+                 throw new BusiException("pushtx",  e.getMessage());	
+             }
+            rawTx.setRawTx(txid);
+            return rawTx;
+        }
 
 
 
