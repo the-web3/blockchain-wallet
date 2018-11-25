@@ -454,6 +454,245 @@ size:块大小（以字节为单位）。
 
 可能会阻止服务中阻止看似已死或永不返回“* ok *”响应的回调域。
 
+### 2.比特币区块链钱包API（Blockchain Wallet用户发送和接收比特币的简单API）
+
+区块链钱包API提供了一个简单的界面，商家可以用它以编程方式与钱包进行交互。
+
+#### 2.1.安装
+
+要使用此API，您需要运行负责管理区块链钱包的小型本地服务。 您的应用程序通过HTTP API调用在本地与此服务进行交互。下面说安装说明
+
+nodejs和npm是安装和使用此API服务所必需的。 安装：
+
+    npm install -g blockchain-wallet-service
+    
+为获得最佳稳定性和性能，请确保始终使用最新版本。
+
+要检查您的版本：
+
+    blockchain-wallet-service -V
+
+要更新到最新版本：
+
+    npm update -g blockchain-wallet-service
+    
+要求
+
+* node >= 6.0.0
+* npm >= 3.0.0
+
+#### 2.2.运行
+
+使用下面的命令启动区块链钱包服务：
+
+    blockchain-wallet-service start --port 3000
+
+下面是你安装运行过程中可能遇到的问题
+
+* 如果您收到EACCESS或与权限相关的错误，则可能需要使用sudo命令以root身份运行安装。
+* 如果您收到有关node-gyp或python的错误，请使用npm install --no-optional安装
+* 如果使用/usr/bin/env：node启动失败：没有这样的文件或目录，可能没有安装节点，或者安装了不同的名称（例如，Ubuntu将节点安装为nodejs）。 如果使用其他名称安装node，请为节点二进制文件创建符号链接：sudo ln -s/usr/bin/nodejs/usr/bin/node，或通过Node Version Manager安装节点。
+* 如果您看到TypeError声称对象没有方法'compare'，那是因为在比较方法添加到Buffers之前，您的节点版本早于0.12。 尝试升级到至少节点版本0.12。
+* 如果您获得钱包解密错误，尽管有正确的凭据，那么您可能没有安装Java，这是my-wallet-v3模块的依赖项所必需的。 在npm安装过程中没有安装Java会导致无法解密钱包。 从这里为Mac下载JDK或在基于debian的linux系统上运行apt-get install default-jdk。
+* 如果您收到超时响应，可能需要您的区块链钱包的额外授权。 使用无法识别的浏览器或IP地址时可能会发生这种情况。 授权API访问尝试的电子邮件将发送给注册用户，该用户需要采取措施以授权将来的请求。
+
+#### 2.3.创建钱包API
+
+create_wallet方法可用于创建新的blockchain.info比特币钱包。
+
+接口路径：http://localhost:3000/api/v2/create
+请求方式：POST或者GET
+参数
+* password:新钱包的密码。 长度必须至少为10个字符。
+* api_code:具有create wallets权限的API代码。
+* priv:添加到钱包的私钥（首选钱包导入格式）。 （可选的）
+* label:为钱包中的第一个地址设置的标签。 仅限字母数字。 （可选的）
+* email:与新钱包关联的电子邮件，即代表您创建此钱包的用户的电子邮件地址。 （可选的）
+
+请在此处创建API代码，包括“创建钱包”的权限。
+回复：200 OK，application / json
+
+    {
+        "guid": "4b8cd8e9-9480-44cc-b7f2-527e98ee3287",
+        "address": "12AaMuRnzw6vW6s2KPRAGeX53meTf8JbZS",
+        "label": "Main address"
+    }
+
+#### 2.4.付款
+
+将比特币从您的钱包发送到另一个比特币地址。 所有交易均包括0.0001BTC矿工费。
+
+所有比特币值均为Satoshi，即除以100000000以获得BTC中的金额。 所有请求的基本URL：https://blockchain.info/merchant/$guid/  guid应替换为您的区块链钱包标识符（在登录页面上找到）。
+
+    http://localhost:3000/merchant/$guid/payment?password=$main_password&second_password=$second_password&to=$address&amount=$amount&from=$from&fee=$fee
+
+* main_password：主要区块链钱包密码
+* second_password：如果启用了双重加密，则为您的第二个区块链钱包密码。
+* to：背书比特币地址。
+* amount：用satoshi发送的金额。
+* from 特定比特币地址发送（可选）
+* fee satoshi的交易费用价值（必须大于违约费）（可选）
+回复：200 OK，application/json
+
+    { "message" : "Response Message" , "tx_hash": "Transaction Hash", "notice" : "Additional Message" }
+
+    { "message" : "Sent 0.1 BTC to 1A8JiWcwvpY7tAopUkSnGuEYHmzGYfZPiq" , "tx_hash" : "f322d01ad784e5deeb25464a5781c3b20971c1863679ca506e702e3e33c18e9c" , "notice" : "Some funds are pending confirmation and cannot be spent yet (Value 0.001 BTC)" }
+
+#### 2.5.发送很多交易
+
+将事务发送到同一事务中的多个收件人。
+
+    http://localhost:3000/merchant/$guid/sendmany?password=$main_password&second_password=$second_password&recipients=$recipients&fee=$fee
+
+* main_password：主区块链钱包密码
+* second_password：如果启用了双重加密，则为您的第二个区块链钱包密码。
+* recipients是一个JSON对象，使用比特币地址作为键，以及作为值发送的金额（见下文）。
+* from特定比特币地址发送（可选）
+* fee satoshi的交易费用价值（必须大于违约费）（可选）
+回复：200 OK，application/json
+
+    {
+        "1JzSZFs2DQke2B3S4pBxaNaMzzVZaG4Cqh": 100000000,
+        "12Cf6nCcRtKERh9cQm3Z29c9MWvQuFSxvT": 1500000000,
+        "1dice6YgEVBf88erBFra9BHf6ZMoyvG88": 200000000
+    }
+
+以上示例将在同一交易中将1BTC发送到1JzSZFs2DQke2B3S4pBxaNaMzzVZaG4Cqh，15BTC到12Cf6nCcRtKERh9cQm3Z29c9MWvQuFSxvT和2BTC到1dice6YgEVBf88erBFra9BHf6ZMoyvG88。
+
+回复：200 OK，application/json
+
+    { "message" : "Response Message" , "tx_hash": "Transaction Hash" }
+
+    { "message" : "Sent To Multiple Recipients" , "tx_hash" : "f322d01ad784e5deeb25464a5781c3b20971c1863679ca506e702e3e33c18e9c" }
+
+PHP示例代码
+
+    <?
+
+    $guid="GUID_HERE";
+    $firstpassword="PASSWORD_HERE";
+    $secondpassword="PASSWORD_HERE";
+    $amounta = "10000000";
+    $amountb = "400000";
+    $addressa = "1A8JiWcwvpY7tAopUkSnGuEYHmzGYfZPiq";
+    $addressb = "1ExD2je6UNxL5oSu6iPUhn9Ta7UrN8bjBy";
+    $recipients = urlencode('{
+                      "'.$addressa.'": '.$amounta.',
+                      "'.$addressb.'": '.$amountb.'
+                   }');
+
+    $json_url = "http://localhost:3000/merchant/$guid/sendmany?password=$firstpassword&second_password=$secondpassword&recipients=$recipients";
+
+    $json_data = file_get_contents($json_url);
+
+    $json_feed = json_decode($json_data);
+
+    $message = $json_feed->message;
+    $txid = $json_feed->tx_hash;
+
+    ?>
+
+#### 2.6.获取钱包余额
+
+获取钱包的余额。 这应仅用作估算值，包括未经证实的交易和可能的双倍花费。
+
+    http://localhost:3000/merchant/$guid/balance?password=$main_password
+
+回复：200 OK，application/json
+
+    { "balance": Wallet Balance in Satoshi }
+    { "balance": 1000}
+
+#### 2.7.列出地址
+
+列出钱包中的所有活动地址。 还包括0确认余额，该余额仅用作估算，包括未经证实的交易和可能的双倍花费。
+
+    http://localhost:3000/merchant/$guid/list?password=$main_password
+
+回复：200 OK，application/json
+
+    {
+        "addresses": [
+            {
+                "balance": 1400938800,
+                "address": "1Q1AtvCyKhtveGm3187mgNRh5YcukUWjQC",
+                "label": "SMS Deposits",
+                "total_received": 5954572400
+            },
+            {
+                "balance": 79434360,
+                "address": "1A8JiWcwvpY7tAopUkSnGuEYHmzGYfZPiq",
+                "label": "My Wallet",
+                "total_received": 453300048335
+            },
+            {
+                "balance": 0,
+                "address": "17p49XUC2fw4Fn53WjZqYAm4APKqhNPEkY",
+                "total_received": 0
+            }
+        ]
+    }
+
+
+#### 2.8.获得地址的余额
+
+检索比特币地址的余额。 按标签查询地址余额是折旧的。
+
+    http://localhost:3000/merchant/$guid/address_balance?password=$main_password&address=$address
+
+* main_password：主区块链钱包密码
+* address：要查找的比特币地址
+
+回复：200 OK，application/json
+
+    {"balance" : Balance in Satoshi ,"address": "Bitcoin Address", "total_received" : Total Satoshi Received}
+    {"balance" : 50000000, "address" : "19r7jAbPDtfTKQ9VJpvDzFFxCjUJFKesVZ", "total_received" : 100000000}
+
+
+#### 2.9.创建一个新地址
+
+    http://localhost:3000/merchant/$guid/new_address?password=$main_password&second_password=$second_password&label=$label
+
+* main_password：主区块链钱包密码
+* second_password：如果启用了双重加密，则为您的第二个区块链钱包密码。
+* label附加到此地址的可选标签。 建议这是一个人类可读的字符串，例如 “订单号：1234”。 您可以使用此作为参考来检查订单的余额（稍后记录）
+
+回复：200 OK，application / json
+
+    { "address" : "The Bitcoin Address Generated" , "label" : "The Address Label"}
+    { "address" : "18fyqiZzndTxdVo7g9ouRogB4uFj86JJiy" , "label":  "Order No : 1234" }
+
+#### 2.10.地址管理
+
+##### 2.10.1.存档地址
+
+为了改善钱包性能，最近未使用的地址应该移动到存档状态。 它们仍将保留在钱包中，但不再包含在“列表”或“列表 - 交易”调用中。
+
+例如，如果在支付发票后为用户生成发票，则应归档该地址。
+
+或者，如果为每个用户生成唯一的比特币地址，则应该归档最近（~30天）未登录其地址的用户。
+
+    http://localhost:3000/merchant/$guid/archive_address?password=$main_password&second_password=$second_password&address=$address
+
+* main_password：主区块链钱包密码
+* address：要存档的比特币地址
+
+回复：200 OK，application / json
+
+    {"archived" : "18fyqiZzndTxdVo7g9ouRogB4uFj86JJiy"}
+
+
+##### 2.10.2.取消归档地址
+
+    http://localhost:3000/merchant/$guid/unarchive_address?password=$main_password&second_password=$second_password&address=$address
+
+* main_password主区块链钱包密码
+* address要取消归档的比特币地址
+
+回复：200 OK，application / json
+
+    {"active" : "18fyqiZzndTxdVo7g9ouRogB4uFj86JJiy"}
+
 
 
 ## 四.比特币JSON-RPC接口
