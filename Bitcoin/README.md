@@ -187,7 +187,272 @@ Fee对象具有以下属性（除了它们引用的minFee-maxFee范围）：
 * 状态503：服务不可用（请在生成预测时等待）
 * 状态429：请求太多（已达到API速率限制）
 
-## 三.比特币区块链浏览器API
+## 三.比特开发者API
+
+Blockchain提供免费使用的API来帮助您开始构建比特币应用程序。在使用blockchain的API时，你需要申请一个秘钥，申请秘钥的地址如下
+
+    https://api.blockchain.info/customer/signup
+    
+
+### 1.支付过程API（接收付款API V2）
+
+一种非常简单的网站接收比特币支付的方法。 这项服务完全免费且安全。 适合商务或个人使用。用户提供了扩展公钥（xPub），blockchain会为用户的客户生成一个唯一的，未使用的相应地址，以便向其发送付款。 blockchain会立即使用你选择的回拨网址通知您该地址的付款。
+
+Blockchain接收付款API V2是开始接受自动比特币支付的最快捷，最简单的方式。 只需一个简单的HTTP GET请求，您就可以在几分钟内启动并运行。
+
+接收比特币支付所涉及的困难之一是需要为每个新用户或发票生成唯一地址。 需要安全地监视和存储这些地址。 区块链接收付款API负责地址的生成和监控。 每当收到付款时，blockchain都会使用简单的回电通知您的服务器。
+
+#### 1.1.请求API密钥访问Blockchain.info API
+
+要使用Receive Payments API V2，请通过https://api.blockchain.info/v2/apikey/request/申请API密钥。 此API密钥仅适用于我们的Receive Payments API。 您不能将标准区块链钱包API密钥用于Receive Payments V2，反之亦然。
+
+#### 1.2.获取扩展公钥（xPub）[xPub可以使用我们新的区块链钱包创建]
+
+此API要求您拥有BIP 32帐户xPub才能接收付款。 开始接收付款的最简单方法是在https://blockchain.info/wallet/#/signup上打开区块链钱包。 您应该在钱包内创建一个新帐户，专门用于此API促成的交易。 进行API调用时，请使用此帐户的xPub（位于“设置” - >“地址” - >“管理” - >“更多选项” - >“显示xPub”）。
+
+#### 1.3.生成接收地址[GET]为您的客户提供唯一的, [未使用的比特币地址]
+
+此方法创建一个应呈现给客户的唯一地址。对于发送到此地址的任何付款，您将收到HTTP通知。请注意，每次调用服务器都会增加`index`参数。这样做是为了不向两个不同的客户显示相同的地址。但是，所有资金仍将显示在同一帐户中。
+
+    https://api.blockchain.info/v2/receive?xpub=$xpub&callback=$callback_url&key=$key
+
+如BIP 44中所定义，钱包软件不会扫描超过20个未使用的地址。如果来自此API的足够多的请求没有匹配的付款，您可以生成超出此范围的地址，这将使支付这些地址的资金变得非常困难。因此，此API将返回错误并拒绝生成新地址，如果它检测到它将创建超过20个未使用地址的间隙。如果您遇到此错误，您将需要切换到新的xPub（在同一个钱包内是可以的），或者收到前20个创建的地址之一的付款
+
+您可以通过选择将“gap_limit”作为额外的URL参数传递来控制此行为。请注意，这不会增加我们的服务器将监控的地址数量。传递`gap_limit`参数会在API停止生成新地址之前更改允许的最大间隙。使用此功能需要您了解差距限制以及如何处理它（仅限高级用户）：
+
+    https://api.blockchain.info/v2/receive?xpub=$xpub&callback=$callback_url&key=$key&gap_limit=$gap_limit
+
+* xpub:您的xPub（您希望付款的位置）
+* callback_url:收到付款时要通知的回调URL。记住URL在调用create方法时对回调URL进行编码。
+* key:您的blockchain.info接收付款v2 api密钥。请求API密钥。
+* gap_limit:可选。在出错之前允许多少个未使用的地址。
+
+使用xPub导出未使用的地址：
+
+    curl "https://api.blockchain.info/v2/receive?xpub=xpub6CWiJoiwxPQni3DFbrQNHWq8kwrL2J1HuBN7zm4xKPCZRmEshc7Dojz4zMah7E4o2GEEbD6HgfG7sQid186Fw9x9akMNKw2mu1PjqacTJB2&callback=https%3A%2F%2Fmystore.com%3Finvoice_id%3D058921123&key=[yourkeyhere]"
+
+让您的客户将比特币发送到响应中包含的地址：
+回复：200 OK，application / json
+
+    {"address":"19jJyiC6DnKyKvPg38eBE8R6yCSXLLEjqw","index":23,"callback":"https://mystore.com?invoice_id=058921123"}
+
+PHP请求示例
+
+    $secret = 'ZzsMLGKe162CfA5EcG6j';
+    $my_xpub = '{YOUR XPUB ADDRESS}';
+    $my_api_key = '{YOUR API KEY}';
+    $my_callback_url = 'https://mystore.com?invoice_id=058921123&secret='.$secret;
+    $root_url = 'https://api.blockchain.info/v2/receive';
+    $parameters = 'xpub=' .$my_xpub. '&callback=' .urlencode($my_callback_url). '&key=' .$my_api_key;
+    $response = file_get_contents($root_url . '?' . $parameters);
+    $object = json_decode($response);
+    echo 'Send Payment To : ' . $object->address;
+
+github上的代码地址：https://github.com/blockchain/receive-payments-demos
+
+#### 1.4.余额更新
+
+此方法监控您选择的已接收和/或预付款的地址。您将在进行交易时立即向您发送HTTP通知，并在随后达到请求中指定的确认数时发送HTTP通知。
+
+您需要指定请求的通知行为。将行为设置为“DELETE”将在将第一个相关通知发送到您的回调地址后删除该请求。将行为设置为“KEEP”将在每次将具有指定确认和操作类型的事务发送到请求中的地址或从请求中的地址发送时发送其他通知。
+
+操作类型是一个可选参数，指示是否将监视接收或已用事务的地址，或两者。默认情况下，监视两种操作类型。
+
+您还可以选择在发送通知之前指定事务达到的确认数。请注意，您将在0次确认时（即交易时立即收到）收到通知，并在达到请求中指定的确认次数时（默认情况下为3次确认）再次收到通知。
+
+
+    https://api.blockchain.info/v2/receive/balance_update
+
+* 地址：要监控的地址
+* 回调：收到付款时要通知的回调网址。
+* 密钥：你的blockchain.info接收付款v2 api密钥。 请求API密钥。
+* onNotification：请求通知行为（'KEEP'|'DELETE）。
+* Confs：可选（默认3）。 在发送通知之前交易需要的确认数。
+* Op：可选（默认为“ALL”）。 您希望接收通知的操作类型（'SPEND'|'RECEIVE'|'ALL'）。
+
+通过5次确认监控每个收到付款的地址：
+
+    curl -H "Content-Type: text/plain" --data '{"key":"[your-key-here]","addr":"183qrMGHzMstARRh2rVoRepAd919sGgMHb","callback":"https://mystore.com?invoice_id=123","onNotification":"KEEP", "op":"RECEIVE", "confs": 5}' https://api.blockchain.info/v2/receive/balance_update
+
+回复：200 OK，application/json
+
+    {
+      "id" : 70,
+      "addr" : "183qrMGHzMstARRh2rVoRepAd919sGgMHb",
+      "op" : "RECEIVE",
+      "confs" : 5,
+      "callback" : "https://mystore.com?invoice_id=123",
+      "onNotification" : "KEEP"
+    }
+
+响应中的id可用于删除请求：
+
+    curl -X DELETE "https://api.blockchain.info/v2/receive/balance_update/70?key=[your-key-here]"
+
+回复：200 OK，application/json
+
+    { "deleted": true }
+
+#### 1.5.阻止通知[POST]
+
+此方法允许您在将指定高度和确认编号的新块添加到区块链时请求回调。
+
+与余额更新请求一样，您需要将请求的通知行为指定为“保持”或“删除”。
+
+高度是一个可选参数，指示您希望在哪个高度接收块通知 - 如果未指定，则这将是下一个块到达的高度。
+
+Confs是另一个可选参数，指示在发送通知时块应具有多少确认。
+
+    https://api.blockchain.info/v2/receive/block_notification
+
+* 回调：添加与查询匹配的块时要通知的回调URL。
+* 密钥：您的blockchain.info接收付款v2 api密钥。 请求API密钥。
+* onNotification：请求通知行为（'KEEP'|'DELETE）。
+* Confs：可选（默认值1）。 在发送通知之前块应该具有的确认数。
+* 高度：可选（默认当前链高+ 1）。 应发送通知的高度。
+
+当比特币区块链达到500,000个区块时请求单个通知：
+
+    curl -H "Content-Type: text/plain" --data '{"key":"[your-key-here]","height":500000,"callback":"https://mysite.com/block?request_id=1234","onNotification":"DELETE"}' https://api.blockchain.info/v2/receive/block_notification
+
+回复：200 OK，application / json
+
+    {
+      "id" : 64,
+      "height" : 500000,
+      "callback" : "https://mysite.com/block?request_id=1234",
+      "confs" : 1,
+      "onNotification" : "DELETE"
+    }
+    
+响应中的id可用于删除请求：
+
+    curl -X DELETE "https://api.blockchain.info/v2/receive/block_notifcation/64?key=[your-key-here]"
+    
+回复：200 OK，application/json
+
+    { "deleted": true }
+
+#### 1.6.实现回调处理（从blockchain.info发送的回调）
+
+##### 1.6.1.接收和平衡更新回调
+
+请注意，回调网址的长度限制为255个字符。
+
+当生成的地址或余额更新请求监控的地址收到付款时，blockchain.info将通知您指定的回调URL。 对于余额更新回调，一旦交易达到指定的确认数量，将发送附加通知。
+
+transaction_hash：付款交易哈希。
+address：目标比特币地址（xPub帐户的一部分）。
+确认：此交易的确认数量。
+价值：收到的付款的价值（在satoshi，因此除以100,000,000以获得BTC的价值）。
+{custom parameter}：回调URL中包含的任何参数都将传递回通知中的回调URL。 您可以使用此功能在回调网址中包含参数，例如invoice_id或customer_id，以跟踪哪些付款与您的哪些客户相关联。
+
+##### 1.6.2.阻止通知回调
+
+每次将新块添加到区块链时，都会发送块通知，并匹配通知请求中设置的确认的高度和数量。
+
+hash:块哈希。
+确认:该块的确认数量。
+height:块高。
+timestamp:指示添加块的时间的unix时间戳。
+size:块大小（以字节为单位）。
+{custom parameter}:回调URL中包含的任何参数都将传递回通知中的回调URL。
+
+##### 1.6.3.PHP代码示例
+
+    $real_secret = 'ZzsMLGKe162CfA5EcG6j';
+    $invoice_id = $_GET['invoice_id']; //invoice_id is passed back to the callback URL
+    $transaction_hash = $_GET['transaction_hash'];
+    $value_in_satoshi = $_GET['value'];
+    $value_in_btc = $value_in_satoshi / 100000000;
+
+    //Commented out to test, uncomment when live
+    if ($_GET['test'] == true) {
+        return;
+    }
+
+    try {
+      //create or open the database
+      $database = new SQLiteDatabase('db.sqlite', 0666, $error);
+    } catch(Exception $e) {
+      die($error);
+    }
+
+    //Add the invoice to the database
+    $stmt = $db->prepare("replace INTO invoice_payments (invoice_id, transaction_hash, value) values(?, ?, ?)");
+    $stmt->bind_param("isd", $invoice_id, $transaction_hash, $value_in_btc);
+
+    if($stmt->execute()) {
+       echo "*ok*";
+    }
+
+##### 1.6.4.预期的回调响应
+
+为了确认回调的成功处理，您的服务器应该以纯文本，无HTML来回复文本“*ok*”（无引号）。 如果服务器以其他任何方式响应，或者什么也不响应，则每个新块（大约每10分钟）将再次重新发送回调，最多1000次（1周）。 可能会阻止服务中阻止看似已死或永不返回“*ok*”响应的回调域。
+
+#### 1.7.检查xPub地址间隙[GET]
+
+检查支付的最后一个地址与使用checkgap端点生成的最后一个地址之间的索引间隔。 使用您要检查的xpub和API密钥，如下所示：
+
+    curl "https://api.blockchain.info/v2/receive/checkgap?xpub=[yourxpubhere]]&key=[yourkeyhere]"
+响应
+
+    {"gap":2}
+
+#### 1.8.回调日志[GET](调试未付款)
+
+使用callback_logs端点查看与回调尝试相关的日志。 使用相关的确切回调和您的API密钥，如下所示：
+
+    curl "https://api.blockchain.info/v2/receive/callback_log?callback=https%3A%2F%2Fmystore.com%3Finvoice_id%3D05892112%26secret%3DZzsMLGKe162CfA5EcG6j&key=[yourkeyhere]"
+
+响应
+
+    [
+       {
+           "callback": "https://mystore.com?invoice_id=058921123&secret=ZzsMLGKe162CfA5EcG6j&key=[yourkeyhere]",
+           "called_at": "2015-10-21T22:43:47Z",
+           "raw_response": "*bad*",
+           "response_code": 200
+       },
+       {
+           "callback": "http://mystore.com?invoice_id=058921123&secret=ZzsMLGKe162CfA5EcG6j&key=[yourkeyhere]",
+           "called_at": "2015-10-21T22:43:55Z",
+           "raw_response": "*bad*",
+           "response_code": 200
+       }
+      ]
+
+#### 1.9.安全
+
+自定义密钥参数应包含在回调URL中。 当回调被触发时，秘密将被传递回回调脚本，并且应该由您的代码检查是否有效。 这可以防止有人试图打电话给你的服务器并错误地将发票标记为“付费”。
+
+#### 1.10.货币转换
+
+使用Exchange Rates API将本地货币的值转换为BTC。下面的内容中将会介绍
+
+#### 1.11.双倍花费和退款
+
+当恶意用户花费两次相同的BTC时会发生双重花费。 初始看似成功的付款可以在以后撤销。 通过等待交易被包含在区块链中并达到一些确认来抵消这种情况。 对于高价值交易，通常认为6个确认是安全的。
+
+通过检查`$_GET['confirmations']`参数来验证回调脚本中的事务确认。 建议您在零确认时确认交易，但仅在确认后才信任该交易。 例如，如果购买产品，我们会在零确认时显示订单成功（第一次回调，但尚未回复“*ok*”），但仅在达到4次或更多次确认时才发货。 有关示例，请参阅PHP演示callback.php。
+
+    if ($_GET['confirmations'] >= 6) {
+        //Insert into confirmed payments
+        echo '*ok*';
+    } else {
+        //Insert into pending payments
+        //Don't print *ok* so the notification resent again on next confirmation
+    }
+
+#### 1.12.地址到期
+
+接收地址永不过期，并将继续受到监视，直到在回调响应中收到“*ok*”或blockchain.info已通知回调1000次。
+
+#### 1.13.安全使用
+
+可以生成的接收地址数量没有限制（只要满足20地址间隙限制），该服务旨在监视数百万个地址。
+
+可能会阻止服务中阻止看似已死或永不返回“* ok *”响应的回调域。
 
 
 
@@ -327,9 +592,6 @@ Fee对象具有以下属性（除了它们引用的minFee-maxFee范围）：
     var utxo = bitUtxo.unspent_outputs;
     var sign = bitcoinMultiSign(sendInfo, bitUtxo.unspent_outputs);
     console.log(sign);
-
-
-
 
 
 ## 七.发送交易比特币主网
