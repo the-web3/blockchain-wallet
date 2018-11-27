@@ -50,7 +50,7 @@ ERC-20令牌具有以下与方法相关的功能：
 
     Transfer(address indexed _from, address indexed _to, uint256 _value)
     
-每当批准`（地址_spender，uint256 _value）`被调用时触发
+每当批准(地址_spender,uint256 _value)被调用时触发
 
     Approval(address indexed _owner, address indexed _spender, uint256 _value)
 
