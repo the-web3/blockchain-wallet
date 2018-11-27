@@ -20,19 +20,19 @@ ERC-20于2015年11月19日由Fabian Vogelsteller提出。 它定义了以太坊T
 
 ERC-20令牌具有以下与方法相关的功能：
 
-获取Token总量
+获取Token代币总量
 
     totalSupply() public view returns (uint256 totalSupply)
      
-获取具有address_owner的其他帐户的帐户余额
+获取具有相应合约地址上的的帐户的帐户余额
 
     balanceOf(address _owner) public view returns (uint256 balance) 
     
-将_value数量的Token发送到地址_to
+将一定数量的Token代币发送到地址给其他接收转账地址
 
     transfer(address _to, uint256 _value) public returns (bool success) 
 
-从地址_from到地址_to发送_value数量的Token
+从地址_from到地址_to发送_value数量的Token代币
 
     transferFrom(address _from, address _to, uint256 _value) public returns (bool success)
 
@@ -43,3 +43,15 @@ ERC-20令牌具有以下与方法相关的功能：
 返回仍然允许_spender从_owner中退出的数量
 
     allowance(address _owner, address _spender) public view returns (uint256 remaining) 
+
+#### 事件格式
+
+转移Token时触发
+
+    Transfer(address indexed _from, address indexed _to, uint256 _value)
+    
+每当批准`（地址_spender，uint256 _value）`被调用时触发
+
+    Approval(address indexed _owner, address indexed _spender, uint256 _value)
+
+
