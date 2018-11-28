@@ -77,7 +77,8 @@ ERC-20令牌具有以下与方法相关的功能：
 
 ### 三.ERC20代币转账签名
 
-以下是封装好的一个ERC20交易签名
+以下是封装好的一个ERC20交易签名，上述代码中包含了单个ERC20交易签名和批量ERC20交易签名，代码中使用到了ethereumjs-tx这个开源库。
+
 
     const transaction = require( 'ethereumjs-tx');
 
@@ -94,7 +95,9 @@ ERC-20令牌具有以下与方法相关的功能：
         return s+num;
     }
 
-    libErc29Sign.ethereumErc20CoinSign = function(privateKey, nonce, currentAccount,  contractAddress, toAddress,  gasPrice,  gasLimit, totalAmount , decimal) {
+这个函数是单个ERC20代币交易签名函数，`privateKey`是私钥；`nonce`交易nonce，标识每一交易；`currentAccount`当前要转账的账户地址；`contractAddress`代币的合约地址；`toAddress`数字货币转入地址；gasPrice和gasLimit俩个相乘代表手续费；`totalAmount`转账金额, `decimal`代币单位换算。
+
+    function ethereumErc20CoinSign(privateKey, nonce, currentAccount,  contractAddress, toAddress,  gasPrice,  gasLimit, totalAmount , decimal) {
         if(!privateKey || !nonce || !currentAccount || !contractAddress || !toAddress  || !gasPrice || !gasLimit || !totalAmount || !decimal) {
             console.log("one of param is null, please give a valid param");
             return paramsErr;
@@ -119,7 +122,9 @@ ERC-20令牌具有以下与方法相关的功能：
         return '0x'+serializedTx;
     };
 
-    libErc29Sign.MultiEthereumErc20CoinSign = function (erc20SignData) {
+下面函数是批量ERC20交易签名，下面函数将参数JSON化，参数的意义和上面的函数一致。
+
+    function MultiEthereumErc20CoinSign(erc20SignData) {
         var outErc20Data = [];
         if(erc20SignData === null) {
             console.log("erc30SignData param is null, please give a valid param");
@@ -150,9 +155,6 @@ ERC-20令牌具有以下与方法相关的功能：
         return { signCoin:"ERC20", signDataArr:outErc20Data}
     };
 
-    module.exports = libErc29Sign;
-
-上述代码中包含了单个ERC20交易签名和批量ERC20交易签名
 
 ### 四.发送交易到区块链网络
 
