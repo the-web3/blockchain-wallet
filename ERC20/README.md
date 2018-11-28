@@ -58,11 +58,102 @@ ERC-20令牌具有以下与方法相关的功能：
 
 由于现在很多代币都没有在BIP44上注册相应的序号，因此现在的大多数钱包开发ERC20代币生成地址时，都使用以太坊的账户地址方式生成ERC20代币的地址。我们这里和正式钱包开发不一样，咱们将用严格的地址生成方式生成ERC20代币的地址。有关BIP44协议部分内容请看面的章节，这里不再做重复的介绍。
 
-下面我们将选取几个BIP44上的币来生成他们的账户地址。
+下面是封装好的一个生成ERC20地址的函数
 
-### 
+    function erc20Address(seed, bipNumber, number, coinMark) {
+        if(!seed || !number) {
+            console.log("input param seed, coinNumber and number is null")
+            return paramsErr;
+        }
+        var rootMasterKey = hdkey.fromMasterSeed(seed);
+        var childKey = rootMasterKey.derivePath("m/44'/" + bipNumber + "'/0'/0/" +  number + "");
+        var address = util.pubToAddress(childKey._hdkey._publicKey, true).toString('hex');
+        var privateKey = childKey._hdkey._privateKey.toString('hex');
+        var erc20Data = {coinMark:coinMark, privateKey:privateKey, address:"0x" + address}
+        return erc20Data;
+    }
+
+函数说明：`seed`是随机种子的Buffer流，`bipNumber`对BIP44协议上规定的代号，`number`对应第几个账户，`0`表示第一个服务器，`coinMark`币的标识，例如`LET`。
 
 ### 三.ERC20代币转账签名
 
+以下是封装好的一个ERC20交易签名
+
+    const transaction = require( 'ethereumjs-tx');
+
+    const paramsErr = {code:1000, message:"input params is null"};
+
+    var libErc29Sign = {};
+
+    function addPreZero(num){
+        var t = (num+'').length,
+            s = '';
+        for(var i=0; i<64-t; i++){
+            s += '0';
+        }
+        return s+num;
+    }
+
+    libErc29Sign.ethereumErc20CoinSign = function(privateKey, nonce, currentAccount,  contractAddress, toAddress,  gasPrice,  gasLimit, totalAmount , decimal) {
+        if(!privateKey || !nonce || !currentAccount || !contractAddress || !toAddress  || !gasPrice || !gasLimit || !totalAmount || !decimal) {
+            console.log("one of param is null, please give a valid param");
+            return paramsErr;
+        }
+        var transactionNonce = parseInt(nonce).toString(16);
+        var gasLimits = parseInt(90000).toString(16);
+        var gasPrices = parseFloat(gasPrice).toString(16);
+        var txboPrice = parseFloat(totalAmount*(10**decimal)).toString(16)
+        var txData = {
+            nonce: '0x'+ transactionNonce,
+            gasLimit: '0x' + gasLimits,
+            gasPrice: '0x' +gasPrices,
+            to: contractAddress,
+            from: currentAccount,
+            value: '0x00',
+            data: '0x' + 'a9059cbb' + addPreZero(toAddress.substr(2)) + addPreZero(txboPrice)
+        }
+        var tx = new transaction(txData);
+        const privateKey1 = new Buffer(privateKey, 'hex');
+        tx.sign(privateKey1);
+        var serializedTx = tx.serialize().toString('hex');
+        return '0x'+serializedTx;
+    };
+
+    libErc29Sign.MultiEthereumErc20CoinSign = function (erc20SignData) {
+        var outErc20Data = [];
+        if(erc20SignData === null) {
+            console.log("erc30SignData param is null, please give a valid param");
+            return paramsErr;
+        }
+        var calcNonce = Number(erc20SignData.nonce);
+        for (var i = 0; i < erc20SignData.signDta.length; i++){
+            var transactionNonce = parseInt(calcNonce).toString(16);
+            var gasLimit = parseInt(120000).toString(16);
+            var gasPrice = parseFloat(erc20SignData.gasPrice).toString(16);
+            var totx = parseFloat((erc20SignData.signDta[i].totalAmount)*(10**(erc20SignData.decimal))).toString(16);
+            var txData = {
+                nonce: '0x'+ transactionNonce,
+                gasLimit: '0x' + gasLimit,
+                gasPrice: '0x' +gasPrice,
+                to: erc20SignData.contractAddress,
+                from: erc20SignData.currentAccount,
+                value: '0x00',
+                data: '0x' + 'a9059cbb' + addPreZero((erc20SignData.signDta[i].toAddress).substr(2)) + addPreZero(totx)
+            }
+            var tx = new transaction(txData);
+            const privateKey1 = new Buffer(erc20SignData.privateKey, 'hex');
+            tx.sign(privateKey1);
+            var serializedTx = '0x' + tx.serialize().toString('hex');
+            outErc20Data = outErc20Data.concat(serializedTx)
+            calcNonce = calcNonce + 1;
+        }
+        return { signCoin:"ERC20", signDataArr:outErc20Data}
+    };
+
+    module.exports = libErc29Sign;
+
+上述代码中包含了单个ERC20交易签名和批量ERC20交易签名
 
 ### 四.发送交易到区块链网络
+
+此处发送交易到区块链网络和以太坊的一致，这里不再做过多的介绍。
