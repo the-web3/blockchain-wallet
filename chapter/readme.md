@@ -19,7 +19,7 @@
 
 ### [第九章：omni—USDT钱包开发](https://github.com/guoshijiang/blockchain-wallet/tree/master/Omni)
 
-### [第十章：瑞波钱包开发](https://github.com/guoshijiang/blockchain-wallet/tree/master/Ripple)
+### [第十章：Ripple钱包开发](https://github.com/guoshijiang/blockchain-wallet/tree/master/Ripple)
 
 ### [第十一章：web3j](https://github.com/guoshijiang/blockchain-wallet/tree/master/web3j)
 
