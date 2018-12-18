@@ -27,9 +27,84 @@ Testnet模式允许Omni Core在比特币testnet区块链上运行以进行安全
 * 要在testnet模式下运行Omni Core，请使用以下选项运行Omni Core：-testnet。
 * 要在testnet上接收OMNI（和TOMNI），请将TBTC发送到moneyqMan7uh8FqdCA2BV5yZ8qVrc9ikLP。每1 TBTC，您将获得100 OMNI和100 TOMNI。
 
-
-
 ### 2.钱包节点搭建
+
+
+#### 2.1.安装环境说明
+
+* Centos系统
+* C++ 和 java
+* OmniCore 0.3.1 fork bitcoin 0.13
+
+#### 2.2.必须依赖项
+
+* libssl
+加密库，用于随机数产生和椭圆曲线加密
+
+* libboost
+应用库，主要用里面的线程、数据结构等
+
+* libevent
+网络，OS独立的异步网络
+
+#### 2.3.可选依赖项
+
+* miniupnpc	
+防火墙穿越支持
+
+* libdb4.8
+钱包存储（仅仅在钱包可以使用的时候支持）
+
+* qt
+界面支撑（）
+
+* protobuf 
+支付协议中的数据交换格式
+
+* libqrencode
+生成QR码（二维码）
+
+* univalue
+解析与生成
+
+* libzmq3	
+生成zmq消息（ZMQ，ZeroMQ，消息队列）
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ## 二.钱包开发
