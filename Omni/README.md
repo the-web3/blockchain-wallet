@@ -70,41 +70,131 @@ Testnet模式允许Omni Core在比特币testnet区块链上运行以进行安全
 * libzmq3	
 生成zmq消息（ZMQ，ZeroMQ，消息队列），版本号需大于4.x
 
-#### 2.4.安装与配置
+如果你的系统上没有g++，请您自行安装
+
+#### 2.4.内存要求
+
+C ++编译器需要大量内存。 在编译比特币核心时，建议至少有1.5 GB的内存可用。 在较少的系统上，可以通过额外的CXXFLAGS调整gcc以节省内存：`./configure CXXFLAGS="--param ggc-min-expand=1 --param ggc-min-heapsize=32768"
+`
+#### 2.5.安装与配置
+
+##### 2.4.1.安装git,如果有git，此步可以略过
+
+    sudo yum install git
+    sudo yum install pkg-config
+
+##### 2.4.2.安装依赖项
+
+    sudo yum install build-essential libtool autotools-dev automake pkg-config libssl-dev libevent-dev bsdmainutils
+  
+##### 2.4.3.安装boost库
+
+    sudo yum install libboost-system-dev libboost-filesystem-dev libboost-chrono-dev libboost-program-options-dev libboost-test-dev libboost-thread-dev
+
+为了兼容各个系统版本，建议安装所有的boost开发包
+
+    sudo yum install libboost-all-dev
+
+##### 2.4.4. 钱包需要BerkeleyDB。 db4.8包可以在这里找到。 您可以使用以下命令添加存储库并进行安装：
+
+    sudo yum install software-properties-common
+    sudo add-apt-repository ppa:bitcoin/bitcoin
+    sudo yum update
+    sudo yum install libdb4.8-dev libdb4.8++-dev
+
+##### 2.4.5.可选安装项
+
+* libminiupnpc 
+
+       sudo yum install libminiupnpc-dev
+
+* ZMQ denpendencies 
+
+      sudo yum install libzmq3-dev
 
 
+##### 2.4.5. GUI依赖项安装
+
+如果需要编译bitcoin-qt，则需要安装qt开发环境，qt4和qt5都是可以的，如果两者都安装了，则默认使用qt5，也可以在配置时，使用--with-gui=qt4来进行选择使用qt4版本，或者使用--without-gui来选择不编译gui。
+
+qt5的安装方法 
+
+    sudo yum install libqt5gui5 libqt5core5a libqt5dbus5 qttools5-dev qttools5-dev-tools libprotobuf-dev protobuf-compiler
+qt4的安装方法 
+
+    sudo yum install libqt4-dev libprotobuf-dev protobuf-compiler
+    
+libqrencode libqrendoce 是qr码（二维码）的支持模块，可选安装 
+
+    sudo yum install libqrencode-dev
+    
+如果这些环境包被安装，则会被configure检测到，bitcoin-qt会默认编译生成。
+
+##### 2.4.6.克隆代码
+
+    git clone https://github.com/OmniLayer/omnicore.git
 
 
+##### 2.4.7.构建OmniCore
+
+    cd omnicore/
+    ./autogen.sh
+    ./configure
+    make && make install 
+
+编译完成之后，在omnicore/src/会有omnicored, omnicore-cli等可执行文件。其来执行方式与bitcoin一样，需要一个名为bitcoin.conf的配置文件。下面是同步数据的命令
+
+    ./omnicored -conf=配置文件目录 -datadir=数据同步目录
+
+启动之后，可以在数`据同步目录/omnicore.log`下面查看日志。
+
+omni同步区块的时间和你的网络相关，我这边同步了3天才同步完成，现在大约有55万多个块。
+
+##### 2.4.8. bitcoin 基本配置
+启动之前，需要配置位于工程目录之下的.bitcoin文件夹中的OmniCore配置文件bitcoin.conf
+
+    server=1  
+    txindex=1 
+    rpcuser=你的rpc用户名
+    rpcpassword=你的rpc密码
+    rpcallowip=127.0.0.1 
+    rpcport=8332
+    paytxfee=0.00001
+    minrelaytxfee=0.00001
+    datacarriersize=80
+    logtimestamps=1
+    omnidebug=tally  
+    omnidebug=packets
+    omnidebug=pending
 
 
+server=1代表开启RPC访问
+txindex=1代表事务初始索引
+recuser和rpcpassword 代表rpc访问的身份验证，
+rpcallowip 和rpcport代表允许访问钱包的ip地址及端口。
+paytxfee和minrelattxfee控制bitcoin交易的手续费，Omni交易也属于一种特殊的比特币交易，打包与广播也需要向矿工支付费用。手续费设置过低会造成交易确认慢甚至交易失败，手续费过高会造成资源的浪费(以2018.09.13的BTC价格换算，每多消耗0.0001btc需要浪费4rmb)，所以设置动态配置交易手续费十分必要。预估比特币交易手续费可以使用下面的网址bitcoinfees.earn，buybitcoinworldwide。假设当前预估的比特币交易费率为0.0000001BTC/Byte,那么需要设置paytxfee=0.00001BTC/kByte。
 
 
+##### 2.4.8.使用节点条用一次RPC接口
+
+导入地址，执行以下命令
+
+    ./omnicore-cli importaddress 1C6UYrmbtvdi8dHZNnZD3YoVwit2mccSgw
+
+然后去你同步数据的目录查看导入日志，同步日志效果如下。
+
+.： 
+    ![.： 
+](https://github.com/guoshijiang/blockchain-wallet/blob/master/img/640.jpg)
 
 
+列出UTXO，命令如下：
 
+    /omnicore-cli "listunspent" 0 999999 '["1C6UYrmbtvdi8dHZNnZD3YoVwit2mccSgw"]'
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+.： 
+    ![.： 
+](https://github.com/guoshijiang/blockchain-wallet/blob/master/img/641.jpg)
 
 
 ## 二.钱包开发
