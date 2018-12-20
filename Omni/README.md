@@ -200,7 +200,85 @@ paytxfee和minrelattxfee控制bitcoin交易的手续费，Omni交易也属于一
 ## 二.Omni浏览器接口
 
 
-
 ## 二.钱包开发
+
+### 1.使用钱包节点进行转账开发
+
+如果你的地址不是在节点上创建的，那么你需要导入地址，才能查找UTXO。如果是在节点上创建的地址，转账发生在节点上的，直接获取UTXO就行。
+
+#### 1.1.导入地址
+
+    ./omnicore-cli importaddress 1C6UYrmbtvdi8dHZNnZD3YoVwit2mccSgw
+
+#### 1.2.列出UTXO
+
+需要导入地址才能获取UTXO的前提条件是，上面的地址已经扫描完所有的块并导入。
+
+    ./omnicore-cli "listunspent" 0 999999 '["1C6UYrmbtvdi8dHZNnZD3YoVwit2mccSgw"]'
+    
+下面是查询的结果
+
+    [
+      {
+        "txid": "974e148acb093a654309bd976fd989e3a565835147b21b8de8cbda97b457995a",
+        "vout": 0,
+        "address": "1C6UYrmbtvdi8dHZNnZD3YoVwit2mccSgw",
+        "account": "",
+        "scriptPubKey": "76a91479b275dd5f136c241f3c28549b4c338177d5cb2188ac",
+        "amount": 0.01300000,
+        "confirmations": 2677,
+        "spendable": false,
+        "solvable": false
+      },
+      {
+        "txid": "25a91d219fe3bd736f60c56f6886a4e96bb3863f181e727657bbc7e1bd407b71",
+        "vout": 0,
+        "address": "1C6UYrmbtvdi8dHZNnZD3YoVwit2mccSgw",
+        "account": "",
+        "scriptPubKey": "76a91479b275dd5f136c241f3c28549b4c338177d5cb2188ac",
+        "amount": 0.00022008,
+        "confirmations": 2676,
+        "spendable": false,
+        "solvable": false
+      },
+      {
+        "txid": "570d3afd9814de0b44b479ad2df597f76c8e798d1e983d199312e0da092fefc2",
+        "vout": 0,
+        "address": "1C6UYrmbtvdi8dHZNnZD3YoVwit2mccSgw",
+        "account": "",
+        "scriptPubKey": "76a91479b275dd5f136c241f3c28549b4c338177d5cb2188ac",
+        "amount": 0.00000546,
+        "confirmations": 1709,
+        "spendable": false,
+        "solvable": false
+      },
+      {
+        "txid": "b43dbcb4d7ead95ab59a3193b97bc30e97c0ea292d415c048076b46e0cd5c1cb",
+        "vout": 0,
+        "address": "1C6UYrmbtvdi8dHZNnZD3YoVwit2mccSgw",
+        "account": "",
+        "scriptPubKey": "76a91479b275dd5f136c241f3c28549b4c338177d5cb2188ac",
+        "amount": 0.00149000,
+        "confirmations": 2677,
+        "spendable": false,
+        "solvable": false
+      }
+    ]
+
+#### 1.3.确定要转出的USDT的数量
+
+    ./omnicore-cli omni_createpayload_simplesend 31 2.0
+
+上面代码中31表示USDT在Omni上的代币ID为31，和以太坊的ERC20代币Token类似，2.0代表的是要转出2个USDT。
+
+执行结果如下：
+
+    000000000000001f000000000bebc200
+
+#### 1.4.创建交易
+
+这个和比特币是一样的，代码如下：
+
+
 
 
