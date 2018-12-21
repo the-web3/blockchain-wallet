@@ -220,65 +220,107 @@ paytxfee和minrelattxfee控制bitcoin交易的手续费，Omni交易也属于一
 
     [
       {
-        "txid": "974e148acb093a654309bd976fd989e3a565835147b21b8de8cbda97b457995a",
+        "txid": "4f5b2b5ac6f7402f2edd8d4dafbdcca71758076d13f9b58dccd02ad76ac0f2ce",
         "vout": 0,
         "address": "1C6UYrmbtvdi8dHZNnZD3YoVwit2mccSgw",
         "account": "",
         "scriptPubKey": "76a91479b275dd5f136c241f3c28549b4c338177d5cb2188ac",
-        "amount": 0.01300000,
-        "confirmations": 2677,
-        "spendable": false,
-        "solvable": false
-      },
-      {
-        "txid": "25a91d219fe3bd736f60c56f6886a4e96bb3863f181e727657bbc7e1bd407b71",
-        "vout": 0,
-        "address": "1C6UYrmbtvdi8dHZNnZD3YoVwit2mccSgw",
-        "account": "",
-        "scriptPubKey": "76a91479b275dd5f136c241f3c28549b4c338177d5cb2188ac",
-        "amount": 0.00022008,
-        "confirmations": 2676,
-        "spendable": false,
-        "solvable": false
-      },
-      {
-        "txid": "570d3afd9814de0b44b479ad2df597f76c8e798d1e983d199312e0da092fefc2",
-        "vout": 0,
-        "address": "1C6UYrmbtvdi8dHZNnZD3YoVwit2mccSgw",
-        "account": "",
-        "scriptPubKey": "76a91479b275dd5f136c241f3c28549b4c338177d5cb2188ac",
-        "amount": 0.00000546,
-        "confirmations": 1709,
-        "spendable": false,
-        "solvable": false
-      },
-      {
-        "txid": "b43dbcb4d7ead95ab59a3193b97bc30e97c0ea292d415c048076b46e0cd5c1cb",
-        "vout": 0,
-        "address": "1C6UYrmbtvdi8dHZNnZD3YoVwit2mccSgw",
-        "account": "",
-        "scriptPubKey": "76a91479b275dd5f136c241f3c28549b4c338177d5cb2188ac",
-        "amount": 0.00149000,
-        "confirmations": 2677,
+        "amount": 0.01411554,
+        "confirmations": 105,
         "spendable": false,
         "solvable": false
       }
     ]
 
+
 #### 1.3.确定要转出的USDT的数量
 
-    ./omnicore-cli omni_createpayload_simplesend 31 2.0
+    ./omnicore-cli omni_createpayload_simplesend 31 5.0
 
 上面代码中31表示USDT在Omni上的代币ID为31，和以太坊的ERC20代币Token类似，2.0代表的是要转出2个USDT。
 
 执行结果如下：
 
-    000000000000001f000000000bebc200
+    000000000000001f000000001dcd6500
 
 #### 1.4.创建交易
 
 这个和比特币是一样的，代码如下：
 
+    ./omnicore-cli "createrawtransaction" '[{"txid":"4f5b2b5ac6f7402f2edd8d4dafbdcca71758076d13f9b58dccd02ad76ac0f2ce","vout":0}]' '{}'
 
+执行结果如下：
+    
+    0100000001cef2c06ad72ad0cc8db5f9136d075817a7ccbdaf4d8ddd2e2f40f7c65a2b5b4f0000000000ffffffff0000000000
+        
 
+#### 1.5.在交易上绑定代币数据
+
+    ./omnicore-cli omni_createrawtx_opreturn 0100000001cef2c06ad72ad0cc8db5f9136d075817a7ccbdaf4d8ddd2e2f40f7c65a2b5b4f0000000000ffffffff0000000000 000000000000001f000000001dcd6500
+    
+执行结果如下：
+    0100000001cef2c06ad72ad0cc8db5f9136d075817a7ccbdaf4d8ddd2e2f40f7c65a2b5b4f0000000000ffffffff010000000000000000166a146f6d6e69000000000000001f000000001dcd650000000000
+
+#### 1.6.添加接收币的地址
+
+    ./omnicore-cli omni_createrawtx_reference 0100000001cef2c06ad72ad0cc8db5f9136d075817a7ccbdaf4d8ddd2e2f40f7c65a2b5b4f0000000000ffffffff010000000000000000166a146f6d6e69000000000000001f000000001dcd650000000000 1DefiYRCAD4wVS7rXwFkqhEn6R88EkSUnh
+    
+执行结果
+            
+    0100000001cef2c06ad72ad0cc8db5f9136d075817a7ccbdaf4d8ddd2e2f40f7c65a2b5b4f0000000000ffffffff020000000000000000166a146f6d6e69000000000000001f000000001dcd650022020000000000001976a9148ac137fb413490ec6f69792552c5f5ddf2ecd4cf88ac00000000
+    
+#### 1.6.设置找零和矿工费
+
+指令：（事务HASH，交易信息，找零地址，手续费）
+
+    ./omnicore-cli omni_createrawtx_change 0100000001cef2c06ad72ad0cc8db5f9136d075817a7ccbdaf4d8ddd2e2f40f7c65a2b5b4f0000000000ffffffff020000000000000000166a146f6d6e69000000000000001f000000001dcd650022020000000000001976a9148ac137fb413490ec6f69792552c5f5ddf2ecd4cf88ac00000000  '[{"txid":"4f5b2b5ac6f7402f2edd8d4dafbdcca71758076d13f9b58dccd02ad76ac0f2ce","vout":0,"scriptPubKey":"76a91479b275dd5f136c241f3c28549b4c338177d5cb2188ac","value":0.01411554}]' "1C6UYrmbtvdi8dHZNnZD3YoVwit2mccSgw" 0.0002
+    
+执行结果：   
+
+    0100000001cef2c06ad72ad0cc8db5f9136d075817a7ccbdaf4d8ddd2e2f40f7c65a2b5b4f0000000000ffffffff03a0391500000000001976a91479b275dd5f136c241f3c28549b4c338177d5cb2188ac0000000000000000166a146f6d6e69000000000000001f000000001dcd650022020000000000001976a9148ac137fb413490ec6f69792552c5f5ddf2ecd4cf88ac00000000
+
+#### 1.7.对交易进行签名
+
+签名指令：
+
+    ./omnicore-cli signrawtransaction 0100000001cef2c06ad72ad0cc8db5f9136d075817a7ccbdaf4d8ddd2e2f40f7c65a2b5b4f0000000000ffffffff03a0391500000000001976a91479b275dd5f136c241f3c28549b4c338177d5cb2188ac0000000000000000166a146f6d6e69000000000000001f000000001dcd650022020000000000001976a9148ac137fb413490ec6f69792552c5f5ddf2ecd4cf88ac00000000
+    
+执行结果：
+
+    {
+      "hex": "0100000001cef2c06ad72ad0cc8db5f9136d075817a7ccbdaf4d8ddd2e2f40f7c65a2b5b4f0000000000ffffffff03a0391500000000001976a91479b275dd5f136c241f3c28549b4c338177d5cb2188ac0000000000000000166a146f6d6e69000000000000001f000000001dcd650022020000000000001976a9148ac137fb413490ec6f69792552c5f5ddf2ecd4cf88ac00000000",
+      "complete": false,
+      "errors": [
+        {
+          "txid": "4f5b2b5ac6f7402f2edd8d4dafbdcca71758076d13f9b58dccd02ad76ac0f2ce",
+          "vout": 0,
+          "scriptSig": "",
+          "sequence": 4294967295,
+          "error": "Operation not valid with the current stack size"
+        }
+      ]
+    }
+
+出现上面这种错误的原因，是因为你的地址不是在节点上生成的，而是通过导入地址的方式导入的，这种情况下，你需要在签名的时候加上私钥。
+
+如下：
+
+    ./omnicore-cli signrawtransaction 0100000001cef2c06ad72ad0cc8db5f9136d075817a7ccbdaf4d8ddd2e2f40f7c65a2b5b4f0000000000ffffffff03a0391500000000001976a91479b275dd5f136c241f3c28549b4c338177d5cb2188ac0000000000000000166a146f6d6e69000000000000001f000000001dcd650022020000000000001976a9148ac137fb413490ec6f69792552c5f5ddf2ecd4cf88ac00000000 '[]' '["私钥"]'
+
+执行结果如下：
+
+    {
+      "hex": "签名串",
+      "complete": true
+    }
+
+#### 1.7.发送交易到区块链网络
+
+指令如下：
+
+    ./omnicore-cli sendrawtransaction 签名串
+    
+返回结果：
+
+    2ae377b5d928132910ffa4419d52913c34d90baec3ed53fc621a07a9bcfb2bcf
 
