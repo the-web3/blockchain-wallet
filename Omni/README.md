@@ -324,3 +324,87 @@ paytxfee和minrelattxfee控制bitcoin交易的手续费，Omni交易也属于一
 
     2ae377b5d928132910ffa4419d52913c34d90baec3ed53fc621a07a9bcfb2bcf
 
+
+### 2.NodeJS离线签名开发USDT钱包
+
+签名代码：
+
+    function addPreZero(num){
+        var t = (num+'').length,
+            s = '';
+        for(var i=0; i<16-t; i++){
+            s += '0';
+        }
+        return s+num;
+    }
+
+    function usdtSign(privateKey, utxo, feeValue, usdtValue, fromAddress, toAddress) {
+        var txb = new bitcoin.TransactionBuilder();
+        var set = bitcoin.ECPair.fromWIF(privateKey);
+        const fundValue = 546;
+        var usdtAmount = parseInt(usdtValue*1e8).toString(16);
+        var totalUnspent = 0;
+        for(var i = 0; i < utxo.length; i++){
+            totalUnspent = totalUnspent + utxo[i].value;
+        }
+        const changeValue = totalUnspent - fundValue - (feeValue*1e8);
+        if (totalUnspent < feeValue + fundValue) {
+            console.log("Total less than fee");
+            return constant.LessValue;
+        }
+        for(var i = 0; i< utxo.length; i++){
+            txb.addInput(utxo[i].tx_hash_big_endian, utxo[i].tx_output_n, 0xfffffffe);
+        }
+        const usdtInfo = [
+            "6f6d6e69",
+            "0000",
+            "00000000001f",
+            addPreZero(usdtAmount)
+        ].join('');
+        const data = Buffer.from(usdtInfo, "hex");
+        const omniOutput = bitcoin.script.compile([
+            bitcoin.opcodes.OP_RETURN,
+            data
+        ]);
+        txb.addOutput(toAddress, fundValue);
+        txb.addOutput(omniOutput, 0);
+        txb.addOutput(fromAddress, changeValue);
+        for(var i = 0;i < utxo.length; i++){
+            txb.sign(0, set);
+        }
+        return txb.buildIncomplete().toHex();
+    };
+
+上面代码中UXTO的获取方式和比特币的一样。
+
+案列代码：
+
+    var utxo ={
+        "unspent_outputs":[
+            {
+                "tx_hash":"1bf1e457ac7572518cde36945e94728659dfae7fb2229411c1e13c085054c506",
+                "tx_hash_big_endian":"06c55450083ce1c1119422b27faedf598672945e9436de8c517275ac57e4f11b",
+                "tx_index":399167492,
+                "tx_output_n": 2,
+                "script":"76a91479b275dd5f136c241f3c28549b4c338177d5cb2188ac",
+                "value": 1363462,
+                "value_hex": "14ce06",
+                "confirmations":0
+            }
+        ]
+    }
+
+    var privateKey = "私钥";
+    var usdtValue = 2;
+    var feeValue = 0.0002;
+    var fromAddress = "1C6UYrmbtvdi8dHZNnZD3YoVwit2mccSgw";
+    var toAddress = "1DefiYRCAD4wVS7rXwFkqhEn6R88EkSUnh";
+    var sign = usdtSign(privateKey, utxo.unspent_outputs, feeValue, usdtValue, fromAddress, toAddress);
+    console.log(sign);
+
+签名成功后调用Omni区块链浏览器接口`https://api.omniexplorer.info/v1/transaction/pushtx`将其发到区块链网络即可
+
+
+
+
+
