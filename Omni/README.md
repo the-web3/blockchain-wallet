@@ -332,6 +332,776 @@ paytxfee和minrelattxfee控制bitcoin交易的手续费，Omni交易也属于一
             ]
         }
     
+#### 2.返回给出地址的余额信息和交易历史记录
+
+接口名字：https://api.omniexplorer.info/v1/address/addr/details/
+请求方式：POST
+调用示例：
+* curl方式调用
+
+        curl -X POST -H "Content-Type: application/x-www-form-urlencoded" -H "Content-Type: application/x-www-form-urlencoded" -d "addr=1EXoDusjGwvnjZUyKkxZ4UHEf77z6A5S4P" "https://api.omniexplorer.info/v1/address/addr/details/"
+
+
+* http方式调用说明
+
+        POST /v1/address/addr/details/ HTTP/1.1
+        Host: api.omniexplorer.info
+        Content-Type: application/x-www-form-urlencoded
+        Content-Type: application/x-www-form-urlencoded
+
+        addr=1EXoDusjGwvnjZUyKkxZ4UHEf77z6A5S4P
+
+
+返回结果：
+
+    {
+        "address": "1EXoDusjGwvnjZUyKkxZ4UHEf77z6A5S4P",
+        "balance": [
+            {
+                "divisible": true,
+                "frozen": "0",
+                "id": "1",
+                "pendingneg": "0",
+                "pendingpos": "0",
+                "reserved": "0",
+                "symbol": "OMNI",
+                "value": "3054147959984"
+            },
+            {
+                "divisible": true,
+                "frozen": "0",
+                "id": "2",
+                "pendingneg": "0",
+                "pendingpos": "0",
+                "reserved": "0",
+                "symbol": "T-OMNI",
+                "value": "0"
+            },
+            {
+                "divisible": true,
+                "error": false,
+                "id": 0,
+                "pendingneg": "0",
+                "pendingpos": "0",
+                "symbol": "BTC",
+                "value": "214236735"
+            }
+        ],
+        "pages": 3,
+        "transactions": [
+            {
+                "amount": "0.00000100",
+                "block": 342733,
+                "blockhash": "000000000000000014a6858e7da93606ffe624331a2f295732c8c9499ffa1025",
+                "blocktime": 1423503818,
+                "confirmations": 176418,
+                "divisible": true,
+                "fee": "0.00001000",
+                "ismine": false,
+                "positioninblock": 1569,
+                "propertyid": 1,
+                "propertyname": "Omni",
+                "sendingaddress": "1F9jCeixNbK6GEkdQFq1ejkbJjAGwVVVqG",
+                "txid": "318fb016144f3dadb16acf39cd7e00089b808418f1c4b343926af55882824966",
+                "type": "Send To Owners",
+                "type_int": 3,
+                "valid": true,
+                "version": 0
+            },
+            {
+                "additional records": "..."
+            }
+        ]
+    }
+
+
+#### 4.返回与Armory离线事务一起使用的未签名事务的Armory编码版本。 数据：unsigned_hex：原始比特币十六进制格式化tx转换为pubkey：发送地址的pubkey
+
+接口名字：https://api.omniexplorer.info/v1/armory/getunsigned
+请求方式：POST
+调用示例：
+* curl方式调用
+
+        curl -X POST -H "Content-Type: application/x-www-form-urlencoded" -H "Content-Type: application/x-www-form-urlencoded" -d "unsigned_hex=01000000011c2d89d15d4853194e0e617e5d6d6d151752b09f72bf62a34453643270ebc763000000001976a914946cb2e08075bcbaf157e47bcb67eb2b2339d24288acffffffff01d8d60000000000001976a914946cb2e08075bcbaf157e47bcb67eb2b2339d24288ac00000000&pubkey=04ad90e5b6bc86b3ec7fac2c5fbda7423fc8ef0d58df594c773fa05e2c281b2bfe877677c668bd13603944e34f4818ee03cadd81a88542b8b4d5431264180e2c28" "https://api.omniexplorer.info/v1/armory/getunsigned"
+
+
+* http方式调用说明
+
+        POST /v1/armory/getunsigned HTTP/1.1
+        Host: api.omniexplorer.info
+        Content-Type: application/x-www-form-urlencoded
+        Content-Type: application/x-www-form-urlencoded
+
+        unsigned_hex=01000000011c2d89d15d4853194e0e617e5d6d6d151752b09f72bf62a34453643270ebc763000000001976a914946cb2e08075bcbaf157e47bcb67eb2b2339d24288acffffffff01d8d60000000000001976a914946cb2e08075bcbaf157e47bcb67eb2b2339d24288ac00000000&pubkey=04ad90e5b6bc86b3ec7fac2c5fbda7423fc8ef0d58df594c773fa05e2c281b2bfe877677c668bd13603944e34f4818ee03cadd81a88542b8b4d5431264180e2c28
+
+
+返回结果：
+
+    {
+        "armoryUnsigned": "=====TXSIGCOLLECT-7fK9x5wF======================================\nAQAAAPm+tNkAAAAAAf2gAQEAAAD5vrTZHC2J0V1IUxlODmF+XW1tFRdSsJ9yv2Kj\nRFNkMnDrx2MAAAAA/SUBAQAAAAHb6cvxUOY3xjmumbvja4ws2Y91+lIUyjV3kswG\nZmxHNAAAAABqRzBEAiAWH+zK7+MqKy/RpARlwAxlkGmB2oI5jwXCzwXlrgoDdwIg\nRIt5APjkheiGF64yCgGDXHpLdlB7cYRgvuEePdRvee0BIQIx3eVJDpRTFPeTFz1z\nD/sd7M8z0/5dZUFpNFHpPFrinv////8EYOoAAAAAAAAZdqkUlGyy4IB1vLrxV+R7\ny2frKyM50kKIrJB3dAEAAAAAGXapFJHmmj4F756OJPTktKHCmlUL83kWiKxg6gAA\nAAAAABl2qRSCgUFaaIQzk5laBF7zFYAlb2gEyYisYOoAAAAAAAAZdqkUgQAAAAAA\nAAACAAAAAAX14QAAAACIrAAAAAAAAAD/////AUEErZDltryGs+x/rCxfvadCP8jv\nDVjfWUx3P6BeLCgbK/6HdnfGaL0TYDlE409IGO4Dyt2BqIVCuLTVQxJkGA4sKAAA\nATQBAAAA+b602Rl2qRSUbLLggHW8uvFX5HvLZ+srIznSQois2NYAAAAAAAAAAARO\nT05FAAAAAAAAAA==\n================================================================"
+    }
+
+
+#### 5.从armory交易中解码并返回原始十六进制和签名状态。 数据：armory_tx：文本格式的armory交易
+
+接口名字：https://api.omniexplorer.info/v1/armory/getrawtransaction
+请求方式：POST
+调用示例：
+* curl方式调用
+
+        curl -X POST -H "Content-Type: application/x-www-form-urlencoded" -H "Content-Type: application/x-www-form-urlencoded" -d "armory_tx======TXSIGCOLLECT-7fK9x5wF======================================
+        AQAAAPm+tNkAAAAAAf2gAQEAAAD5vrTZHC2J0V1IUxlODmF+XW1tFRdSsJ9yv2Kj
+        RFNkMnDrx2MAAAAA/SUBAQAAAAHb6cvxUOY3xjmumbvja4ws2Y91+lIUyjV3kswG
+        ZmxHNAAAAABqRzBEAiAWH+zK7+MqKy/RpARlwAxlkGmB2oI5jwXCzwXlrgoDdwIg
+        RIt5APjkheiGF64yCgGDXHpLdlB7cYRgvuEePdRvee0BIQIx3eVJDpRTFPeTFz1z
+        D/sd7M8z0/5dZUFpNFHpPFrinv////8EYOoAAAAAAAAZdqkUlGyy4IB1vLrxV+R7
+        y2frKyM50kKIrJB3dAEAAAAAGXapFJHmmj4F756OJPTktKHCmlUL83kWiKxg6gAA
+        AAAAABl2qRSCgUFaaIQzk5laBF7zFYAlb2gEyYisYOoAAAAAAAAZdqkUgQAAAAAA
+        AAACAAAAAAX14QAAAACIrAAAAAAAAAD/////AUEErZDltryGs+x/rCxfvadCP8jv
+        DVjfWUx3P6BeLCgbK/6HdnfGaL0TYDlE409IGO4Dyt2BqIVCuLTVQxJkGA4sKAAA
+        ATQBAAAA+b602Rl2qRSUbLLggHW8uvFX5HvLZ+srIznSQois2NYAAAAAAAAAAARO
+        T05FAAAAAAAAAA==
+        ================================================================" "https://api.omniexplorer.info/v1/armory/getrawtransaction"
+
+* http方式调用说明
+
+        POST /v1/armory/getrawtransaction HTTP/1.1
+        Host: api.omniexplorer.info
+        Content-Type: application/x-www-form-urlencoded
+        Content-Type: application/x-www-form-urlencoded
+
+        armory_tx======TXSIGCOLLECT-7fK9x5wF======================================
+        AQAAAPm+tNkAAAAAAf2gAQEAAAD5vrTZHC2J0V1IUxlODmF+XW1tFRdSsJ9yv2Kj
+        RFNkMnDrx2MAAAAA/SUBAQAAAAHb6cvxUOY3xjmumbvja4ws2Y91+lIUyjV3kswG
+        ZmxHNAAAAABqRzBEAiAWH+zK7+MqKy/RpARlwAxlkGmB2oI5jwXCzwXlrgoDdwIg
+        RIt5APjkheiGF64yCgGDXHpLdlB7cYRgvuEePdRvee0BIQIx3eVJDpRTFPeTFz1z
+        D/sd7M8z0/5dZUFpNFHpPFrinv////8EYOoAAAAAAAAZdqkUlGyy4IB1vLrxV+R7
+        y2frKyM50kKIrJB3dAEAAAAAGXapFJHmmj4F756OJPTktKHCmlUL83kWiKxg6gAA
+        AAAAABl2qRSCgUFaaIQzk5laBF7zFYAlb2gEyYisYOoAAAAAAAAZdqkUgQAAAAAA
+        AAACAAAAAAX14QAAAACIrAAAAAAAAAD/////AUEErZDltryGs+x/rCxfvadCP8jv
+        DVjfWUx3P6BeLCgbK/6HdnfGaL0TYDlE409IGO4Dyt2BqIVCuLTVQxJkGA4sKAAA
+        ATQBAAAA+b602Rl2qRSUbLLggHW8uvFX5HvLZ+srIznSQois2NYAAAAAAAAAAARO
+        T05FAAAAAAAAAA==
+        ================================================================
+
+返回结果：
+
+    {
+        "rawTransaction": "01000000011c2d89d15d4853194e0e617e5d6d6d151752b09f72bf62a34453643270ebc7630000000000ffffffff01d8d60000000000001976a914946cb2e08075bcbaf157e47bcb67eb2b2339d24288ac00000000",
+        "signed": false
+    }
+
+
+#### 6.解码签名的交易信息
+
+接口名字：https://api.omniexplorer.info/v1/decode/
+请求方式：POST
+调用示例：
+* curl方式调用
+
+        curl -X POST -H "Content-Type: application/x-www-form-urlencoded" -H "Content-Type: application/x-www-form-urlencoded" -d "hex=0100000001b8442ba55406897a5c5751d3b4bb841d1686dbf43de16e1f4d581a2274eecd8e000000006b483045022100ac16e6e938d1353440b88d41e7de9e7ef3d232fb8db04ed639885596d0f8df260220297fc6fb9d39d9042b859b07dd78b634827f8d541213c16c0d68b40b60739372012103124d5b2ba19187be886e4bfa4c5c66cbdac7c6249825ff4fa3c7e05479a08823feffffff030000000000000000166a146f6d6e69000000000000001f000000003b02338075910700000000001976a914025d87dd0602bd86308b354e038f82ba1e9fe94688ac22020000000000001976a91488d924f51033b74a895863a5fb57fd545529df7d88acf9eb0700" "https://api.omniexplorer.info/v1/decode/"
+
+
+* http方式调用说明
+
+        POST /v1/decode/ HTTP/1.1
+        Host: api.omniexplorer.info
+        Content-Type: application/x-www-form-urlencoded
+        Content-Type: application/x-www-form-urlencoded
+
+        hex=0100000001b8442ba55406897a5c5751d3b4bb841d1686dbf43de16e1f4d581a2274eecd8e000000006b483045022100ac16e6e938d1353440b88d41e7de9e7ef3d232fb8db04ed639885596d0f8df260220297fc6fb9d39d9042b859b07dd78b634827f8d541213c16c0d68b40b60739372012103124d5b2ba19187be886e4bfa4c5c66cbdac7c6249825ff4fa3c7e05479a08823feffffff030000000000000000166a146f6d6e69000000000000001f000000003b02338075910700000000001976a914025d87dd0602bd86308b354e038f82ba1e9fe94688ac22020000000000001976a91488d924f51033b74a895863a5fb57fd545529df7d88acf9eb0700
+
+
+返回结果：
+
+        {
+            "BTC": {
+                "hash": "5451c8e67d7ab3f947064337e8cf87c416f1fb163630913dcf307d4ca5d5ccaa",
+                "locktime": 519161,
+                "size": 257,
+                "txid": "5451c8e67d7ab3f947064337e8cf87c416f1fb163630913dcf307d4ca5d5ccaa",
+                "version": 1,
+                "vin": [
+                    {
+                        "scriptSig": {
+                            "asm": "3045022100ac16e6e938d1353440b88d41e7de9e7ef3d232fb8db04ed639885596d0f8df260220297fc6fb9d39d9042b859b07dd78b634827f8d541213c16c0d68b40b60739372[ALL] 03124d5b2ba19187be886e4bfa4c5c66cbdac7c6249825ff4fa3c7e05479a08823",
+                            "hex": "483045022100ac16e6e938d1353440b88d41e7de9e7ef3d232fb8db04ed639885596d0f8df260220297fc6fb9d39d9042b859b07dd78b634827f8d541213c16c0d68b40b60739372012103124d5b2ba19187be886e4bfa4c5c66cbdac7c6249825ff4fa3c7e05479a08823"
+                        },
+                        "sequence": 4294967294,
+                        "txid": "8ecdee74221a584d1f6ee13df4db86161d84bbb4d351575c7a890654a52b44b8",
+                        "vout": 0
+                    }
+                ],
+                "vout": [
+                    {
+                        "n": 0,
+                        "scriptPubKey": {
+                            "asm": "OP_RETURN 6f6d6e69000000000000001f000000003b023380",
+                            "hex": "6a146f6d6e69000000000000001f000000003b023380",
+                            "type": "nulldata"
+                        },
+                        "value": 0.0
+                    },
+                    {
+                        "n": 1,
+                        "scriptPubKey": {
+                            "addresses": [
+                                "1DWQ1gZ8VhL1fUCABqKbXtUZv63roGvXf"
+                            ],
+                            "asm": "OP_DUP OP_HASH160 025d87dd0602bd86308b354e038f82ba1e9fe946 OP_EQUALVERIFY OP_CHECKSIG",
+                            "hex": "76a914025d87dd0602bd86308b354e038f82ba1e9fe94688ac",
+                            "reqSigs": 1,
+                            "type": "pubkeyhash"
+                        },
+                        "value": 0.00495989
+                    },
+                    {
+                        "n": 2,
+                        "scriptPubKey": {
+                            "addresses": [
+                                "1DUb2YYbQA1jjaNYzVXLZ7ZioEhLXtbUru"
+                            ],
+                            "asm": "OP_DUP OP_HASH160 88d924f51033b74a895863a5fb57fd545529df7d OP_EQUALVERIFY OP_CHECKSIG",
+                            "hex": "76a91488d924f51033b74a895863a5fb57fd545529df7d88ac",
+                            "reqSigs": 1,
+                            "type": "pubkeyhash"
+                        },
+                        "value": 5.46e-06
+                    }
+                ],
+                "vsize": 257
+            },
+            "OMNI": {
+                "amount": "9.90000000",
+                "confirmations": 0,
+                "divisible": true,
+                "fee": "0.00003465",
+                "ismine": false,
+                "propertyid": 31,
+                "referenceaddress": "1DUb2YYbQA1jjaNYzVXLZ7ZioEhLXtbUru",
+                "sendingaddress": "1DWQ1gZ8VhL1fUCABqKbXtUZv63roGvXf",
+                "txid": "5451c8e67d7ab3f947064337e8cf87c416f1fb163630913dcf307d4ca5d5ccaa",
+                "type": "Simple Send",
+                "type_int": 0,
+                "version": 0
+            },
+            "Reference": "1DUb2YYbQA1jjaNYzVXLZ7ZioEhLXtbUru",
+            "Sender": "1DWQ1gZ8VhL1fUCABqKbXtUZv63roGvXf",
+            "error": "None",
+            "inputs": {
+                "1DWQ1gZ8VhL1fUCABqKbXtUZv63roGvXf": 500000
+            }
+        }
+
+#### 7.返回omnidex已打开订单的当前有效/可用基础货币列表。 数据：生态系统：主网/生产生态系统为1，测试/开发生态系统为2
+
+接口名字：https://api.omniexplorer.info/v1/omnidex/designatingcurrencies
+请求方式：POST
+调用示例：
+* curl方式调用
+
+        curl -X POST -H "Content-Type: application/x-www-form-urlencoded" -H "Content-Type: application/x-www-form-urlencoded" -d "ecosystem=1" "https://api.omniexplorer.info/v1/omnidex/designatingcurrencies"
+
+
+* http方式调用说明
+
+        POST /v1/omnidex/designatingcurrencies HTTP/1.1
+        Host: api.omniexplorer.info
+        Content-Type: application/x-www-form-urlencoded
+        Content-Type: application/x-www-form-urlencoded
+
+        ecosystem=1
+
+
+返回结果：
+
+        {
+            "currencies": [
+                {
+                    "displayname": "Omni #1",
+                    "propertyid": 1,
+                    "propertyname": "Omni"
+                },
+                {
+                    "displayname": "MaidSafeCoin #3",
+                    "propertyid": 3,
+                    "propertyname": "MaidSafeCoin"
+                },
+                {
+                    "displayname": "TetherUS #31",
+                    "propertyid": 31,
+                    "propertyname": "TetherUS"
+                },
+                {
+                    "additional records": "..."
+                }
+            ],
+            "status": 200
+        }
+
+#### 8.返回与查询的Property ID相关的事务列表（每页最多10个）。 返回的交易类型包括：创建Tx，变更发行人txs，授予Txs，撤销Txs，Crowdsale参与Txs，早期关闭Crowdsale tx
+
+接口名字：https://api.omniexplorer.info/v1/properties/gethistory
+请求方式：POST
+调用示例：
+* curl方式调用
+
+        curl -X POST -H "Content-Type: application/x-www-form-urlencoded" -H "Content-Type: application/x-www-form-urlencoded" -d "page=0" "https://api.omniexplorer.info/v1/properties/gethistory/3"
+
+
+* http方式调用说明
+
+        POST /v1/properties/gethistory/3 HTTP/1.1
+        Host: api.omniexplorer.info
+        Content-Type: application/x-www-form-urlencoded
+        Content-Type: application/x-www-form-urlencoded
+
+        page=0
+
+
+返回结果：
+
+        {
+            "pages": 19,
+            "total": 193,
+            "transactions": [
+                {
+                    "amount": "0",
+                    "block": 297115,
+                    "blockhash": "00000000000000004c93a71e1b0dd876c07cbc5ebd385ff8e5ba8379ffa1e377",
+                    "blocktime": 1398154020,
+                    "category": "Crowdsale",
+                    "confirmations": 213140,
+                    "data": "SAFE Network Crowdsale (MSAFE)",
+                    "deadline": 1400749200,
+                    "divisible": false,
+                    "earlybonus": 10,
+                    "ecosystem": "main",
+                    "fee": "0.00010001",
+                    "ismine": false,
+                    "percenttoissuer": 0,
+                    "positioninblock": 215,
+                    "propertyid": 3,
+                    "propertyiddesired": 1,
+                    "propertyname": "MaidSafeCoin",
+                    "propertytype": "indivisible",
+                    "sendingaddress": "1ARjWDkZ7kT9fwjPrjcQyvbXDkEySzKHwu",
+                    "subcategory": "MaidSafe",
+                    "tokensperunit": "0.00003400",
+                    "txid": "86f214055a7f4f5057922fd1647e00ef31ab0a3ff15217f8b90e295f051873a7",
+                    "type": "Create Property - Variable",
+                    "type_int": 51,
+                    "url": "www.buysafecoins.com",
+                    "valid": true,
+                    "version": 0
+                },
+                {
+                    "amount": "100.00000000",
+                    "block": 297117,
+                    "blockhash": "00000000000000002cf2f281f4a69c6757f9e468fd30b50c5c85433a7b17b1c5",
+                    "blocktime": 1398155998,
+                    "confirmations": 213138,
+                    "divisible": true,
+                    "fee": "0.00050000",
+                    "ismine": false,
+                    "issuertokens": "0",
+                    "positioninblock": 83,
+                    "propertyid": 1,
+                    "purchasedpropertydivisible": false,
+                    "purchasedpropertyid": 3,
+                    "purchasedpropertyname": "MaidSafeCoin",
+                    "purchasedtokens": "485781",
+                    "referenceaddress": "1ARjWDkZ7kT9fwjPrjcQyvbXDkEySzKHwu",
+                    "sendingaddress": "1LEVELTb6dkZmsUXgQE8nqc8naAVotX86D",
+                    "txid": "4ec15360a03d23c069c2fd4a035cfee28af5ddfdd5a6839934dd2629129d477e",
+                    "type": "Crowdsale Purchase",
+                    "type_int": 0,
+                    "valid": true,
+                    "version": 0
+                },
+                {
+                    "additional records": "..."
+                }
+            ]
+        }
+
+#### 9.返回查询地址创建的属性列表。
+
+接口名字：https://api.omniexplorer.info/v1/properties/listbyowner
+请求方式：POST
+调用示例：
+* curl方式调用
+
+        curl -X POST -H "Content-Type: application/x-www-form-urlencoded" -H "Content-Type: application/x-www-form-urlencoded" -d "addresses=1ARjWDkZ7kT9fwjPrjcQyvbXDkEySzKHwu" "https://api.omniexplorer.info/v1/properties/listbyowner"
+
+* http方式调用说明
+
+        POST /v1/properties/listbyowner HTTP/1.1
+        Host: api.omniexplorer.info
+        Content-Type: application/x-www-form-urlencoded
+        Content-Type: application/x-www-form-urlencoded
+
+        addresses=1ARjWDkZ7kT9fwjPrjcQyvbXDkEySzKHwu
+
+返回结果：
+
+        {
+            "properties": [
+                {
+                    "active": false,
+                    "addedissuertokens": "0",
+                    "amount": "0",
+                    "amountraised": "93249.21601551",
+                    "block": 297115,
+                    "blockhash": "00000000000000004c93a71e1b0dd876c07cbc5ebd385ff8e5ba8379ffa1e377",
+                    "blocktime": 1398154020,
+                    "category": "Crowdsale",
+                    "closedearly": true,
+                    "closetx": "b8864525a2eef4f76a58f33a4af50dc24461445e1a420e21bcc99a1901740e79",
+                    "confirmations": 213140,
+                    "creationtxid": "86f214055a7f4f5057922fd1647e00ef31ab0a3ff15217f8b90e295f051873a7",
+                    "data": "SAFE Network Crowdsale (MSAFE)",
+                    "deadline": 1400749200,
+                    "divisible": false,
+                    "earlybonus": 10,
+                    "ecosystem": "main",
+                    "endedtime": 1398173740,
+                    "fee": "0.00010001",
+                    "fixedissuance": false,
+                    "ismine": false,
+                    "issuer": "1ARjWDkZ7kT9fwjPrjcQyvbXDkEySzKHwu",
+                    "managedissuance": false,
+                    "maxtokens": false,
+                    "name": "MaidSafeCoin",
+                    "percenttoissuer": 0,
+                    "positioninblock": 215,
+                    "propertyid": 3,
+                    "propertyiddesired": 1,
+                    "propertyname": "MaidSafeCoin",
+                    "propertytype": "indivisible",
+                    "sendingaddress": "1ARjWDkZ7kT9fwjPrjcQyvbXDkEySzKHwu",
+                    "starttime": 1398154020,
+                    "subcategory": "MaidSafe",
+                    "tokensissued": "452552412",
+                    "tokensperunit": "3400",
+                    "totaltokens": "452552412",
+                    "txid": "86f214055a7f4f5057922fd1647e00ef31ab0a3ff15217f8b90e295f051873a7",
+                    "type": "Create Property - Variable",
+                    "type_int": 51,
+                    "url": "www.buysafecoins.com",
+                    "valid": true,
+                    "version": 0
+                }
+        ],
+            "status": "OK"
+        }
+
+#### 10.返回当前活动的众包列表。 数据：生态系统：1用于生产/主网生态系统。 2用于测试/ 开发生态系统
+
+接口名字：https://api.omniexplorer.info/v1/properties/listactivecrowdsales
+请求方式：POST
+调用示例：
+* curl方式调用
+
+        curl -X POST -H "Content-Type: application/x-www-form-urlencoded" -H "Content-Type: application/x-www-form-urlencoded" -d "ecosystem=1" "https://api.omniexplorer.info/v1/properties/listactivecrowdsales"
+
+* http方式调用说明
+
+        POST /v1/properties/listactivecrowdsales HTTP/1.1
+        Host: api.omniexplorer.info
+        Content-Type: application/x-www-form-urlencoded
+        Content-Type: application/x-www-form-urlencoded
+
+        ecosystem=1
+
+返回结果：
+
+        {
+            "crowdsales": [
+                {
+                    "active": true,
+                    "amountraised": "300000000",
+                    "category": "Proof of Stake",
+                    "creationtxid": "b01d1594a7e2083ebcd428706045df003f290c4dc7bd6d77c93df9fcca68232f",
+                    "data": "Introducing ProzCoin which utilizes the new Proof of Action algorithm.  PoA pays users for article submission, moderating forums, interaction and participation.  PoA adjusts to pay out higher rates for higher quality content based on user ratings.",
+                    "deadline": 1406967060000,
+                    "divisible": true,
+                    "earlybonus": 0,
+                    "fixedissuance": false,
+                    "issuer": "1PRozi3UhpXtC4kZtPD1nfCFXJkXrV27Wp",
+                    "name": "ProzCoin",
+                    "percenttoissuer": 100,
+                    "propertyid": 28,
+                    "propertyiddesired": 24,
+                    "propertyiddesiredname": "BitStrapAccessToken",
+                    "starttime": 1406925999,
+                    "subcategory": "Proof of Action",
+                    "tokensissued": "600000000.00000000",
+                    "tokensperunit": "100000000.00000000",
+                    "totaltokens": "600000000.00000000",
+                    "url": "http://Coinproz.com/Coinpage.html?alt=proz"
+                },
+                {
+                    "additional records": "..."
+                }
+            ],
+            "status": "OK"
+        }
+
+
+#### 10返回由生态系统过滤的已创建属性列表。 数据：生态系统：1用于生产/主网生态系统。 2用于测试/开发生态系统
+
+
+接口名字：https://api.omniexplorer.info/v1/properties/listbyecosystem
+请求方式：GET
+调用示例：
+* curl方式调用
+
+        curl -X GET -H "Content-Type: application/x-www-form-urlencoded" "https://api.omniexplorer.info/v1/properties/list"
+
+* http方式调用说明
+
+        POST /v1/properties/listbyecosystem HTTP/1.1
+        Host: api.omniexplorer.info
+        Content-Type: application/x-www-form-urlencoded
+        Content-Type: application/x-www-form-urlencoded
+
+        ecosystem=1
+        
+返回结果：
+
+        {
+            "properties": [
+                {
+                    "blocktime": 1377994675,
+                    "category": "N/A",
+                    "creationtxid": "0000000000000000000000000000000000000000000000000000000000000000",
+                    "data": "Omni serve as the binding between Bitcoin, smart properties and contracts created on the Omni Layer.",
+                    "divisible": true,
+                    "fixedissuance": false,
+                    "issuer": "1EXoDusjGwvnjZUyKkxZ4UHEf77z6A5S4P",
+                    "managedissuance": false,
+                    "name": "Omni",
+                    "propertyid": 1,
+                    "subcategory": "N/A",
+                    "totaltokens": "617211.68177584",
+                    "url": "http://www.omnilayer.org"
+                },
+                {
+                    "additional records": "..."
+                }
+            ],
+            "status": "OK"
+        }
+
+#### 11.返回所有已创建属性的列表。
+
+接口名字：https://api.omniexplorer.info/v1/properties/list
+请求方式：GET
+调用示例：
+* curl方式调用
+
+        curl -X GET -H "Content-Type: application/x-www-form-urlencoded" "https://api.omniexplorer.info/v1/properties/list"
+
+* http方式调用说明
+
+        GET /v1/properties/list HTTP/1.1
+        Host: api.omniexplorer.info
+        Content-Type: application/x-www-form-urlencoded
+
+返回结果：
+
+        {
+            "properties": [
+                {
+                    "blocktime": 1377994675,
+                    "category": "N/A",
+                    "creationtxid": "0000000000000000000000000000000000000000000000000000000000000000",
+                    "data": "Omni serve as the binding between Bitcoin, smart properties and contracts created on the Omni Layer.",
+                    "divisible": true,
+                    "fixedissuance": false,
+                    "issuer": "1EXoDusjGwvnjZUyKkxZ4UHEf77z6A5S4P",
+                    "managedissuance": false,
+                    "name": "Omni",
+                    "propertyid": 1,
+                    "subcategory": "N/A",
+                    "totaltokens": "617211.68177584",
+                    "url": "http://www.omnilayer.org"
+                },
+                {
+                    "blocktime": 1377994675,
+                    "category": "N/A",
+                    "creationtxid": "0000000000000000000000000000000000000000000000000000000000000000",
+                    "data": "Test Omni serve as the binding between Bitcoin, smart properties and contracts created on the Omni Layer.",
+                    "divisible": true,
+                    "fixedissuance": false,
+                    "issuer": "1EXoDusjGwvnjZUyKkxZ4UHEf77z6A5S4P",
+                    "managedissuance": false,
+                    "name": "Test Omni",
+                    "propertyid": 2,
+                    "subcategory": "N/A",
+                    "totaltokens": "563162.35759628",
+                    "url": "http://www.omnilayer.org"
+                },
+                {
+                    "additional records": "..."
+                }
+            ],
+            "status": "OK"
+        }
+
+#### 12.按事务ID，地址或属性ID搜索。 数据：查询：要搜索的交易ID，地址或属性ID的文本字符串
+
+接口名字：https://api.omniexplorer.info/v1/search
+请求方式：POST
+调用示例：
+* curl方式调用
+
+        curl -X POST -H "Content-Type: application/x-www-form-urlencoded" -H "Content-Type: application/x-www-form-urlencoded" -d "query=3" "https://api.omniexplorer.info/v1/search"
+
+* http方式调用说明
+
+        POST /v1/search HTTP/1.1
+        Host: api.omniexplorer.info
+        Content-Type: application/x-www-form-urlencoded
+        Content-Type: application/x-www-form-urlencoded
+
+        query=3
+
+
+返回结果：
+
+        {
+            "data": {
+                "address": {},
+                "asset": [
+                    [
+                        3,
+                        "MaidSafeCoin",
+                        "1ARjWDkZ7kT9fwjPrjcQyvbXDkEySzKHwu"
+                    ]
+                ],
+                "tx": {}
+            },
+            "query": "3",
+            "status": 200
+        }
+
+#### 13.返回查询地址的交易列表。 数据：地址：查询页面的地址：循环浏览可用的响应页面（每页10个tx）
+
+接口名字：https://api.omniexplorer.info/v1/transaction/address
+请求方式：POST
+调用示例：
+* curl方式调用
+
+        curl -X POST -H "Content-Type: application/x-www-form-urlencoded" -H "Content-Type: application/x-www-form-urlencoded" -d "addr=1EXoDusjGwvnjZUyKkxZ4UHEf77z6A5S4P&page=0" "https://api.omniexplorer.info/v1/transaction/address"
+
+
+* http方式调用说明
+
+        POST /v1/transaction/address HTTP/1.1
+        Host: api.omniexplorer.info
+        Content-Type: application/x-www-form-urlencoded
+        Content-Type: application/x-www-form-urlencoded
+
+        addr=1EXoDusjGwvnjZUyKkxZ4UHEf77z6A5S4P&page=0
+
+
+返回结果：
+
+        {
+            "address": "1EXoDusjGwvnjZUyKkxZ4UHEf77z6A5S4P",
+            "pages": 3,
+            "transactions": [
+                {
+                    "amount": "0.00000100",
+                    "block": 342733,
+                    "blockhash": "000000000000000014a6858e7da93606ffe624331a2f295732c8c9499ffa1025",
+                    "blocktime": 1423503818,
+                    "confirmations": 176424,
+                    "divisible": true,
+                    "fee": "0.00001000",
+                    "ismine": false,
+                    "positioninblock": 1569,
+                    "propertyid": 1,
+                    "propertyname": "Omni",
+                    "sendingaddress": "1F9jCeixNbK6GEkdQFq1ejkbJjAGwVVVqG",
+                    "txid": "318fb016144f3dadb16acf39cd7e00089b808418f1c4b343926af55882824966",
+                    "type": "Send To Owners",
+                    "type_int": 3,
+                    "valid": true,
+                    "version": 0
+                },
+                {
+                    "additional records": "..."
+                }
+            ]
+        }
+
+#### 14.将已签名的事务广播到网络。 数据：signedTransaction：已签名的十六进制广播
+
+接口名字：https://api.omniexplorer.info/v1/transaction/pushtx
+请求方式：POST
+调用示例：
+* curl方式调用
+
+        curl -X POST -H "Content-Type: application/x-www-form-urlencoded" -H "Content-Type: application/x-www-form-urlencoded" -d "signedTransaction=01000000010b7ad3946c6fcd15d39fd4312c4f8dfd68c51a61071c2575cfb0722c4403eef1000000008a47304402206fe4eabf81cc4c6c3cee3dedc6ea9be46bb685c1b61da577bb9aead8188b80b702201404284c52ad2e857bd3931fb0e1646575d1e72c93b2cdcd80a7e0c7bee1c191014104ad90e5b6bc86b3ec7fac2c5fbda7423fc8ef0d58df594c773fa05e2c281b2bfe877677c668bd13603944e34f4818ee03cadd81a88542b8b4d5431264180e2c28ffffffff0470170000000000001976a9143b0000000000000001000000009d828d9600000088ac70170000000000001976a9143c791cc99255509d85788e2bf0e0f6e8b389b3cf88ac40355d5f000000001976a914946cb2e08075bcbaf157e47bcb67eb2b2339d24288ac70170000000000001976a914946cb2e08075bcbaf157e47bcb67eb2b2339d24288ac00000000" "https://api.omniexplorer.info/v1/transaction/pushtx/"
+
+* http方式调用说明
+
+        POST /v1/transaction/pushtx/ HTTP/1.1
+        Host: api.omniexplorer.info
+        Content-Type: application/x-www-form-urlencoded
+        Content-Type: application/x-www-form-urlencoded
+
+        signedTransaction=01000000010b7ad3946c6fcd15d39fd4312c4f8dfd68c51a61071c2575cfb0722c4403eef1000000008a47304402206fe4eabf81cc4c6c3cee3dedc6ea9be46bb685c1b61da577bb9aead8188b80b702201404284c52ad2e857bd3931fb0e1646575d1e72c93b2cdcd80a7e0c7bee1c191014104ad90e5b6bc86b3ec7fac2c5fbda7423fc8ef0d58df594c773fa05e2c281b2bfe877677c668bd13603944e34f4818ee03cadd81a88542b8b4d5431264180e2c28ffffffff0470170000000000001976a9143b0000000000000001000000009d828d9600000088ac70170000000000001976a9143c791cc99255509d85788e2bf0e0f6e8b389b3cf88ac40355d5f000000001976a914946cb2e08075bcbaf157e47bcb67eb2b2339d24288ac70170000000000001976a914946cb2e08075bcbaf157e47bcb67eb2b2339d24288ac00000000
+
+
+返回结果：
+
+        {
+            "status": "OK",
+            "pushed": "Success",
+            "tx": "9975dcd1f574fe8356183e34eb435df6aa5620e7f9fea98a3c2349a10383a62b"
+        }
+
+#### 15.返回查询的事务哈希的事务详细信息
+
+接口名字：https://api.omniexplorer.info/v1/transaction/tx
+请求方式：GET
+调用示例：
+* curl方式调用
+
+        curl -X GET -H "Content-Type: application/x-www-form-urlencoded" "https://api.omniexplorer.info/v1/transaction/tx/e0e3749f4855c341b5139cdcbb4c6b492fcc09c49021b8b15462872b4ba69d1b"
+
+* http方式调用说明
+
+        GET /v1/transaction/tx/e0e3749f4855c341b5139cdcbb4c6b492fcc09c49021b8b15462872b4ba69d1b HTTP/1.1
+        Host: api.omniexplorer.info
+        Content-Type: application/x-www-form-urlencoded
+
+返回结果：
+
+        {
+            "amount": "6167.00000000",
+            "block": 511660,
+            "blockhash": "0000000000000000003f37e72e599fbdaa14396a2e9251e493f0d7d15b1fd915",
+            "blocktime": 1520009505,
+            "confirmations": 7499,
+            "divisible": true,
+            "fee": "0.00009124",
+            "ismine": false,
+            "positioninblock": 825,
+            "propertyid": 31,
+            "propertyname": "TetherUS",
+            "referenceaddress": "3GyeFJmQynJWd8DeACm4cdEnZcckAtrfcN",
+            "sendingaddress": "3D4r9ERiM3HSc4eC4EhcT31tXoSV96HsPg",
+            "txid": "e0e3749f4855c341b5139cdcbb4c6b492fcc09c49021b8b15462872b4ba69d1b",
+            "type": "Simple Send",
+            "type_int": 0,
+            "valid": true,
+            "version": 0
+        }
 
 
 ## 三.钱包开发
