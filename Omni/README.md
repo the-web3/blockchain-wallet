@@ -199,8 +199,142 @@ paytxfee和minrelattxfee控制bitcoin交易的手续费，Omni交易也属于一
 
 ## 二.Omni浏览器接口
 
+建议重复调用之间的最短等待时间为5-10秒，以防止触发api速率限制器。触发后，系统将响应错误消息： `{‘error’:True, ‘msg’:‘Rate Limit Reached. Please limit consecutive requests to no more than “limit” every “time frame in seconds”.’}` 。以及后续呼叫将被禁止长达一分钟。如果一直重复调用，系统将会禁止你条用API接口。
 
-## 二.钱包开发
+### API详细说明
+
+#### 1.获取余额
+
+##### 1.1.同时获取多个地址的余额
+
+接口名字：https://api.omniexplorer.info/v2/address/addr
+请求方式：POST
+调用示例：
+* curl方式调用
+
+        curl -X POST -H "Content-Type: application/x-www-form-urlencoded" -H "Content-Type: application/x-www-form-urlencoded" -d "addr=1FoWyxwPXuj4C6abqwhjDWdz6D4PZgYRjA&addr=1KYiKJEfdJtap9QX2v9BXJMpz2SfU4pgZw" "https://api.omniwallet.org/v2/address/addr/"
+
+* http方式调用说明
+
+        POST /v2/address/addr/ HTTP/1.1
+        Host: api.omniwallet.org
+        Content-Type: application/x-www-form-urlencoded
+        Content-Type: application/x-www-form-urlencoded
+
+        addr=1FoWyxwPXuj4C6abqwhjDWdz6D4PZgYRjA&addr=1KYiKJEfdJtap9QX2v9BXJMpz2SfU4pgZw
+
+返回结果：
+
+    {
+        "1FoWyxwPXuj4C6abqwhjDWdz6D4PZgYRjA": {
+            "balance": [
+                {
+                    "pendingpos": "231154059052026",
+                    "reserved": "0",
+                    "divisible": true,
+                    "symbol": "SP31",
+                    "value": "81672408571806609",
+                    "frozen": "0",
+                    "pendingneg": "-16422699999141",
+                    "id": "31"
+                },
+                {
+                    "pendingpos": "0",
+                    "divisible": true,
+                    "symbol": "BTC",
+                    "value": "860484222",
+                    "pendingneg": "0",
+                    "error": false,
+                    "id": 0
+                }
+            ]
+        },
+        "1KYiKJEfdJtap9QX2v9BXJMpz2SfU4pgZw": {
+            "balance": [
+                {
+                    "pendingpos": "0",
+                    "reserved": "0",
+                    "divisible": true,
+                    "symbol": "SP31",
+                    "value": "12587438660387443",
+                    "frozen": "0",
+                    "pendingneg": "0",
+                    "id": "31"
+                },
+                {
+                    "pendingpos": "0",
+                    "divisible": true,
+                    "symbol": "BTC",
+                    "value": "8916129408",
+                    "pendingneg": "0",
+                    "error": false,
+                    "id": 0
+                }
+            ]
+        }
+    }
+
+##### 1.2.获取单个地址的余额
+
+返回给定地址的余额信息。 对于单个查询中的多个地址，上面的API
+
+接口名字：https://api.omniexplorer.info/v1/address/addr/
+请求方式：POST
+调用示例：
+* curl方式调用
+
+        curl -X POST -H "Content-Type: application/x-www-form-urlencoded" -H "Content-Type: application/x-www-form-urlencoded" -d "addr=1EXoDusjGwvnjZUyKkxZ4UHEf77z6A5S4P" "https://api.omniexplorer.info/v1/address/addr/"
+
+
+* http方式调用说明
+
+        POST /v1/address/addr/ HTTP/1.1
+        Host: api.omniexplorer.info
+        Content-Type: application/x-www-form-urlencoded
+        Content-Type: application/x-www-form-urlencoded
+
+        addr=1EXoDusjGwvnjZUyKkxZ4UHEf77z6A5S4P
+
+
+返回结果：
+
+        {
+            "balance": [
+                {
+                    "divisible": true,
+                    "frozen": "0",
+                    "id": "1",
+                    "pendingneg": "0",
+                    "pendingpos": "0",
+                    "reserved": "0",
+                    "symbol": "OMNI",
+                    "value": "3054147959984"
+                },
+                {
+                    "divisible": true,
+                    "frozen": "0",
+                    "id": "2",
+                    "pendingneg": "0",
+                    "pendingpos": "0",
+                    "reserved": "0",
+                    "symbol": "T-OMNI",
+                    "value": "0"
+                },
+                {
+                    "divisible": true,
+                    "error": false,
+                    "id": 0,
+                    "pendingneg": "0",
+                    "pendingpos": "0",
+                    "symbol": "BTC",
+                    "value": "214236735"
+                }
+            ]
+        }
+    
+
+
+## 三.钱包开发
 
 ### 1.使用钱包节点进行转账开发
 
