@@ -17,7 +17,7 @@
 
 ### [第八章：ERC20代币钱包开发](https://github.com/guoshijiang/blockchain-wallet/tree/master/ERC20)
 
-### [第九章：omni—USDT钱包开发](https://github.com/guoshijiang/blockchain-wallet/tree/master/Omni)
+### [第九章：omni-USDT钱包开发](https://github.com/guoshijiang/blockchain-wallet/tree/master/Omni)
 
 ### [第十章：Ripple钱包开发](https://github.com/guoshijiang/blockchain-wallet/tree/master/Ripple)
 
