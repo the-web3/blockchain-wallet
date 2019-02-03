@@ -23,3 +23,48 @@ EOSIO是一个它开源的区块链项目，旨在实现分散式应用程序的
 
 ## 二.安装EOS钱包节点
 
+下面咱们使用二进制文件来构建项目，从源码来构建项目的话，这种操作方式比较复杂，而且很浪费时间，这里不推荐这种方式。
+
+### 1.各种平台上安装EOS
+
+### 1.1.在mac平台下安装EOS
+
+    brew tap eosio/eosio
+    brew install eosio
+
+### 1.2.Ubuntu18.04
+
+    wget https://github.com/eosio/eos/releases/download/v1.5.0/eosio_1.5.0-1-ubuntu-18.04_amd64.deb
+    sudo apt install ./eosio_1.5.0-1-ubuntu-18.04_amd64.deb
+
+### 1.3.Ubuntu16.04
+
+    wget https://github.com/eosio/eos/releases/download/v1.5.0/eosio_1.5.0-1-ubuntu-16.04_amd64.deb
+    sudo apt install ./eosio_1.5.0-1-ubuntu-16.04_amd64.deb
+
+### 1.4.CentOS
+
+    wget https://github.com/eosio/eos/releases/download/v1.5.0/eosio-1.5.0-1.el7.x86_64.rpm
+    sudo yum install ./eosio-1.5.0-1.el7.x86_64.rpm
+
+### 1.5.Fedora
+
+    wget https://github.com/eosio/eos/releases/download/v1.5.0/eosio-1.5.0-1.fc27.x86_64.rpm
+    sudo yum install ./eosio-1.5.0-1.fc27.x86_64.rpm
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
