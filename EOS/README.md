@@ -27,44 +27,117 @@ EOSIO是一个它开源的区块链项目，旨在实现分散式应用程序的
 
 ### 1.各种平台上安装EOS
 
-### 1.1.在mac平台下安装EOS
+#### 1.1.在mac平台下安装EOS
 
     brew tap eosio/eosio
     brew install eosio
 
-### 1.2.Ubuntu18.04
+#### 1.2.Ubuntu18.04
 
     wget https://github.com/eosio/eos/releases/download/v1.5.0/eosio_1.5.0-1-ubuntu-18.04_amd64.deb
     sudo apt install ./eosio_1.5.0-1-ubuntu-18.04_amd64.deb
 
-### 1.3.Ubuntu16.04
+#### 1.3.Ubuntu16.04
 
     wget https://github.com/eosio/eos/releases/download/v1.5.0/eosio_1.5.0-1-ubuntu-16.04_amd64.deb
     sudo apt install ./eosio_1.5.0-1-ubuntu-16.04_amd64.deb
 
-### 1.4.CentOS
+#### 1.4.CentOS
 
     wget https://github.com/eosio/eos/releases/download/v1.5.0/eosio-1.5.0-1.el7.x86_64.rpm
     sudo yum install ./eosio-1.5.0-1.el7.x86_64.rpm
 
-### 1.5.Fedora
+#### 1.5.Fedora
 
     wget https://github.com/eosio/eos/releases/download/v1.5.0/eosio-1.5.0-1.fc27.x86_64.rpm
     sudo yum install ./eosio-1.5.0-1.fc27.x86_64.rpm
 
 
+### 2.启动节点并对节点进行配置
+
+#### 2.1.启动Keosd
+
+    keosd &
+
+执行上面这个命令之后，你应该可以看到类似下面这样的输出，按Enter键可以退出来。
+
+    info  2018-11-26T06:54:24.789 thread-0  wallet_plugin.cpp:42          plugin_initialize    ] initializing wallet plugin
+    info  2018-11-26T06:54:24.795 thread-0  http_plugin.cpp:554           add_handler          ] add api url: /v1/keosd/stop
+    info  2018-11-26T06:54:24.796 thread-0  wallet_api_plugin.cpp:73      plugin_startup       ] starting wallet_api_plugin
+    info  2018-11-26T06:54:24.796 thread-0  http_plugin.cpp:554           add_handler          ] add api url: /v1/wallet/create
+    info  2018-11-26T06:54:24.796 thread-0  http_plugin.cpp:554           add_handler          ] add api url: /v1/wallet/create_key
+    info  2018-11-26T06:54:24.796 thread-0  http_plugin.cpp:554           add_handler          ] add api url: /v1/wallet/get_public_keys
 
 
+### 2.2.启动nodeos
 
+    nodeos -e -p eosio \
+    --plugin eosio::producer_plugin \
+    --plugin eosio::chain_api_plugin \
+    --plugin eosio::http_plugin \
+    --plugin eosio::history_plugin \
+    --plugin eosio::history_api_plugin \
+    --access-control-allow-origin='*' \
+    --contracts-console \
+    --http-validate-host=false \
+    --verbose-http-errors \
+    --filter-on='*' >> nodeos.log 2>&1 &
 
+这些设置可实现以下功能：
 
+* 在开发目录下的eosio目录中使用工作目录进行区块链数据和配置。这里我们分别使用eosio/data和eosio/config
 
+* 运行Nodeos。此命令加载所有基本插件，设置服务器地址，启用CORS并添加一些合同调试和日志记录。
 
+* 无限制地启用CORS（*）
 
+在上面的配置中，CORS仅用于开发目的*，您永远不应在可公开访问的节点上启用CORS for *！
 
+### 3.检查节点的和钱包的情况
 
+#### 3.1.检查节点的情况
 
+运行下面的命令
 
+    tail -f nodeos.log
+
+你可以看到终端下面有这些输入
+
+    1929001ms thread-0   producer_plugin.cpp:585       block_production_loo ] Produced block 0000366974ce4e2a... #13929 @ 2018-05-23T16:32:09.000 signed by eosio [trxs: 0, lib: 13928, confirmed: 0]
+    1929502ms thread-0   producer_plugin.cpp:585       block_production_loo ] Produced block 0000366aea085023... #13930 @ 2018-05-23T16:32:09.500 signed by eosio [trxs: 0, lib: 13929, confirmed: 0]
+    1930002ms thread-0   producer_plugin.cpp:585       block_production_loo ] Produced block 0000366b7f074fdd... #13931 @ 2018-05-23T16:32:10.000 signed by eosio [trxs: 0, lib: 13930, confirmed: 0]
+    1930501ms thread-0   producer_plugin.cpp:585       block_production_loo ] Produced block 0000366cd8222adb... #13932 @ 2018-05-23T16:32:10.500 signed by eosio [trxs: 0, lib: 13931, confirmed: 0]
+    1931002ms thread-0   producer_plugin.cpp:585       block_production_loo ] Produced block 0000366d5c1ec38d... #13933 @ 2018-05-23T16:32:11.000 signed by eosio [trxs: 0, lib: 13932, confirmed: 0]
+    1931501ms thread-0   producer_plugin.cpp:585       block_production_loo ] Produced block 0000366e45c1f235... #13934 @ 2018-05-23T16:32:11.500 signed by eosio [trxs: 0, lib: 13933, confirmed: 0]
+    1932001ms thread-0   producer_plugin.cpp:585       block_production_loo ] Produced block 0000366f98adb324... #13935 @ 2018-05-23T16:32:12.000 signed by eosio [trxs: 0, lib: 13934, confirmed: 0]
+    1932501ms thread-0   producer_plugin.cpp:585       block_production_loo ] Produced block 00003670a0f01daa... #13936 @ 2018-05-23T16:32:12.500 signed by eosio [trxs: 0, lib: 13935, confirmed: 0]
+    1933001ms thread-0   producer_plugin.cpp:585       block_production_loo ] Produced block 00003671e8b36e1e... #13937 @ 2018-05-23T16:32:13.000 signed by eosio [trxs: 0, lib: 13936, confirmed: 0]
+    1933501ms thread-0   producer_plugin.cpp:585       block_production_loo ] Produced block 0000367257fe1623... #13938 @ 2018-05-23T16:32:13.500 signed by eosio [trxs: 0, lib: 13937, confirmed: 0]
+
+按CNTL + C键退出日志。
+
+#### 3.2.检查钱包的情况
+
+打开shell并运行cleos命令列出可用的钱包
+
+    cleos wallet list
+
+你应该看到下面这样的输出
+
+    Wallets:
+    []
+
+#### 3.3.检查Nodeos末端节点
+
+这将检查RPC API是否正常工作，选择一个。
+
+检查浏览器中chain_api_plugin提供的get_info端点：
+
+    http：// localhost：8888 / v1 / chain / get_info
+    
+检查相同的事情，但在主机的控制台中
+
+    curl http://localhost:8888/v1/chain/get_info
 
 
 
