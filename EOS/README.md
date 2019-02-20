@@ -152,9 +152,11 @@ EOSIO是一个它开源的区块链项目，旨在实现分散式应用程序的
     
 cleos将返回密码，需要将密码存在其他地方，以供后面需要的时候使用
 
-
-
-
+    Creating wallet: default
+    Save password to use in the future to unlock this wallet.
+    Without password imported keys will not be retrievable.
+    "PW5Kewn9L76X8Fpd....................t42S9XCw2"
+    
 
 
 
