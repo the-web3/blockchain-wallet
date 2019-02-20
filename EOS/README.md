@@ -202,7 +202,7 @@ keosd钱包已经打开，但仍然被锁定。 你创建钱包的时候，您�
     Created new private key with a public key of: "EOS8PEJ5FM42xLpHK...X6PymQu97KrGDJQY5Y"
 
 
-### 5.引入开发的密钥
+### 6.引入开发的密钥
 
 每个新的EOSIO链都有一个名为“eosio”的默认“系统”用户。 此帐户用于通过加载系统合同来设置链，该合约规定了EOSIO链的治理和共识。 每个新的EOSIO链都带有一个开发密钥，这个密钥是相同的。 加载此密钥以代表系统用户（eosio）对事务进行签名。
 
@@ -214,24 +214,58 @@ keosd钱包已经打开，但仍然被锁定。 你创建钱包的时候，您�
 
 *注意：上面的密钥是我生成的密钥，此处你应该填写的是自己生成的密钥。切勿将开发密钥用于生产帐户！ 这样做肯定会导致您无法访问您的帐户，此私钥是公开的。
 
+### 7.创建一个测试账户
+
+#### 7.1.什么是EOS的账户
+
+帐户是一组授权，存储在区块链中，用于标识发件人/收件人。它具有灵活的授权结构，使其可以由个人或一组个人拥有，具体取决于如何配置权限。需要一个帐户才能向区块链发送或接收有效的交易。
+
+#### 7.2.创建一个测试账户
+
+使用了bob和alice做为账户，使用cleos create account创建两个账户。
+
+    cleos create account eosio bob EOS6ia9oVJpCvUzMrgAyMdbhrYu5YBfbuohvfUJxwvqh8e4JaBtJH 
+    cleos create account eosio alice EOS6ia9oVJpCvUzMrgAyMdbhrYu5YBfbuohvfUJxwvqh8e4JaBtJH
+
+然后，您应该看到确认消息已被广播的每个命令的类似于以下内容的确认消息。
+
+    executed transaction: 40c605006de...  200 bytes  153 us
+    #         eosio <= eosio::newaccount            {"creator":"eosio","name":"alice","owner":{"threshold":1,"keys":[{"key":"EOS5rti4LTL53xptjgQBXv9HxyU...
+    warning: transaction executed locally, but may not be confirmed by the network yet    ]
+
+#### 7.3.公钥
+
+请注意，在cleos命令中，公钥与帐户alice相关联。每个EOSIO帐户都与公钥相关联。
+
+请注意，帐户名称是所有权的唯一标识符。您可以更改公钥，但不会更改您的EOSIO帐户的所有权。
+
+使用cleos get帐户检查哪个公钥与alice相关联
+
+    cleos get account alice
+
+你将看到下面的这种返回
+
+    permissions:
+         owner     1:    1 EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
+            active     1:    1 EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
+    memory:
+         quota:       unlimited  used:      2.66 KiB
+
+    net bandwidth:
+         used:               unlimited
+         available:          unlimited
+         limit:              unlimited
+
+    cpu bandwidth:
+         used:               unlimited
+         available:          unlimited
+         limit:              unlimited
 
 
+*请注意，实际上alice同时拥有所有者和活动公钥。 EOSIO具有独特的授权结构，可为您的帐户增加安全性。在使用与您的活动权限相关联的密钥时，您可以通过保持所有者密钥冷却来最小化帐户的风险。这样，如果您的有效密钥遭到入侵，您可以使用所有者密钥重新控制您的帐户。
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+## 四.使用合约方式开发转账的过程
 
 
 
