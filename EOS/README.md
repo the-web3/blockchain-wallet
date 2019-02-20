@@ -140,7 +140,7 @@ EOSIO是一个它开源的区块链项目，旨在实现分散式应用程序的
     curl http://localhost:8888/v1/chain/get_info
 
 
-## 三.创建一个开发钱包
+## 三.使用命令行创建一个开发钱包
 
 钱包是公钥-私钥对的存储库。 需要私钥来签署区块链上执行的操作。 钱包可以使用cleos访问。
 
@@ -156,7 +156,79 @@ cleos将返回密码，需要将密码存在其他地方，以供后面需要的
     Save password to use in the future to unlock this wallet.
     Without password imported keys will not be retrievable.
     "PW5Kewn9L76X8Fpd....................t42S9XCw2"
+
+### 2.打开钱包
+
+默认情况下，在启动keosd服务钱包是关闭，开启钱包请运行下面的命令
+
+    cleos wallet open
+
+获取钱包的列表请执行下面的命令
+
+    cleos wallet list
     
+获取钱包列表返回的数据结构
+
+    Wallets:
+    [
+      "default"
+    ]
+
+### 3.解锁钱包
+
+keosd钱包已经打开，但仍然被锁定。 你创建钱包的时候，您已经获得了密码，现在就需要密码了。，执行下面的命令解锁钱包
+
+    cleos wallet unlock
+
+上面的命令会提示您输入密码，你直接把上面生成的密码复制过来粘贴上去就可以了。
+
+### 4.查看钱包是否解锁
+
+执行`cleos wallet list`命令之后返回的钱包后面带有星号（`*`）, 这意味着钱包目前已解锁,如下：
+
+    Wallets:
+    [
+      "default *"   
+    ]
+
+### 5.给钱包导入密钥
+
+生成一个私钥，cleos有一个函数生成私钥的函数，只需运行以下命令即可。
+
+    cleos wallet create_key
+
+执行上面的命令将会返回下面的结果
+
+    Created new private key with a public key of: "EOS8PEJ5FM42xLpHK...X6PymQu97KrGDJQY5Y"
+
+
+### 5.引入开发的密钥
+
+每个新的EOSIO链都有一个名为“eosio”的默认“系统”用户。 此帐户用于通过加载系统合同来设置链，该合约规定了EOSIO链的治理和共识。 每个新的EOSIO链都带有一个开发密钥，这个密钥是相同的。 加载此密钥以代表系统用户（eosio）对事务进行签名。
+
+    cleos wallet import
+
+系统将提示您输入私钥，输入下面提供的eosio开发密钥
+
+    5KQwrPbwdL6PhXujxW37FSSQZ1JiwsST4cqQzDeyXtP79zkvFD3
+
+*注意：上面的密钥是我生成的密钥，此处你应该填写的是自己生成的密钥。切勿将开发密钥用于生产帐户！ 这样做肯定会导致您无法访问您的帐户，此私钥是公开的。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
