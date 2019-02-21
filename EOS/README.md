@@ -269,6 +269,203 @@ keosd钱包已经打开，但仍然被锁定。 你创建钱包的时候，您�
 
 ### 1.EOS合约开发入门
 
+在前面创建的合约目录中创建一个名为“hello”的新目录
+
+    cd /root/eosio/contracts
+    mkdir hello
+    cd hello
+
+创建一个`hello.cpp`的c++代码文件，然后用你最喜欢的编译器打开
+
+下面分别包含两个头文件，eosio.hpp和print.hpp文件。 eosio.hpp文件包含编写合同所需的库。以下是这些必需库的说明：
+
+* action.hpp：为查询和发送操作定义类型安全的C ++包装器。
+* contract.hpp：EOSIO合约的基类。
+* print.hpp：用于记录/打印文本消息的C++包装器。
+* multi_index.hpp：EOSIO Multi-Index API为EOSIO数据库提供C++接口。
+* dispatcher.hpp：定义C++函数以将操作分派给合同中的正确操作处理程序。
+
+使用eosio命名空间可以减少代码中的混乱。 例如，通过设置使用命名空间eosio;，可以写eosio :: print（“foo”）print（“foo”）
+
+eosiolib/eosio.hpp将EOSIO C和C++ API加载到合约范围内，这是您的新版本。
+
+创建一个标准的C++11类。合同类需要扩展eosio :: contract。
+
+    #include <eosiolib/eosio.hpp>
+
+    using namespace eosio;
+
+    class hello : public contract {};
+
+空合约没有多大帮助。 添加公共访问说明符和using声明。 using声明将允许我们编写更简洁的代码。
+
+    #include <eosiolib/eosio.hpp>
+
+    using namespace eosio;
+
+    class [[eosio::contract("hello")]] hello : public contract {
+      public:
+          using contract::contract;
+    };
+
+这份合同需要做点什么。 本着hello world的精神，编写一个接受“name”参数的动作，然后输出该参数。
+
+动作实现合同的行为。 合同操作之间的通信有两种形式，内联操作（将在与调用操作相同的事务中执行）和延迟操作（将在稍后执行）。
+
+    #include <eosiolib/eosio.hpp>
+
+    using namespace eosio;
+
+    class [[eosio::contract("hello")]] hello : public contract {
+      public:
+          using contract::contract;
+
+          [[eosio::action]]
+          void hi( name user ) {
+             print( "Hello, ", name{user});
+          }
+    };
+
+上面的操作接受一个名为user的参数，它是一个名称类型。 EOSIO附带了许多typedef，你会遇到的最常见的typedef之一是name。使用先前包含的eosio :: print库，连接字符串并打印用户参数。使用名称{user}的支撑初始化使用户参数可打印。
+
+因此，eosio.cdt中的abi生成器将不知道没有属性的hi（）动作。在动作上方添加C++ 11样式属性，这样abi生成器可以产生更可靠的输出。
+
+    #include <eosiolib/eosio.hpp>
+
+    using namespace eosio;
+
+    class [[eosio::contract("hello")]] hello : public contract {
+      public:
+          using contract::contract;
+
+          [[eosio::action]]
+          void hi( name user ) {
+             print( "Hello, ", user);
+          }
+    };
+
+    EOSIO_DISPATCH( hello, (hi))
+
+最后，添加EOSIO_DISPATCH宏来处理调度hello契约的操作。
+
+    EOSIO_DISPATCH( hello, (hi))
+
+一切都在一起，这是完成的hello world合约
+
+    #include <eosiolib/eosio.hpp>
+
+    using namespace eosio;
+
+    class [[eosio::contract("hello")]] hello : public contract {
+      public:
+          using contract::contract;
+
+          [[eosio::action]]
+          void hi( name user ) {
+             print( "Hello, ", user);
+          }
+    };
+
+    EOSIO_DISPATCH( hello, (hi))
+
+您可以将代码编译为Web程序集（.wasm），如下所示：
+
+    eosio-cpp -o hello.wasm hello.cpp --abigen
+
+部署合约时，会将其部署到帐户，该帐户将成为合约的接口。 如前所述，这些教程对所有帐户使用相同的公钥，以保持简单。
+
+    cleos wallet keys
+
+使用cleos create account创建合同帐户，使用下面提供的命令。
+
+    cleos create account eosio hello EOS6ia9oVJpCvUzMrgAyMdbhrYu5YBfbuohvfUJxwvqh8e4JaBtJH -p eosio@active
+
+使用cleos set contract将已编译的wasm广播到区块链。
+
+在前面的步骤中，您应该创建一个`contracts`目录并获取绝对路径，然后将其保存到cookie中。 将以下命令中的“CONTRACTS_DIR”替换为`contracts`目录的绝对路径。
+
+    cleos set contract hello /root/eosio/contracts/hello -p hello@active
+
+完美儿，现在合约已经设定，执行下面的命令
+
+    cleos push action hello hi '["bob"]' -p bob@active
+
+执行结果如下：
+
+    executed transaction: 4c10c1426c16b1656e802f3302677594731b380b18a44851d38e8b5275072857  244 bytes  1000 cycles
+    #    hello.code <= hello.code::hi               {"user":"bob"}
+    >> Hello, bob
+
+如上所述，合约将允许任何帐户向任何用户打招呼
+
+    cleos push action hello hi '["bob"]' -p alice@active
+
+执行结果：
+
+    executed transaction: 28d92256c8ffd8b0255be324e4596b7c745f50f85722d0c4400471bc184b9a16  244 bytes  1000 cycles
+    #    hello.code <= hello.code::hi               {"user":"bob"}
+    >> Hello, bob
+
+正如预期的那样，控制台输出是“Hello，bob”
+
+在这种情况下，“alice”是授权它的人，用户只是一个参数。修改合约，以便授权用户在这种情况下“alice”必须与合约响应“hi”的用户相同。使用require_auth方法。此方法将名称作为参数，并将检查执行操作的用户是否与提供的参数匹配并具有适当的授权。
+
+    void hi( name user ) {
+       require_auth( user );
+       print( "Hello, ", name{user} );
+    }
+
+重新编译合约代码
+
+    eosio-cpp -o hello.wasm hello.cpp --abigen
+
+然后更新一下它
+
+    cleos set contract hello /root/eosio/contracts/hello -p hello@active
+
+尝试再次执行操作，但这次授权不匹配。
+
+    cleos push action hello hi '["bob"]' -p alice@active
+
+正如预期的那样，require_auth暂停了事务并抛出了错误。
+
+    Error 3090004: Missing required authority
+    Ensure that you have the related authority inside your transaction!;
+    If you are currently using 'cleos push action' command, try to add the [relevant](**http://google.com**) authority using -p option.
+
+现在，通过我们的更改，合同将验证提供的名称用户是否与授权用户相同。 再试一次，但这一次，拥有“alice”帐户的权限。
+
+    cleos push action hello hi '["alice"]' -p alice@active
+
+执行结果
+
+    executed transaction: 235bd766c2097f4a698cfb948eb2e709532df8d18458b92c9c6aae74ed8e4518  244 bytes  1000 cycles
+    #    hello <= hello::hi               {"user":"alice"}
+    >> Hello, alice
+
+### 2.部署，发布和token转账
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
