@@ -453,27 +453,115 @@ EOS官方开源了一份转账的合约代码，我们只需要把这份合约�
 
     cd /root/eosio/contracts
 
+拉取源码
+
+    git clone https://github.com/EOSIO/eosio.contracts --branch v1.4.0 --single-branch
+
+这个存储库包含几个契约，但它现在是重要的eosio.token契约。 进入到该目录。
+
+    cd eosio.contracts/eosio.token
+
+#### 2.2.为合约创建一个用户
+
+在我们部署token合约之前，我们必须创建一个帐户来部署它，我们将使用该帐户的eosio开发密钥。当然，在使用前你应该先解锁钱包
+
+    cleos create account eosio eosio.token EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
+
+#### 2.3.编译合约代码
+
+    eosio-cpp -I include -o eosio.token.wasm src/eosio.token.cpp --abigen
+
+#### 2.4.部署token合约
+
+    cleos set contract eosio.token /root/eosio/contracts/eosio.contracts/eosio.token --abi eosio.token.abi -p eosio.token@active
+
+下面是执行结果
+
+    Reading WASM from ...
+    Publishing contract...
+    executed transaction: 69c68b1bd5d61a0cc146b11e89e11f02527f24e4b240731c4003ad1dc0c87c2c  9696 bytes  6290 us
+    #         eosio <= eosio::setcode               {"account":"eosio.token","vmtype":0,"vmversion":0,"code":"0061736d0100000001aa011c60037f7e7f0060047f...
+    #         eosio <= eosio::setabi                {"account":"eosio.token","abi":"0e656f73696f3a3a6162692f312e30000605636c6f73650002056f776e6572046e61...
+    warning: transaction executed locally, but may not be confirmed by the network yet         ]
+
+#### 2.5.创建一个token
+
+要创建新Token，调用create（...）操作。 此操作接受1个参数，它是一个symbol_name类型，由两个数据组成，最大供应float和仅带大写字母字符的symbol_name，例如“1.0000 SYM”。 发行人将有权发出问题或执行其他操作，例如冻结，召回和列入所有者白名单。
+
+下面是使用位置参数调用此方法的简明方法：
+
+    cleos push action eosio.token create '[ "eosio", "1000000000.0000 SYS"]' -p eosio.token@active
+
+执行结果
+
+    executed transaction: 0e49a421f6e75f4c5e09dd738a02d3f51bd18a0cf31894f68d335cd70d9c0e12  120 bytes  1000 cycles
+    #   eosio.token <= eosio.token::create          {"issuer":"eosio","maximum_supply":"1000000000.0000 SYS"}
+
+另一种方法使用命名参数：
+
+    cleos push action eosio.token create '{"issuer":"eosio", "maximum_supply":"1000000000.0000 SYS"}' -p eosio.token@active
+
+执行结果：
+
+    executed transaction: 0e49a421f6e75f4c5e09dd738a02d3f51bd18a0cf31894f68d335cd70d9c0e12  120 bytes  1000 cycles
+    #   eosio.token <= eosio.token::create          {"issuer":"eosio","maximum_supply":"1000000000.0000 SYS"}
+
+此命令创建了一个新的令牌SYS，其精度为4位小数，最大供应量为1000000000.0000 SYS。 要创建此令牌，需要获得eosio.token合约的许可。 因此，传递了-p eosio.token@active以授权该请求。
+
+#### 2.6.发布token
+
+发行者可以向之前创建的“alice”帐户发放新令牌。
+
+    cleos push action eosio.token issue '[ "alice", "100.0000 SYS", "memo" ]' -p eosio@active
+
+执行结果如下：
+
+    executed transaction: 822a607a9196112831ecc2dc14ffb1722634f1749f3ac18b73ffacd41160b019  268 bytes  1000 cycles
+    #   eosio.token <= eosio.token::issue           {"to":"user","quantity":"100.0000 SYS","memo":"memo"}
+    >> issue
+    #   eosio.token <= eosio.token::transfer        {"from":"eosio","to":"user","quantity":"100.0000 SYS","memo":"memo"}
+    >> transfer
+    #         eosio <= eosio.token::transfer        {"from":"eosio","to":"user","quantity":"100.0000 SYS","memo":"memo"}
+    #          user <= eosio.token::transfer        {"from":"eosio","to":"user","quantity":"100.0000 SYS","memo":"memo"}
 
 
+这次输出包含几个不同的操作：一个问题和三个传输。虽然签署的唯一操作是问题，但问题操作执行“内联传输”，“内联传输”通知发件人和收件人帐户。输出指示调用的所有操作处理程序，调用它们的顺序以及操作是否生成任何输出。
 
+从技术上讲，eosio.token合同可能会跳过内联转移，并选择直接修改余额。但是，在这种情况下，eosio.token合同遵循我们的Token约定，该约定要求所有帐户余额可以通过引用它们的传输操作的总和来推导。它还要求通知资金的发送方和接收方，以便它们可以自动处理存款和取款。
 
+要检查事务，请尝试使用-d -j选项，它们表示“不要广播”和“将事务返回为json”，在开发过程中您可能会发现这些选项很有用。
 
+    cleos push action eosio.token issue '["alice", "100.0000 SYS", "memo"]' -p eosio@active -d -j
 
+#### 2.7.转移token
 
+现在该帐户已经发出了令牌，将其中一些转移到帐户bob。 之前曾表示alice使用参数-p alice @ active授权此操作。
 
+    cleos push action eosio.token transfer '[ "alice", "bob", "25.0000 SYS", "m" ]' -p alice@active
 
+执行结果如下：
 
+    executed transaction: 06d0a99652c11637230d08a207520bf38066b8817ef7cafaab2f0344aafd7018  268 bytes  1000 cycles
+    #   eosio.token <= eosio.token::transfer        {"from":"alice","to":"bob","quantity":"25.0000 SYS","memo":"Here you go bob!"}
+    >> transfer
+    #          user <= eosio.token::transfer        {"from":"alice","to":"bob","quantity":"25.0000 SYS","memo":"Here you go bob!"}
+    #        tester <= eosio.token::transfer        {"from":"alice","to":"bob","quantity":"25.0000 SYS","memo":"Here you go bob!"}
 
+现在检查“bob”是否使用cleos获得Token以获得货币余额
 
+    cleos get currency balance eosio.token bob SYS
 
+结果如下：
 
+    25.00 SYS
+    
+检查“alice”的余额，注意从帐户中扣除了Token
 
+    cleos get currency balance eosio.token alice SYS
 
+结果如下：
 
-
-
-
-
+    75.00 SYS
 
 
 
