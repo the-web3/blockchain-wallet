@@ -563,5 +563,78 @@ EOS官方开源了一份转账的合约代码，我们只需要把这份合约�
 
     75.00 SYS
 
+## 五.钱包相关的API
+
+### 1.根据给出的名字创建一个钱包的接口
+
+#### 1.1.curl方式调用
+
+    curl --request POST \
+      --url http://127.0.0.1:8888/v1/wallet/create \
+      --header 'content-type: application/x-www-form-urlencoded; charset=UTF-8'
+    
+#### 1.2.NodeJs方式调用
+
+    var request = require("request");
+
+    var options = { method: 'POST',
+      url: 'http://127.0.0.1:8888/v1/wallet/create',
+      headers: { 'content-type': 'application/x-www-form-urlencoded; charset=UTF-8' } };
+
+    request(options, function (error, response, body) {
+      if (error) throw new Error(error);
+
+      console.log(body);
+    });
+
+
+#### 1.3.Ruby方式调用
+
+    require 'uri'
+    require 'net/http'
+
+    url = URI("http://127.0.0.1:8888/v1/wallet/create")
+
+    http = Net::HTTP.new(url.host, url.port)
+
+    request = Net::HTTP::Post.new(url)
+    request["content-type"] = 'application/x-www-form-urlencoded; charset=UTF-8'
+
+    response = http.request(request)
+    puts response.read_body
+
+
+#### 1.4.javaScript方式调用
+
+    var data = null;
+
+    var xhr = new XMLHttpRequest();
+
+    xhr.addEventListener("readystatechange", function () {
+      if (this.readyState === this.DONE) {
+        console.log(this.responseText);
+      }
+    });
+
+    xhr.open("POST", "http://127.0.0.1:8888/v1/wallet/create");
+    xhr.setRequestHeader("content-type", "application/x-www-form-urlencoded; charset=UTF-8");
+
+    xhr.send(data);
+
+#### 1.5.python方式调用
+
+    import requests
+
+    url = "http://127.0.0.1:8888/v1/wallet/create"
+
+    headers = {'content-type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+
+    response = requests.request("POST", url, headers=headers)
+
+    print(response.text)
+
+返回结果都一样，返回结果如下
+
+    "PW5KdHAJNyHGvVQfZMebawZrCxUrXoG8wrz55R5EHcfmvjSASuDay"
 
 
