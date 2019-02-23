@@ -567,6 +567,9 @@ EOS官方开源了一份转账的合约代码，我们只需要把这份合约�
 
 ### 1.根据给出的名字创建一个钱包的接口
 
+请求方式：POST
+接口名字：`http://127.0.0.1:8888/v1/wallet/create`
+
 #### 1.1.curl方式调用
 
     curl --request POST \
@@ -638,3 +641,278 @@ EOS官方开源了一份转账的合约代码，我们只需要把这份合约�
     "PW5KdHAJNyHGvVQfZMebawZrCxUrXoG8wrz55R5EHcfmvjSASuDay"
 
 
+### 2.根据给出的名字打开一个已经存在的钱包
+
+请求方式：POST
+接口名字：`http://127.0.0.1:8888/v1/wallet/open`
+
+#### 2.1.curl方式调用
+
+       curl --request POST \
+      --url http://127.0.0.1:8888/v1/wallet/open \
+      --header 'content-type: application/x-www-form-urlencoded; charset=UTF-8'
+  
+#### 1.2.NodeJs方式调用
+
+    var request = require("request");
+
+    var options = { method: 'POST',
+      url: 'http://127.0.0.1:8888/v1/wallet/open',
+      headers: { 'content-type': 'application/x-www-form-urlencoded; charset=UTF-8' } };
+
+    request(options, function (error, response, body) {
+      if (error) throw new Error(error);
+
+      console.log(body);
+    });  
+
+#### 1.3.Ruby方式调用
+
+    require 'uri'
+    require 'net/http'
+
+    url = URI("http://127.0.0.1:8888/v1/wallet/open")
+
+    http = Net::HTTP.new(url.host, url.port)
+
+    request = Net::HTTP::Post.new(url)
+    request["content-type"] = 'application/x-www-form-urlencoded; charset=UTF-8'
+
+    response = http.request(request)
+    puts response.read_body 
+
+
+#### 1.4.javaScript方式调用
+
+    var data = null;
+
+    var xhr = new XMLHttpRequest();
+
+    xhr.addEventListener("readystatechange", function () {
+      if (this.readyState === this.DONE) {
+        console.log(this.responseText);
+      }
+    });
+
+    xhr.open("POST", "http://127.0.0.1:8888/v1/wallet/open");
+    xhr.setRequestHeader("content-type", "application/x-www-form-urlencoded; charset=UTF-8");
+
+    xhr.send(data);
+
+#### 1.5.python方式调用
+
+    import requests
+
+    url = "http://127.0.0.1:8888/v1/wallet/open"
+
+    headers = {'content-type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+
+    response = requests.request("POST", url, headers=headers)
+
+    print(response.text)
+
+返回结果都一样，返回结果如下
+
+
+
+### 3.根据给出的名字锁定一个已经存在的钱包
+
+#### 3.1.curl方式调用
+
+#### 3.2.NodeJs方式调用
+
+#### 3.3.Ruby方式调用
+
+#### 3.4.javaScript方式调用
+
+#### 3.5.python方式调用
+
+   
+返回结果都一样，返回结果如下
+
+
+### 4.锁定所有的钱包
+
+#### 4.1.curl方式调用
+
+#### 4.2.NodeJs方式调用
+
+#### 4.3.Ruby方式调用
+
+#### 4.4.javaScript方式调用
+
+#### 4.5.python方式调用
+
+   
+返回结果都一样，返回结果如下
+
+
+### 5.根据钱包的名字或者密码解锁一个钱包
+
+#### 5.1.curl方式调用
+
+#### 5.2.NodeJs方式调用
+
+#### 5.3.Ruby方式调用
+
+#### 5.4.javaScript方式调用
+
+#### 5.5.python方式调用
+
+   
+返回结果都一样，返回结果如下
+
+### 6.引入私钥到给定的钱包
+
+#### 6.1.curl方式调用
+
+#### 6.2.NodeJs方式调用
+
+#### 6.3.Ruby方式调用
+
+#### 6.4.javaScript方式调用
+
+#### 6.5.python方式调用
+
+   
+返回结果都一样，返回结果如下
+
+
+
+### 7.列出所有钱包
+
+#### 7.1.curl方式调用
+
+#### 7.2.NodeJs方式调用
+
+#### 7.3.Ruby方式调用
+
+#### 7.4.javaScript方式调用
+
+#### 7.5.python方式调用
+
+   
+返回结果都一样，返回结果如下
+
+### 8.通过所有的钱包列出所有的密钥
+
+#### 8.1.curl方式调用
+
+#### 8.2.NodeJs方式调用
+
+#### 8.3.Ruby方式调用
+
+#### 8.4.javaScript方式调用
+
+#### 8.5.python方式调用
+
+   
+返回结果都一样，返回结果如下
+
+### 9.根据钱包获取公钥
+
+#### 9.1.curl方式调用
+
+#### 9.2.NodeJs方式调用
+
+#### 9.3.Ruby方式调用
+
+#### 9.4.javaScript方式调用
+
+#### 9.5.python方式调用
+
+   
+返回结果都一样，返回结果如下
+
+
+### 10.设定钱包自动锁定超时
+
+#### 10.1.curl方式调用
+
+#### 10.2.NodeJs方式调用
+
+#### 10.3.Ruby方式调用
+
+#### 10.4.javaScript方式调用
+
+#### 10.5.python方式调用
+
+   
+返回结果都一样，返回结果如下
+
+
+### 11.交易签名
+
+#### 11.1.curl方式调用
+
+#### 11.2.NodeJs方式调用
+
+#### 11.3.Ruby方式调用
+
+#### 11.4.javaScript方式调用
+
+#### 11.5.python方式调用
+
+   
+返回结果都一样，返回结果如下
+
+### 12.交易签名
+
+#### 12.1.curl方式调用
+
+#### 12.2.NodeJs方式调用
+
+#### 12.3.Ruby方式调用
+
+#### 12.4.javaScript方式调用
+
+#### 12.5.python方式调用
+
+   
+返回结果都一样，返回结果如下
+
+### 13.交易签名
+
+#### 13.1.curl方式调用
+
+#### 13.2.NodeJs方式调用
+
+#### 13.3.Ruby方式调用
+
+#### 13.4.javaScript方式调用
+
+#### 13.5.python方式调用
+
+   
+返回结果都一样，返回结果如下
+
+### 14.交易签名
+
+#### 14.1.curl方式调用
+
+#### 14.2.NodeJs方式调用
+
+#### 14.3.Ruby方式调用
+
+#### 14.4.javaScript方式调用
+
+#### 14.5.python方式调用
+
+   
+返回结果都一样，返回结果如下
+
+
+### 15.交易签名
+
+#### 15.1.curl方式调用
+
+#### 15.2.NodeJs方式调用
+
+#### 15.3.Ruby方式调用
+
+#### 15.4.javaScript方式调用
+
+#### 15.5.python方式调用
+
+   
+返回结果都一样，返回结果如下
