@@ -717,15 +717,74 @@ EOS官方开源了一份转账的合约代码，我们只需要把这份合约�
 
 ### 3.根据给出的名字锁定一个已经存在的钱包
 
+请求方式：POST
+接口名字：`http://127.0.0.1:8888/v1/wallet/lock`
+
 #### 3.1.curl方式调用
+
+       curl --request POST \
+      --url http://127.0.0.1:8888/v1/wallet/lock \
+      --header 'content-type: application/x-www-form-urlencoded; charset=UTF-8'
 
 #### 3.2.NodeJs方式调用
 
+     var request = require("request");
+
+    var options = { method: 'POST',
+      url: 'http://127.0.0.1:8888/v1/wallet/lock',
+      headers: { 'content-type': 'application/x-www-form-urlencoded; charset=UTF-8' } };
+
+    request(options, function (error, response, body) {
+      if (error) throw new Error(error);
+
+      console.log(body);
+    });
+
 #### 3.3.Ruby方式调用
+
+    require 'uri'
+    require 'net/http'
+
+    url = URI("http://127.0.0.1:8888/v1/wallet/lock")
+
+    http = Net::HTTP.new(url.host, url.port)
+
+    request = Net::HTTP::Post.new(url)
+    request["content-type"] = 'application/x-www-form-urlencoded; charset=UTF-8'
+
+    response = http.request(request)
+    puts response.read_body
+    
 
 #### 3.4.javaScript方式调用
 
+    var data = null;
+
+    var xhr = new XMLHttpRequest();
+
+    xhr.addEventListener("readystatechange", function () {
+      if (this.readyState === this.DONE) {
+        console.log(this.responseText);
+      }
+    });
+
+    xhr.open("POST", "http://127.0.0.1:8888/v1/wallet/lock");
+    xhr.setRequestHeader("content-type", "application/x-www-form-urlencoded; charset=UTF-8");
+
+    xhr.send(data);
+
 #### 3.5.python方式调用
+
+
+    import requests
+
+    url = "http://127.0.0.1:8888/v1/wallet/lock"
+
+    headers = {'content-type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+
+    response = requests.request("POST", url, headers=headers)
+
+    print(response.text)
 
    
 返回结果都一样，返回结果如下
@@ -733,93 +792,432 @@ EOS官方开源了一份转账的合约代码，我们只需要把这份合约�
 
 ### 4.锁定所有的钱包
 
+请求方式：POST
+请求接口名称：http://127.0.0.1:8888/v1/wallet/lock_all
+
 #### 4.1.curl方式调用
+
+    curl --request POST \
+      --url http://127.0.0.1:8888/v1/wallet/lock_all \
+      --header 'content-type: application/x-www-form-urlencoded; charset=UTF-8'
 
 #### 4.2.NodeJs方式调用
 
+    var request = require("request");
+
+    var options = { method: 'POST',
+      url: 'http://127.0.0.1:8888/v1/wallet/lock_all',
+      headers: { 'content-type': 'application/x-www-form-urlencoded; charset=UTF-8' } };
+
+    request(options, function (error, response, body) {
+      if (error) throw new Error(error);
+
+      console.log(body);
+    });
+
 #### 4.3.Ruby方式调用
+
+    require 'uri'
+    require 'net/http'
+
+    url = URI("http://127.0.0.1:8888/v1/wallet/lock_all")
+
+    http = Net::HTTP.new(url.host, url.port)
+
+    request = Net::HTTP::Post.new(url)
+    request["content-type"] = 'application/x-www-form-urlencoded; charset=UTF-8'
+
+    response = http.request(request)
+    puts response.read_body
 
 #### 4.4.javaScript方式调用
 
+
+    var data = null;
+
+    var xhr = new XMLHttpRequest();
+
+    xhr.addEventListener("readystatechange", function () {
+      if (this.readyState === this.DONE) {
+        console.log(this.responseText);
+      }
+    });
+
+    xhr.open("POST", "http://127.0.0.1:8888/v1/wallet/lock_all");
+    xhr.setRequestHeader("content-type", "application/x-www-form-urlencoded; charset=UTF-8");
+
+    xhr.send(data);
+
 #### 4.5.python方式调用
 
+    import requests
+
+    url = "http://127.0.0.1:8888/v1/wallet/lock_all"
+
+    headers = {'content-type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+
+    response = requests.request("POST", url, headers=headers)
+
+    print(response.text)
    
 返回结果都一样，返回结果如下
 
 
 ### 5.根据钱包的名字或者密码解锁一个钱包
 
+请求方式：POST
+接口名字：`http://127.0.0.1:8888/v1/wallet/unlock`
+
 #### 5.1.curl方式调用
+
+    curl --request POST \
+      --url http://127.0.0.1:8888/v1/wallet/unlock \
+      --header 'content-type: application/x-www-form-urlencoded; charset=UTF-8'
 
 #### 5.2.NodeJs方式调用
 
+    var request = require("request");
+
+    var options = { method: 'POST',
+      url: 'http://127.0.0.1:8888/v1/wallet/unlock',
+      headers: { 'content-type': 'application/x-www-form-urlencoded; charset=UTF-8' } };
+
+    request(options, function (error, response, body) {
+      if (error) throw new Error(error);
+
+      console.log(body);
+    });
+
 #### 5.3.Ruby方式调用
+
+    require 'uri'
+    require 'net/http'
+
+    url = URI("http://127.0.0.1:8888/v1/wallet/unlock")
+
+    http = Net::HTTP.new(url.host, url.port)
+
+    request = Net::HTTP::Post.new(url)
+    request["content-type"] = 'application/x-www-form-urlencoded; charset=UTF-8'
+
+    response = http.request(request)
+    puts response.read_body
 
 #### 5.4.javaScript方式调用
 
+    var data = null;
+
+    var xhr = new XMLHttpRequest();
+
+    xhr.addEventListener("readystatechange", function () {
+      if (this.readyState === this.DONE) {
+        console.log(this.responseText);
+      }
+    });
+
+    xhr.open("POST", "http://127.0.0.1:8888/v1/wallet/unlock");
+    xhr.setRequestHeader("content-type", "application/x-www-form-urlencoded; charset=UTF-8");
+
+    xhr.send(data);
+
 #### 5.5.python方式调用
+
+    import requests
+
+    url = "http://127.0.0.1:8888/v1/wallet/unlock"
+
+    headers = {'content-type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+
+    response = requests.request("POST", url, headers=headers)
+
+    print(response.text)
 
    
 返回结果都一样，返回结果如下
 
 ### 6.引入私钥到给定的钱包
 
+接口请求方式：POST
+接口名字：`http://127.0.0.1:8888/v1/wallet/import_key`
+
 #### 6.1.curl方式调用
+
+    curl --request POST \
+      --url http://127.0.0.1:8888/v1/wallet/import_key \
+      --header 'content-type: application/x-www-form-urlencoded; charset=UTF-8'
 
 #### 6.2.NodeJs方式调用
 
+    var request = require("request");
+
+    var options = { method: 'POST',
+      url: 'http://127.0.0.1:8888/v1/wallet/import_key',
+      headers: { 'content-type': 'application/x-www-form-urlencoded; charset=UTF-8' } };
+
+    request(options, function (error, response, body) {
+      if (error) throw new Error(error);
+
+      console.log(body);
+    });
+
 #### 6.3.Ruby方式调用
+
+    require 'uri'
+    require 'net/http'
+
+    url = URI("http://127.0.0.1:8888/v1/wallet/import_key")
+
+    http = Net::HTTP.new(url.host, url.port)
+
+    request = Net::HTTP::Post.new(url)
+    request["content-type"] = 'application/x-www-form-urlencoded; charset=UTF-8'
+
+    response = http.request(request)
+    puts response.read_body
+
 
 #### 6.4.javaScript方式调用
 
+    var data = null;
+
+    var xhr = new XMLHttpRequest();
+
+    xhr.addEventListener("readystatechange", function () {
+      if (this.readyState === this.DONE) {
+        console.log(this.responseText);
+      }
+    });
+
+    xhr.open("POST", "http://127.0.0.1:8888/v1/wallet/import_key");
+    xhr.setRequestHeader("content-type", "application/x-www-form-urlencoded; charset=UTF-8");
+
+    xhr.send(data);
+
 #### 6.5.python方式调用
 
-   
-返回结果都一样，返回结果如下
+    import requests
 
+    url = "http://127.0.0.1:8888/v1/wallet/import_key"
+
+    headers = {'content-type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+
+    response = requests.request("POST", url, headers=headers)
+
+    print(response.text)
+
+返回结果都一样，返回结果如下
 
 
 ### 7.列出所有钱包
 
+接口请求方式：POST
+接口名字：`http://127.0.0.1:8888/v1/wallet/list_wallets`
+
 #### 7.1.curl方式调用
+
+    curl --request POST \
+      --url http://127.0.0.1:8888/v1/wallet/list_wallets \
+      --header 'content-type: application/x-www-form-urlencoded; charset=UTF-8'
 
 #### 7.2.NodeJs方式调用
 
+    var request = require("request");
+
+    var options = { method: 'POST',
+      url: 'http://127.0.0.1:8888/v1/wallet/list_wallets',
+      headers: { 'content-type': 'application/x-www-form-urlencoded; charset=UTF-8' } };
+
+    request(options, function (error, response, body) {
+      if (error) throw new Error(error);
+
+      console.log(body);
+    });
+
 #### 7.3.Ruby方式调用
+
+    require 'uri'
+    require 'net/http'
+
+    url = URI("http://127.0.0.1:8888/v1/wallet/list_wallets")
+
+    http = Net::HTTP.new(url.host, url.port)
+
+    request = Net::HTTP::Post.new(url)
+    request["content-type"] = 'application/x-www-form-urlencoded; charset=UTF-8'
+
+    response = http.request(request)
+    puts response.read_body
 
 #### 7.4.javaScript方式调用
 
+    var data = null;
+
+    var xhr = new XMLHttpRequest();
+
+    xhr.addEventListener("readystatechange", function () {
+      if (this.readyState === this.DONE) {
+        console.log(this.responseText);
+      }
+    });
+
+    xhr.open("POST", "http://127.0.0.1:8888/v1/wallet/list_wallets");
+    xhr.setRequestHeader("content-type", "application/x-www-form-urlencoded; charset=UTF-8");
+
+    xhr.send(data);
+
 #### 7.5.python方式调用
 
+    import requests
+
+    url = "http://127.0.0.1:8888/v1/wallet/list_wallets"
+
+    headers = {'content-type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+
+    response = requests.request("POST", url, headers=headers)
+
+    print(response.text)
    
 返回结果都一样，返回结果如下
 
 ### 8.通过所有的钱包列出所有的密钥
 
+接口请求方式：POST
+接口名字：`http://127.0.0.1:8888/v1/wallet/list_keys`
+
 #### 8.1.curl方式调用
+
+    curl --request POST \
+      --url http://127.0.0.1:8888/v1/wallet/list_keys \
+      --header 'content-type: application/x-www-form-urlencoded; charset=UTF-8'
 
 #### 8.2.NodeJs方式调用
 
+    var request = require("request");
+
+    var options = { method: 'POST',
+      url: 'http://127.0.0.1:8888/v1/wallet/list_keys',
+      headers: { 'content-type': 'application/x-www-form-urlencoded; charset=UTF-8' } };
+
+    request(options, function (error, response, body) {
+      if (error) throw new Error(error);
+
+      console.log(body);
+    });
+
 #### 8.3.Ruby方式调用
+
+    require 'uri'
+    require 'net/http'
+
+    url = URI("http://127.0.0.1:8888/v1/wallet/list_keys")
+
+    http = Net::HTTP.new(url.host, url.port)
+
+    request = Net::HTTP::Post.new(url)
+    request["content-type"] = 'application/x-www-form-urlencoded; charset=UTF-8'
+
+    response = http.request(request)
+    puts response.read_body
 
 #### 8.4.javaScript方式调用
 
+    var data = null;
+
+    var xhr = new XMLHttpRequest();
+
+    xhr.addEventListener("readystatechange", function () {
+      if (this.readyState === this.DONE) {
+        console.log(this.responseText);
+      }
+    });
+
+    xhr.open("POST", "http://127.0.0.1:8888/v1/wallet/list_keys");
+    xhr.setRequestHeader("content-type", "application/x-www-form-urlencoded; charset=UTF-8");
+
+    xhr.send(data);
+
 #### 8.5.python方式调用
 
+    import requests
+
+    url = "http://127.0.0.1:8888/v1/wallet/list_keys"
+
+    headers = {'content-type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+
+    response = requests.request("POST", url, headers=headers)
+
+    print(response.text)
    
 返回结果都一样，返回结果如下
 
 ### 9.根据钱包获取公钥
 
+接口请求方式：POST
+接口名字：`http://127.0.0.1:8888/v1/wallet/get_public_keys`
+
 #### 9.1.curl方式调用
+
+    curl --request POST \
+      --url http://127.0.0.1:8888/v1/wallet/get_public_keys \
+      --header 'content-type: application/x-www-form-urlencoded; charset=UTF-8'
 
 #### 9.2.NodeJs方式调用
 
+    var request = require("request");
+
+    var options = { method: 'POST',
+      url: 'http://127.0.0.1:8888/v1/wallet/get_public_keys',
+      headers: { 'content-type': 'application/x-www-form-urlencoded; charset=UTF-8' } };
+
+    request(options, function (error, response, body) {
+      if (error) throw new Error(error);
+
+      console.log(body);
+    });
+
 #### 9.3.Ruby方式调用
+
+    require 'uri'
+    require 'net/http'
+
+    url = URI("http://127.0.0.1:8888/v1/wallet/get_public_keys")
+
+    http = Net::HTTP.new(url.host, url.port)
+
+    request = Net::HTTP::Post.new(url)
+    request["content-type"] = 'application/x-www-form-urlencoded; charset=UTF-8'
+
+    response = http.request(request)
+    puts response.read_body
 
 #### 9.4.javaScript方式调用
 
+    var data = null;
+
+    var xhr = new XMLHttpRequest();
+
+    xhr.addEventListener("readystatechange", function () {
+      if (this.readyState === this.DONE) {
+        console.log(this.responseText);
+      }
+    });
+
+    xhr.open("POST", "http://127.0.0.1:8888/v1/wallet/get_public_keys");
+    xhr.setRequestHeader("content-type", "application/x-www-form-urlencoded; charset=UTF-8");
+
+    xhr.send(data);
+
 #### 9.5.python方式调用
+
+    import requests
+
+    url = "http://127.0.0.1:8888/v1/wallet/get_public_keys"
+
+    headers = {'content-type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+
+    response = requests.request("POST", url, headers=headers)
+
+    print(response.text)
 
    
 返回结果都一样，返回结果如下
@@ -827,15 +1225,72 @@ EOS官方开源了一份转账的合约代码，我们只需要把这份合约�
 
 ### 10.设定钱包自动锁定超时
 
+接口请求方式：POST
+接口名字：`http://127.0.0.1:8888/v1/wallet/set_timeout`
+
 #### 10.1.curl方式调用
+
+    curl --request POST \
+      --url http://127.0.0.1:8888/v1/wallet/set_timeout \
+      --header 'content-type: application/x-www-form-urlencoded; charset=UTF-8'
 
 #### 10.2.NodeJs方式调用
 
+    var request = require("request");
+
+    var options = { method: 'POST',
+      url: 'http://127.0.0.1:8888/v1/wallet/set_timeout',
+      headers: { 'content-type': 'application/x-www-form-urlencoded; charset=UTF-8' } };
+
+    request(options, function (error, response, body) {
+      if (error) throw new Error(error);
+
+      console.log(body);
+    });
+
 #### 10.3.Ruby方式调用
+
+    require 'uri'
+    require 'net/http'
+
+    url = URI("http://127.0.0.1:8888/v1/wallet/set_timeout")
+
+    http = Net::HTTP.new(url.host, url.port)
+
+    request = Net::HTTP::Post.new(url)
+    request["content-type"] = 'application/x-www-form-urlencoded; charset=UTF-8'
+
+    response = http.request(request)
+    puts response.read_body
 
 #### 10.4.javaScript方式调用
 
+    var data = null;
+
+    var xhr = new XMLHttpRequest();
+
+    xhr.addEventListener("readystatechange", function () {
+      if (this.readyState === this.DONE) {
+        console.log(this.responseText);
+      }
+    });
+
+    xhr.open("POST", "http://127.0.0.1:8888/v1/wallet/set_timeout");
+    xhr.setRequestHeader("content-type", "application/x-www-form-urlencoded; charset=UTF-8");
+
+    xhr.send(data);
+
 #### 10.5.python方式调用
+
+    import requests
+
+    url = "http://127.0.0.1:8888/v1/wallet/set_timeout"
+
+    headers = {'content-type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+
+    response = requests.request("POST", url, headers=headers)
+
+    print(response.text)
 
    
 返回结果都一样，返回结果如下
