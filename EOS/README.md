@@ -1653,3 +1653,79 @@ EOS官方开源了一份转账的合约代码，我们只需要把这份合约�
     print(response.text)
    
 返回结果都一样，返回结果如下
+
+## 六.NodeJs开发EOS钱包
+
+### 1.使用NodeJs生成钱包的账户
+
+* 安装JS库
+
+    npm install eosjs --save
+    npm install eosjs-ecc --save
+
+#### 1.1.生成钱包的密钥对
+
+下面是使用的BIP39生成的助记词来生成密钥对
+
+    var eosPrivate = eosEcc.seedPrivate(mnemonic);
+    console.log("EOS私钥：",eosPrivate)
+    const  eosPubkey = eosEcc.privateToPublic(eosPrivate);
+    console.log("EOS公钥：",eosPubkey)
+ 
+#### 1.2.随机生成新的私钥公钥
+
+    eosEcc.randomKey().then(privateKey => {
+         console.log('Private Key:\t', privateKey) 
+         console.log('Public Key:\t', eosEcc.privateToPublic(privateKey)) 
+      })
+ 
+#### 1.3.eos环境配置
+
+    var Eos = require('eosjs')
+    var eosConfig = {
+        keyProvider: ['私钥'], 
+        httpEndpoint: 'https://nodes.get-scatter.com',
+        chainId: "aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a119ffbeaef943642f0e906", 
+        broadcast: true,
+    }
+    
+#### 1.3.生成EOS账户
+
+    var eos = Eos(eosConfig)
+
+                var creatoraccount = "accounthr123";
+                var newaccount = "sdrghiochaiq";
+                var newaccount_pubkey = pubkey; 
+                eos.transaction(tr => {
+                    tr.newaccount({
+                        creator: creatoraccount,
+                        name: newaccount,
+                        owner: newaccount_pubkey,
+                        active: newaccount_pubkey
+                    })
+
+                    tr.buyrambytes({
+                        payer: creatoraccount,
+                        receiver: newaccount,
+                        bytes: 3072
+                    })
+                    
+                    tr.delegatebw({
+                        from: creatoraccount,
+                        receiver: newaccount,
+                        stake_net_quantity: '1.0000 EOS',
+                        stake_cpu_quantity: '1.0000 EOS',
+                        transfer: 0
+                    })
+                }).then(r => {
+                    console.log(r);
+                }).catch(e => {
+                    console.log(e)
+                });
+
+            }catch (e){
+
+            }
+ 
+
+### 2.使用NodeJs完成钱包转账过程
