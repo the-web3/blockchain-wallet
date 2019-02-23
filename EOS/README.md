@@ -1298,76 +1298,358 @@ EOS官方开源了一份转账的合约代码，我们只需要把这份合约�
 
 ### 11.交易签名
 
+接口请求方式：POST
+接口名称：`http://127.0.0.1:8888/v1/wallet/sign_transaction`
+
 #### 11.1.curl方式调用
+
+    curl --request POST \
+      --url http://127.0.0.1:8888/v1/wallet/sign_transaction \
+      --header 'content-type: application/x-www-form-urlencoded; charset=UTF-8'
 
 #### 11.2.NodeJs方式调用
 
+    var request = require("request");
+
+    var options = { method: 'POST',
+      url: 'http://127.0.0.1:8888/v1/wallet/sign_transaction',
+      headers: { 'content-type': 'application/x-www-form-urlencoded; charset=UTF-8' } };
+
+    request(options, function (error, response, body) {
+      if (error) throw new Error(error);
+
+      console.log(body);
+    });
+
 #### 11.3.Ruby方式调用
+
+    require 'uri'
+    require 'net/http'
+
+    url = URI("http://127.0.0.1:8888/v1/wallet/sign_transaction")
+
+    http = Net::HTTP.new(url.host, url.port)
+
+    request = Net::HTTP::Post.new(url)
+    request["content-type"] = 'application/x-www-form-urlencoded; charset=UTF-8'
+
+    response = http.request(request)
+    puts response.read_body
 
 #### 11.4.javaScript方式调用
 
+    var data = null;
+
+    var xhr = new XMLHttpRequest();
+
+    xhr.addEventListener("readystatechange", function () {
+      if (this.readyState === this.DONE) {
+        console.log(this.responseText);
+      }
+    });
+
+    xhr.open("POST", "http://127.0.0.1:8888/v1/wallet/sign_transaction");
+    xhr.setRequestHeader("content-type", "application/x-www-form-urlencoded; charset=UTF-8");
+
+    xhr.send(data);
+
 #### 11.5.python方式调用
 
+    import requests
+
+    url = "http://127.0.0.1:8888/v1/wallet/sign_transaction"
+
+    headers = {'content-type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+
+    response = requests.request("POST", url, headers=headers)
+
+    print(response.text)
    
 返回结果都一样，返回结果如下
 
-### 12.交易签名
+### 12.设置钱包
+
+接口请求方式：POST
+接口名称：`http://127.0.0.1:8888/v1/wallet/set_dir`
 
 #### 12.1.curl方式调用
 
+    curl --request POST \
+      --url http://127.0.0.1:8888/v1/wallet/set_dir \
+      --header 'content-type: application/x-www-form-urlencoded; charset=UTF-8'
+
 #### 12.2.NodeJs方式调用
+
+    var request = require("request");
+
+    var options = { method: 'POST',
+      url: 'http://127.0.0.1:8888/v1/wallet/set_dir',
+      headers: { 'content-type': 'application/x-www-form-urlencoded; charset=UTF-8' } };
+
+    request(options, function (error, response, body) {
+      if (error) throw new Error(error);
+
+      console.log(body);
+    });
 
 #### 12.3.Ruby方式调用
 
+    require 'uri'
+    require 'net/http'
+
+    url = URI("http://127.0.0.1:8888/v1/wallet/set_dir")
+
+    http = Net::HTTP.new(url.host, url.port)
+
+    request = Net::HTTP::Post.new(url)
+    request["content-type"] = 'application/x-www-form-urlencoded; charset=UTF-8'
+
+    response = http.request(request)
+    puts response.read_body
+
 #### 12.4.javaScript方式调用
 
+    var data = null;
+
+    var xhr = new XMLHttpRequest();
+
+    xhr.addEventListener("readystatechange", function () {
+      if (this.readyState === this.DONE) {
+        console.log(this.responseText);
+      }
+    });
+
+    xhr.open("POST", "http://127.0.0.1:8888/v1/wallet/set_dir");
+    xhr.setRequestHeader("content-type", "application/x-www-form-urlencoded; charset=UTF-8");
+
+    xhr.send(data);
+    
 #### 12.5.python方式调用
+
+    import requests
+
+    url = "http://127.0.0.1:8888/v1/wallet/set_dir"
+
+    headers = {'content-type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+
+    response = requests.request("POST", url, headers=headers)
+
+    print(response.text)
 
    
 返回结果都一样，返回结果如下
 
-### 13.交易签名
+### 13.设置密钥
+
+接口请求方式：POST
+接口名称：`http://127.0.0.1:8888/v1/wallet/set_eosio_key`
 
 #### 13.1.curl方式调用
 
+    curl --request POST \
+      --url http://127.0.0.1:8888/v1/wallet/set_eosio_key \
+      --header 'content-type: application/x-www-form-urlencoded; charset=UTF-8'
+
 #### 13.2.NodeJs方式调用
+
+    var request = require("request");
+
+    var options = { method: 'POST',
+      url: 'http://127.0.0.1:8888/v1/wallet/set_eosio_key',
+      headers: { 'content-type': 'application/x-www-form-urlencoded; charset=UTF-8' } };
+
+    request(options, function (error, response, body) {
+      if (error) throw new Error(error);
+
+      console.log(body);
+    });
 
 #### 13.3.Ruby方式调用
 
+    require 'uri'
+    require 'net/http'
+
+    url = URI("http://127.0.0.1:8888/v1/wallet/set_eosio_key")
+
+    http = Net::HTTP.new(url.host, url.port)
+
+    request = Net::HTTP::Post.new(url)
+    request["content-type"] = 'application/x-www-form-urlencoded; charset=UTF-8'
+
+    response = http.request(request)
+    puts response.read_body
+
 #### 13.4.javaScript方式调用
+
+    var data = null;
+
+    var xhr = new XMLHttpRequest();
+
+    xhr.addEventListener("readystatechange", function () {
+      if (this.readyState === this.DONE) {
+        console.log(this.responseText);
+      }
+    });
+
+    xhr.open("POST", "http://127.0.0.1:8888/v1/wallet/set_eosio_key");
+    xhr.setRequestHeader("content-type", "application/x-www-form-urlencoded; charset=UTF-8");
+
+    xhr.send(data);
 
 #### 13.5.python方式调用
 
+    import requests
+
+    url = "http://127.0.0.1:8888/v1/wallet/set_eosio_key"
+
+    headers = {'content-type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+
+    response = requests.request("POST", url, headers=headers)
+
+    print(response.text)
+
    
 返回结果都一样，返回结果如下
 
-### 14.交易签名
+### 14.创建密钥
+
+接口请求方式：POST
+接口名称：`http://127.0.0.1:8888/v1/wallet/create_key`
 
 #### 14.1.curl方式调用
 
+    curl --request POST \
+      --url http://127.0.0.1:8888/v1/wallet/create_key \
+      --header 'content-type: application/x-www-form-urlencoded; charset=UTF-8'
+
 #### 14.2.NodeJs方式调用
+
+    var request = require("request");
+
+    var options = { method: 'POST',
+      url: 'http://127.0.0.1:8888/v1/wallet/create_key',
+      headers: { 'content-type': 'application/x-www-form-urlencoded; charset=UTF-8' } };
+
+    request(options, function (error, response, body) {
+      if (error) throw new Error(error);
+
+      console.log(body);
+    });
 
 #### 14.3.Ruby方式调用
 
+    require 'uri'
+    require 'net/http'
+
+    url = URI("http://127.0.0.1:8888/v1/wallet/create_key")
+
+    http = Net::HTTP.new(url.host, url.port)
+
+    request = Net::HTTP::Post.new(url)
+    request["content-type"] = 'application/x-www-form-urlencoded; charset=UTF-8'
+
+    response = http.request(request)
+    puts response.read_body
+
 #### 14.4.javaScript方式调用
+
+    var data = null;
+
+    var xhr = new XMLHttpRequest();
+
+    xhr.addEventListener("readystatechange", function () {
+      if (this.readyState === this.DONE) {
+        console.log(this.responseText);
+      }
+    });
+
+    xhr.open("POST", "http://127.0.0.1:8888/v1/wallet/create_key");
+    xhr.setRequestHeader("content-type", "application/x-www-form-urlencoded; charset=UTF-8");
+
+    xhr.send(data);
 
 #### 14.5.python方式调用
 
-   
+    import requests
+
+    url = "http://127.0.0.1:8888/v1/wallet/create_key"
+
+    headers = {'content-type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+
+    response = requests.request("POST", url, headers=headers)
+
+    print(response.text)
+
 返回结果都一样，返回结果如下
 
 
-### 15.交易签名
+### 15.sign_digest
+
+接口请求方式：POST
+接口名称：`http://127.0.0.1:8888/v1/wallet/sign_digest`
 
 #### 15.1.curl方式调用
 
+    curl --request POST \
+      --url http://127.0.0.1:8888/v1/wallet/sign_digest \
+      --header 'content-type: application/x-www-form-urlencoded; charset=UTF-8'
+
 #### 15.2.NodeJs方式调用
+
+    var request = require("request");
+
+    var options = { method: 'POST',
+      url: 'http://127.0.0.1:8888/v1/wallet/sign_digest',
+      headers: { 'content-type': 'application/x-www-form-urlencoded; charset=UTF-8' } };
+
+    request(options, function (error, response, body) {
+      if (error) throw new Error(error);
+
+      console.log(body);
+    });
 
 #### 15.3.Ruby方式调用
 
+    require 'uri'
+    require 'net/http'
+
+    url = URI("http://127.0.0.1:8888/v1/wallet/sign_digest")
+
+    http = Net::HTTP.new(url.host, url.port)
+
+    request = Net::HTTP::Post.new(url)
+    request["content-type"] = 'application/x-www-form-urlencoded; charset=UTF-8'
+
+    response = http.request(request)
+    puts response.read_body
+
 #### 15.4.javaScript方式调用
+
+    var data = null;
+
+    var xhr = new XMLHttpRequest();
+
+    xhr.addEventListener("readystatechange", function () {
+      if (this.readyState === this.DONE) {
+        console.log(this.responseText);
+      }
+    });
+
+    xhr.open("POST", "http://127.0.0.1:8888/v1/wallet/sign_digest");
+    xhr.setRequestHeader("content-type", "application/x-www-form-urlencoded; charset=UTF-8");
+
+    xhr.send(data);
 
 #### 15.5.python方式调用
 
+    import requests
+
+    url = "http://127.0.0.1:8888/v1/wallet/sign_digest"
+
+    headers = {'content-type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+
+    response = requests.request("POST", url, headers=headers)
+
+    print(response.text)
    
 返回结果都一样，返回结果如下
