@@ -1771,9 +1771,9 @@ keyProvider：填写你上面生成的私钥；httpEndpoint：开发链url与端
         console.log(e)
     });
 
-}catch (e){
+    }catch (e){
 
-}
+    }
 
 ### 2.使用NodeJs完成钱包转账过程
 
