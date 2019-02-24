@@ -1777,4 +1777,92 @@ keyProvider：填写你上面生成的私钥；httpEndpoint：开发链url与端
 
 ### 2.使用NodeJs完成钱包转账过程
 
+使用EOS的官方库eosjs开发，用户需要自己输入私钥，这种操作方式不安全，容易造成私钥泄露。转账到账户:accountName;转账数额:quantity。
+
+    const { Api, JsonRpc, RpcError, JsSignatureProvider } = require('eosjs');
+    const ecc = require('eosjs-ecc');
+    const fetch = require('node-fetch');
+    const { TextDecoder, TextEncoder } = require('text-encoding');
+    const rpcUrl = 'rpc接口调用地址'
+    const rpc = new JsonRpc(rpcUrl, { fetch });
+    
+    async function transfer(accountName,quantity) {
+        let signatureProvider = new JsSignatureProvider([pkeys[0].privateKey]);
+        let api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), textEncoder: new TextEncoder() });
+        let result = await api.transact({
+            actions: [{
+                account: 'eosio.token',
+                name: 'transfer',
+                authorization: [{
+                    actor: pkeys[0].actor,
+                    permission: 'active',
+                }],
+                data: {
+                    from: pkeys[0].actor,
+                    to: accountName,	
+                    quantity: quantity, 
+                    memo: '',
+                },
+            }]
+        }, {
+            blocksBehind: 3,
+            expireSeconds: 30,
+        });
+        console.dir(result); 
+    };
+ 
+
+使用eosjs的api+wallet的api进行开发，关于钱包的API，请参照上文中的介绍，这种方式适合用于公共账户给不同用户转账。相当于用wallet钱包服务来做密钥管理，隐藏了私钥，代码中只需提供公钥和钱包服务地址即可。
+
+    async function transfer() {
+        try {
+            let actor = "account"
+            let transferTo = "toAccount"
+            let quantity = "10 EOS"
+            let memo = "baoyangni"
+            let blocksBehind = 3
+            let expireSeconds = 100
+            let info = await rpc.get_info();
+            if (info != null && info.chain_id != null && info.head_block_num != null) {
+                let chain_id = info.chain_id;
+                let head_block_num = info.head_block_num - blocksBehind;
+                let block = await get_block(head_block_num);
+                if (block != null && block.ref_block_prefix != null && block.timestamp != null) {
+                    let data = await abi_json_to_bin(actor, transferTo, quantity, memo)
+                    if (data != null) {
+                        let transactions = {
+                            "max_net_usage_words": 0,
+                            "max_cpu_usage_ms": 0,
+                            "delay_sec": 0,
+                            "context_free_actions": [],
+    "actions": [{
+                                "account": "eosio.token",
+                                "name": "transfer",
+                                "authorization": [{
+                                    "actor": actor,
+                                    "permission": "active"
+                                }],
+                                "data": data
+                            }],
+                            "transaction_extensions": [],
+                            "expiration": ser.timePointSecToDate(ser.dateToTimePointSec(block.timestamp) + expireSeconds),
+                            "ref_block_num": block.block_num & 0xffff,
+                            "ref_block_prefix": block.ref_block_prefix
+                        };
+
+                        let signTransaction = await sign_transaction(transactions, ["密钥"], chain_id);
+
+                        if (signTransaction != null && signTransaction.signatures != null) {
+                            var transaction_detail = await push_transaction(transactions, signTransaction.signatures);
+                            console.log('push_transaction=transaction_id==' + transaction_detail.transaction_id);
+                        }
+
+                    }
+                }
+            }
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
 
