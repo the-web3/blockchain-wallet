@@ -1668,23 +1668,40 @@ EOS官方开源了一份转账的合约代码，我们只需要把这份合约�
 
 下面是使用的BIP39生成的助记词来生成密钥对
 
-    var eosPrivate = eosEcc.seedPrivate(mnemonic);
+    var eosEcc = require('eosjs-ecc') ;
+
+    var eosPrivate = eosEcc.seedPrivate("晚 錢 破 性 及 普 木 迷 矛 而 肅 揭 聖 擠 言");
     console.log("EOS私钥：",eosPrivate)
     const  eosPubkey = eosEcc.privateToPublic(eosPrivate);
     console.log("EOS公钥：",eosPubkey)
  
+上面代码中使用的是汉语助记词，助记词的生成请参考本书的助记词一章。
+
+执行结果如下：
+
+    EOS私钥：5KdZWbAFRXhWshbX8TG6DKbTmo9E7VNm5s7onotvE2kbS285yXc
+    EOS公钥：EOS7qvrWb75xXY4dNWLBZSUTZkb6EMmwXhS5T9kxfMeWLggiV8XXE
+
+ 
 #### 1.3.随机生成新的私钥公钥
 
     eosEcc.randomKey().then(privateKey => {
-         console.log('Private Key:\t', privateKey) 
-         console.log('Public Key:\t', eosEcc.privateToPublic(privateKey)) 
-      })
+        console.log('私钥:\t', privateKey)
+        console.log('公钥:\t', eosEcc.privateToPublic(privateKey))
+    })
+    
+执行结果如下：
+
+    私钥: 5Jzk3WKeY8TkLVSUm89GVMPV2XGeSunGZwNL8JioRvUpoiUfrfN
+    公钥: EOS6PisEYXq32dzKP24ZE7JBXnTsiKNyDKXWn5g6xaS9xbr59WRWw
  
 #### 1.4.eos环境配置
 
+keyProvider：填写你上面生成的私钥；httpEndpoint：开发链url与端口；chainId：表示是那一条链的ID，此处可以是你自己搭建的私有链，也可以是EOS的公链ID；我下面填写的都是主网的信息。
+
     var Eos = require('eosjs')
     var eosConfig = {
-        keyProvider: ['私钥'], 
+        keyProvider: ['privateKey'], 
         httpEndpoint: 'https://nodes.get-scatter.com',
         chainId: "aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a119ffbeaef943642f0e906", 
         broadcast: true,
@@ -1692,41 +1709,72 @@ EOS官方开源了一份转账的合约代码，我们只需要把这份合约�
     
 #### 1.5.生成EOS账户
 
+这里使用上一步配置的好环境；creatoraccount表示主账号，newaccount表示新账号；newaccount_pubkey表示新账户的公钥。
+
+下面的代码表示新建账号
+
+    tr.newaccount({
+        creator: creatoraccount,
+        name: newaccount,
+        owner: newaccount_pubkey,
+        active: newaccount_pubkey
+     })
+
+这一步是为新的账号充值RAM
+
+    tr.buyrambytes({
+        payer: creatoraccount,
+        receiver: newaccount,
+        bytes: 3072
+    })
+
+为新账号抵押CPU和NET资源
+
+    tr.delegatebw({
+        from: creatoraccount,
+        receiver: newaccount,
+        stake_net_quantity: '1.0000 EOS',
+        stake_cpu_quantity: '1.0000 EOS',
+        transfer: 0
+    })
+
+下面的代码是完整代码：
+
     var eos = Eos(eosConfig)
+    var creatoraccount = "guosj";
+    var newaccount = "newaccount";
+    var newaccount_pubkey = pubkey; 
+    eos.transaction(tr => {
+        tr.newaccount({
+            creator: creatoraccount,
+            name: newaccount,
+            owner: newaccount_pubkey,
+            active: newaccount_pubkey
+        })
 
-                var creatoraccount = "accounthr123";
-                var newaccount = "sdrghiochaiq";
-                var newaccount_pubkey = pubkey; 
-                eos.transaction(tr => {
-                    tr.newaccount({
-                        creator: creatoraccount,
-                        name: newaccount,
-                        owner: newaccount_pubkey,
-                        active: newaccount_pubkey
-                    })
+        tr.buyrambytes({
+            payer: creatoraccount,
+            receiver: newaccount,
+            bytes: 3072
+        })
 
-                    tr.buyrambytes({
-                        payer: creatoraccount,
-                        receiver: newaccount,
-                        bytes: 3072
-                    })
-                    
-                    tr.delegatebw({
-                        from: creatoraccount,
-                        receiver: newaccount,
-                        stake_net_quantity: '1.0000 EOS',
-                        stake_cpu_quantity: '1.0000 EOS',
-                        transfer: 0
-                    })
-                }).then(r => {
-                    console.log(r);
-                }).catch(e => {
-                    console.log(e)
-                });
+        tr.delegatebw({
+            from: creatoraccount,
+            receiver: newaccount,
+            stake_net_quantity: '2.0000 EOS',
+            stake_cpu_quantity: '2.0000 EOS',
+            transfer: 0
+        })
+    }).then(r => {
+        console.log(r);
+    }).catch(e => {
+        console.log(e)
+    });
 
-            }catch (e){
+}catch (e){
 
-            }
- 
+}
 
 ### 2.使用NodeJs完成钱包转账过程
+
+
