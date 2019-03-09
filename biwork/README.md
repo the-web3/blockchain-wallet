@@ -464,7 +464,7 @@ exportKeystore是导出Keystore的函数，需要传入的参数是密码和路�
     747c41dad42731d5c890dfade8217c6abba13899a064da50dce8079678a8eeaffb976957f1592332
     682f888e8d106db93d362bee93
     
-### 4.ERC20批量转账签名
+### 3.6. ERC20批量转账签名
 
      const testERC20Sign = require('../sdk/sign/erc20Sign');
      var sendErc20Data =
