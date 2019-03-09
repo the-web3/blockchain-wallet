@@ -40,18 +40,6 @@
 ](https://github.com/guoshijiang/blockchain-wallet/blob/master/img/weixin.png)
 
 
-### 欢迎打赏
-
-.： 
-    ![.： 
-](https://github.com/guoshijiang/blockchain-wallet/blob/master/img/shang.png)
-
-本书目前还未更新完成，笔者每天都再努力更新中......，希望各位热心的好友多多支持
-
-多谢  `新宝@mitoken`  的打赏
-
-多谢  `猴儿`  的打赏
-
 ### 关于本书
 
 目前本书在写作阶段，书籍的版本暂设为V1.0.0版，本书将一直跟随区块链钱包技术的发展，随时更新,本书的内容将会在笔者的博客上同步更新，可能内容上不太一致，希望读者多多包涵。
