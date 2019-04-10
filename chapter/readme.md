@@ -19,13 +19,15 @@
 
 ### [第九章：omni-USDT钱包开发](https://github.com/guoshijiang/blockchain-wallet/tree/master/Omni)
 
-### [第十章：防止钱包私钥丢失](https://github.com/guoshijiang/blockchain-wallet/tree/master/Ripple)
+### [第十章：Ripple钱包开发](https://github.com/guoshijiang/blockchain-wallet/tree/master/xrp)
 
-### [第十一章：blockchain-wallet-sdk使用和代码详解](https://github.com/guoshijiang/blockchain-wallet/tree/master/biwork)
+### [第十一章：防止钱包私钥丢失](https://github.com/guoshijiang/blockchain-wallet/tree/master/Ripple)
 
-### [第十二章：钱包项目实战一](https://github.com/guoshijiang/blockchain-wallet/tree/master/projectOne)
+### [第十二章：blockchain-wallet-sdk使用和代码详解](https://github.com/guoshijiang/blockchain-wallet/tree/master/biwork)
 
-### [第十三章：钱包项目实战二](https://github.com/guoshijiang/blockchain-wallet/tree/master/projectTwo)
+### [第十三章：钱包项目实战一](https://github.com/guoshijiang/blockchain-wallet/tree/master/projectOne)
 
-### [第十四章：开源钱包源码分析](https://github.com/guoshijiang/blockchain-wallet/tree/master/openWallet)
+### [第十四章：钱包项目实战二](https://github.com/guoshijiang/blockchain-wallet/tree/master/projectTwo)
+
+### [第十五章：开源钱包源码分析](https://github.com/guoshijiang/blockchain-wallet/tree/master/openWallet)
 
