@@ -27,6 +27,12 @@
 
 ### [第十三章：COSMOS 主链钱包开发](https://github.com/guoshijiang/blockchain-wallet/tree/master/cosmos)
 
+### [第十三章：BTM 主链钱包开发](https://github.com/guoshijiang/blockchain-wallet/tree/master/cosmos)
+
+### [第十三章：TRX 主链钱包开发](https://github.com/guoshijiang/blockchain-wallet/tree/master/cosmos)
+
+### [第十三章：Grin 主链钱包开发](https://github.com/guoshijiang/blockchain-wallet/tree/master/cosmos)
+
 ### [第十四章：防止钱包私钥丢失](https://github.com/guoshijiang/blockchain-wallet/tree/master/Ripple)
 
 ### [第十五章：blockchain-wallet-sdk使用和代码详解](https://github.com/guoshijiang/blockchain-wallet/tree/master/biwork)
