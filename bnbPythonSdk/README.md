@@ -246,13 +246,12 @@ Binance Chain是Binance及其社区开发的区块链软件系统。 Binance DEX
 
 #### 3.1 SDK 目录解析
 
+.： 
+    ![.： 
+](https://github.com/guoshijiang/blockchain-wallet/blob/master/img/bnbsdk.png
+)
 
-
-
-
-
-
-
+上图是 BNB pyhon-sdk 的目录结构图，图中包含了 BNB 的主要的目录结构
 
 
 
