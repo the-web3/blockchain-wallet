@@ -8,6 +8,16 @@
 
 ## 二. COSMOS 相关资料
 
+区块链浏览器：https://cosmos.bigdipper.live/
+官网：https://cosmos.network/
+github:https://github.com/cosmos/
+电报群：https://t.me/cosmosproject
+reddit：https://reddit.com/r/cosmosnetwork
+twitter：https://twitter.com/cosmos
+slideshare：https://www.slideshare.net/tendermint
+博客：https://blog.cosmos.network/
+youtube：https://www.youtube.com/c/CosmosProject
+
 ## 三. COSMOS 节点搭建
 
 ## 四. COSMOS 钱包开发
@@ -154,5 +164,9 @@
 #### 2.1.python 对 COSMOS 交易进行分析
 
 #### 2.2.Node 对 COSMOS 交易进行分析
+
+### 本文小结
+
+本文是作者推出的 COSMOS 系列课程的一部分，大家如果觉能可以，可以联系作者买 COSMOS 相关的课程哦，包含 Java, Python, ,PHP, NodeJs 和 Go 等语言相关的课程，价格实惠。
 
 
