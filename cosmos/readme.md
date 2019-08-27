@@ -8,15 +8,15 @@
 
 ## 二. COSMOS 相关资料
 
-区块链浏览器：https://cosmos.bigdipper.live/
-官网：https://cosmos.network/
-github:https://github.com/cosmos/
-电报群：https://t.me/cosmosproject
-reddit：https://reddit.com/r/cosmosnetwork
-twitter：https://twitter.com/cosmos
-slideshare：https://www.slideshare.net/tendermint
-博客：https://blog.cosmos.network/
-youtube：https://www.youtube.com/c/CosmosProject
+* 区块链浏览器：https://cosmos.bigdipper.live/
+* 官网：https://cosmos.network/
+* github:https://github.com/cosmos/
+* 电报群：https://t.me/cosmosproject
+* reddit：https://reddit.com/r/cosmosnetwork
+* twitter：https://twitter.com/cosmos
+* slideshare：https://www.slideshare.net/tendermint
+* 博客：https://blog.cosmos.network/
+* youtube：https://www.youtube.com/c/CosmosProject
 
 ## 三. COSMOS 节点搭建
 
