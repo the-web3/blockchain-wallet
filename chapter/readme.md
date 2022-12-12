@@ -45,4 +45,3 @@
 
 ### [第十九章：BNB python-sdk 源码分析](https://github.com/guoshijiang/blockchain-wallet/tree/master/bnbPythonSdk)
 
-
