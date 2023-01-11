@@ -44,3 +44,9 @@
 
 目前本书在写作阶段，书籍的版本暂设为V1.0.0版，本书将一直跟随区块链钱包技术的发展，随时更新,本书的内容将会在笔者的博客上同步更新，可能内容上不太一致，希望读者多多包涵。
 
+
+### 赞助本教程
+
+- ETH: 0xa424Db4D52D8f12Bb0ea4fbe2dEAb6cf7e9cBC87
+- ERC20: 0xa424Db4D52D8f12Bb0ea4fbe2dEAb6cf7e9cBC87
+- Layer2: 0xa424Db4D52D8f12Bb0ea4fbe2dEAb6cf7e9cBC87
