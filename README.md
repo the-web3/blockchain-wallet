@@ -29,9 +29,6 @@
 
 [点击开始阅读本书](https://github.com/guoshijiang/blockchain-wallet/blob/master/chapter/readme.md)
 
-[点击开始阅读作者的Docker一书](https://github.com/guoshijiang/docker-virtual-technology)
-
-[跳转到笔者的博客](https://blog.csdn.net/jiang_xinxing)
 
 ### 有兴趣的朋友可以加笔者的微信，我们一起交流区块链技术，区块链钱包技术
 
